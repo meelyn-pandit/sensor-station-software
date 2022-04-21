@@ -1,8 +1,7 @@
 html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
   head
     title= title
-    link(rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" type="text/css")
-    link(rel="stylesheet" href="/javascripts/highcharts/code/css/highcharts-dark-unica.css" type="text/css")
+    link(rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" type="text/css")
     link(rel="stylesheet" href="/stylesheets/style.css" type="text/css")
   body(style="font-size:0.8em;background-color: #333; color: #D1FF00;")
     div(class="row")
@@ -14,19 +13,24 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
     div(class="row")
       div(class="col-lg-8")
         div(class="row")
-          div(class="col-sm")
-            h2 Nodes
-            div(style="overflow: scroll; height:400px;")
-              table(class="table table-bordered table-sm table-dark" id="nodes")
-                tr(class="table-primary", style="color:#111") 
-                  th Node ID
-                  th Last Heard
-                  th RSSI
-                  th Battery
-                  th Firmware
-          div(class="col-sm")
-            h2 Tags
-            div(style="overflow: scroll; height:400px;")
+          h2 Nodes
+          table(class="table table-bordered table-sm table-dark" id="node-history")
+            tr(class="table-primary", style="color:#111")
+              th #
+              th Node ID
+              th Last Heard
+              th RSSI
+              th Battery
+              th Firmware
+              th Latitude
+              th Longitude 
+              th GPS Time
+          a(id="download-nodes", class="btn btn-primary btn-block") Download Node Table
+
+        div(class="row")
+          div(style="overflow-y: scroll; height:400px;")
+            div
+              h2 Live Tags
               table(class="table table-bordered table-sm table-dark" id="tags")
                 tr(class="table-primary", style="color:#111") 
                   th Tag ID
@@ -37,7 +41,7 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
         div(style="min-height:250px;", id="tag_hist")
 
         h2 Sensor Station Log
-        div(style="overflow: scroll; height:400px;")
+        div(style="overflow-y: scroll; height:400px;")
           table(class="table table-bordered table-sm table-dark" id="raw_log")
             tr(class="table-primary", style="color:#111") 
               th Time
@@ -50,6 +54,10 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
             th ID
             td
               span(id="station-id")
+          tr
+            th Software Start
+            td
+              span(id="software-start")
           tr
             th Compute Module Serial
             td
@@ -74,6 +82,17 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
             th Last Boot
             td
               span(id="uptime")
+          tr
+            th Internet Gateway
+            td
+              span(id="internet-gateway")
+        h2 System Versioning Details
+        table(class="table table-sm table-bordered table-dark", id="meta")
+          tr
+            th Station Image
+            td
+              span(id="station-image")
+
         div(class="row")
           div(class="col-sm")
             h3 Memory Usage
@@ -107,97 +126,99 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
             th Altitude
             td
               span(id="alt")
+        h2 Server Utilitites
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Checkin
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="server-checkin") Server Checkin
+          tr
+            th Upload
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="upload-files") Upload Data
+          tr
+            th Station Software Update
+            td
+              a(href="/update-station", class="btn btn-sm btn-primary btn-block") Station Update
+        h2 Modem Control
+        p When the modem is connected - this will always be the default route to the internet, even if you are plugged into a fast internet connection.  Use these controls to temporarily stop / start the modem.  It will still be active on the next reboot.
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Temporarily Start modem
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="start-modem") Start Modem
+          tr
+            th Temporarily Stop modem
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="stop-modem") Stop Modem
 
-    div(class="row")
-      div(class="col-lg")
-        h2(style="text-align:center;") Radio 1
-        div(style="overflow: scroll; height:400px;")
-          table(class="table table-sm table-bordered table-dark radio", id="radio_1")
-            tr(class="table-primary", style="color: #111;")
-              th Time
-              th Tag ID
-              th RSSI
-              th Node
-        div(class="row")
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_node_radio" value="1") Node
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_tag_radio" value="1") Tag
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_ook_radio" value="1") OOK
+        p The controls below are for persistent modem control - starting or stopping the modem will persist through reboots and be permanent.
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Permanently Enable modem
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="enable-modem") Enable Modem
+          tr
+            th Permanently Disable modem
+            td
+              button(class="btn btn-sm btn-primary btn-block", id="disable-modem") Disable Modem
+        h2 Radio Software Control
+        p You can restart the radio software with this control, which will require a page refresh after it is complete.
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Radio Data Server Restart
+            td(colspan=2)
+              button(class="btn btn-sm btn-primary btn-block", id="restart-radios") Restart Radio Software
+        h2 Display Control
+        p Limit radio tables to a set number of rows.
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Max Row Count
+            td
+              input(type="number",value="10000",id="max-row-count", class="form-control")
+            td
+              button(type="button",class="btn btn-sm btn-danger btn-block", id="update-max-row-count") Update
+          tr
+            th Reset radio tag data tables.
+            td(colspan=2)
+              button(class="btn btn-block btn-primary btn-block", id="clear") Clear 
+        h2 Reboot Control
+        p Specify reboot schedule
+        table(class="table table-bordered table-sm table-dark")
+          tr
+            th Checkin Time
+            td
+              span
+                input(class="time", id="reboot-hour", type="number", style="width:3em;") 
+              span :
+              span
+                input(class="time", id="reboot-minute", type="number", style="width:3em;")
+              span UTC
+          tr
+            th Weekly
+            td
+              select(class="form-control", id="reboot-dow")
+                option(value='*') Every Day
+                option(value='0') Sunday
+                option(value='1') Monday
+                option(value='2') Tuesday
+                option(value='3') Wednsday
+                option(value='4') Thursday
+                option(value='5') Friday 
+                option(value='6') Saturday
+          tr
+            th Specify Day Of Month
+            td
+              select(class="form-control", id="reboot-dom")
+          tr
+            td(colspan=2)
+              button(class="btn btn-danger btn-sm btn-block", id="update-reboot-schedule") Update Reboot Schedule
 
-      div(class="col-lg")
-        h2(style="text-align:center;")  Radio 2
-        div(style="overflow: scroll; height:400px;")
-          table(class="table table-sm table-bordered table-dark radio", id="radio_2")
-            tr(class="table-primary", style="color: #111;")
-              th Time
-              th Tag ID
-              th RSSI
-              th Node
-        div(class="row")
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_node_radio" value="2") Node
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_tag_radio" value="2") Tag
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_ook_radio" value="2") OOK
+    div(class="row", id="main-radios")
 
-      div(class="col-lg")
-        h2(style="text-align:center;")  Radio 3
-        div(style="overflow: scroll; height:400px;")
-          table(class="table table-sm table-bordered table-dark radio", id="radio_3")
-            tr(class="table-primary", style="color: #111;")
-              th Time
-              th Tag ID
-              th RSSI
-              th Node
-        div(class="row")
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_node_radio" value="3") Node
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_tag_radio" value="3") Tag
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_ook_radio" value="3") OOK
-
-      div(class="col-lg")
-        h2(style="text-align:center;")  Radio 4
-        div(style="overflow: scroll; height:400px;")
-          table(class="table table-sm table-bordered table-dark radio", id="radio_4")
-            tr(class="table-primary", style="color: #111;")
-              th Time
-              th Tag ID
-              th RSSI
-              th Node
-        div(class="row")
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_node_radio" value="4") Node
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_tag_radio" value="4") Tag
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_ook_radio" value="4") OOK
-
-      div(class="col-lg")
-        h2(style="text-align:center;")  Radio 5
-        div(style="overflow: scroll; height:400px;")
-          table(class="table table-sm table-bordered table-dark radio", id="radio_5")
-            tr(class="table-primary", style="color: #111;")
-              th Time
-              th Tag ID
-              th RSSI
-              th Node
-        div(class="row")
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_node_radio" value="5") Node
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_tag_radio" value="5") Tag
-          div(class="col-sm")
-            button(class="btn btn-block btn-sm btn-danger" name="toggle_ook_radio" value="5") OOK
-
-    div(style="height:5px;")
-    button(class="btn btn-block btn-primary", id="save-radios") Save Radio Configuration
-
-    button(class="btn btn-block btn-primary", id="clear") Clear Session Data
+    div(class="row", id="dongles", style="display:none;")
+      div(style="font-size:2em;font-weight:bold;text-align:center;border-bottom:2px solid #ccc;") Dongle Radios
+      div(id="extra-radios", class="row")
     hr
     h2(style="text-align:center") Data Management
     div(class="row")
@@ -262,8 +283,9 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
     div(class="row")
       button(class="btn btn-danger" id="reboot") Reboot
 
-    script(src="/javascripts/jquery-3.4.1.min.js")
-    script(src="/javascripts/moment-with-locales.min.js")
-    script(src="/bootstrap/js/bootstrap.min.js")
-    script(src="/javascripts/highcharts/code/highcharts.js")
-    script(src="/javascripts/interface.js")
+    script(src="/jquery/dist/jquery.min.js")
+    script(src="/moment/min/moment-with-locales.min.js")
+    script(src="/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/highcharts/highcharts.js")
+    script(src="/highcharts/themes/dark-unica.js")
+    script(src="/javascripts/interface.js?v=1.12")
