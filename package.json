@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "transpile-watch": "babel src -d lib --watch --copy-files",
+    "build": "rm -rf lib && babel src -d lib --copy-files",
     "start-hardware-server": "node ./lib/station-hardware-server/bin/www.js",
     "start-radio-interface": "node ./lib/station-radio-interface/index.js"
   },
@@ -12,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "archiver": "^5.3.1",
-    "aws-sdk": "^2.1118.0",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.4",
@@ -21,6 +21,7 @@
     "heartbeats": "^5.0.1",
     "i2c-bus": "^5.2.2",
     "icmp": "^2.0.1",
+    "int64-buffer": "^1.0.1",
     "lcdi2c": "^1.0.6",
     "moment": "^2.29.3",
     "morgan": "^1.10.0",
