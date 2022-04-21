@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { GpsClient } = require('@cellular-tracking-technologies/gps-client');
+const { GpsClient } = require('../../gps-client/index.js');
 
 let gps = new GpsClient({ max_gps_records: 100 });
 gps.start();

@@ -4,7 +4,9 @@
   "description": "monorepo for CTT Sensor Station Software",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "transpile-watch": "babel src -d lib --watch --copy-files",
+    "start-hardware-server": "node ./lib/station-hardware-server/bin/www.js",
+    "start-radio-interface": "node ./lib/station-radio-interface/index.js"
   },
   "author": "Bob Fogg",
   "license": "ISC",
@@ -34,5 +36,10 @@
     "uuid": "^8.3.2",
     "wifi-config": "^1.0.1",
     "ws": "^8.5.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11"
   }
 }

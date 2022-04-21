@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const {Adc, Tmp102} = require('@cellular-tracking-technologies/adc-driver');
+const {Adc, Tmp102} = require('../../adc-driver/index.js');
 
 let options = {type:"Ads7924"};
 const adc = new Adc(options);

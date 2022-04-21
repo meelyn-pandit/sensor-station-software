@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Led } = require('@cellular-tracking-technologies/led-driver');
+const { Led } = require('../../led-driver/index.js');
 
 let led_gps = new Led(38);
 let led_diag_a = new Led(39);
