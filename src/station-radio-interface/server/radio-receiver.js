@@ -145,7 +145,7 @@ class RadioReceiver extends EventEmitter {
       } catch(err) {
         // not a JSON document - emit the raw input
         console.error(err);
-        console.log(line);
+        console.log('offending line', line);
         this.emit('raw', line);
         return;
       }

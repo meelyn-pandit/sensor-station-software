@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const { SerialPort } = require('serialport');
+const SerialPort = require('serialport');
 import Readline from '@serialport/parser-readline';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -53,8 +53,7 @@ class Modem extends EventEmitter {
   buildModemInterface() {
     return new Promise((resolve, reject) => {
       this.log(`starting modem interface on port ${this.uri} @ ${this.baud_rate}`);
-      let serial_port = new SerialPort({
-				path: this.uri,
+      let serial_port = new SerialPort(this.uri, {
         baudRate: this.baud_rate
       });
       serial_port.on('open', () => {
