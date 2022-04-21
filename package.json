@@ -1,0 +1,38 @@
+{
+  "name": "sensor-station-software",
+  "version": "1.0.0",
+  "description": "monorepo for CTT Sensor Station Software",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bob Fogg",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^5.3.1",
+    "aws-sdk": "^2.1118.0",
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "debug": "^4.3.4",
+    "express": "^4.17.3",
+    "glob": "^8.0.1",
+    "heartbeats": "^5.0.1",
+    "i2c-bus": "^5.2.2",
+    "icmp": "^2.0.1",
+    "lcdi2c": "^1.0.6",
+    "moment": "^2.29.3",
+    "morgan": "^1.10.0",
+    "ncp": "^2.0.0",
+    "node-fetch": "^3.2.3",
+    "node-gpsd": "^0.3.2",
+    "onoff": "^6.0.3",
+    "pug": "^3.0.2",
+    "serialport": "^10.4.0",
+    "tail": "^2.2.4",
+    "tar": "^6.1.11",
+    "usb": "^2.3.1",
+    "uuid": "^8.3.2",
+    "wifi-config": "^1.0.1",
+    "ws": "^8.5.0"
+  }
+}
