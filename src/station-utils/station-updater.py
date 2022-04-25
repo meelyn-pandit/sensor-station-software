@@ -1,4 +1,4 @@
-#!/home/pi/ctt/.envs/station/bin/python3 
+#!/home/ctt/ctt/.envs/station/bin/python3 
 import requests
 import subprocess
 import datetime
