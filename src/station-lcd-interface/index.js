@@ -145,7 +145,6 @@ button_select.watch((err, value) => {
     menu.select();
 });
 
-/*
 const button_back = new Gpio(BACK_BUTTON, 'in', 'rising', {debounceTimeout: 50});
 button_back.watch((err, value) => {
     if (err) {
@@ -153,4 +152,3 @@ button_back.watch((err, value) => {
     }
     menu.back();
 });
-*/
