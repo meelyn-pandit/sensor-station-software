@@ -18,4 +18,9 @@ class SerialChip {
 	}
 }
 
-export { SerialChip }
+const getDeviceId = async () => {
+  let serial_chip = new SerialChip()
+  return serial_chip.getId()
+}
+
+export { SerialChip, getDeviceId }
