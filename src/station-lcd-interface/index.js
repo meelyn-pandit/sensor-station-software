@@ -27,10 +27,10 @@ var Gpio = require('onoff').Gpio; // RaspberryPI Gpio functions
 // App Config
 
 const host = 'http://localhost:3000';
-const UP_BUTTON = 4;
-const DOWN_BUTTON = 5;
-const SELECT_BUTTON = 6;
-const BACK_BUTTON = 7;
+const UP_BUTTON = 17; //4;
+const DOWN_BUTTON = 22; //5;
+const SELECT_BUTTON = 27; //6;
+const BACK_BUTTON = 8; //7;
 
 /*
     Build the menu: Each item MUST be given:

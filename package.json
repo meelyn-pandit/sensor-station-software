@@ -36,6 +36,7 @@
     "node-gpsd": "^0.3.2",
     "onoff": "^6.0.3",
     "pug": "^3.0.2",
+    "regenerator-runtime": "^0.13.9",
     "serialport": "^7.1.5",
     "tail": "^2.2.4",
     "tar": "^6.1.11",
