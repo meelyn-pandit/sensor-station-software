@@ -1,46 +1,14 @@
-var Gpio = require('onoff').Gpio;
+import { Led as V2LedDriver } from './v2-driver.js'
+import { Led as V3LedDriver } from './v3-driver.js'
 
-class Led {
-    constructor(gpio) {
-        this.led = new Gpio(gpio, 'out');
-        this.blink_timer;
-    }
-    init() {
-        this.off();
-    }
-    on() {
-        clearInterval(this.blink_timer);
-        this.led.write(1).catch(error => {
-            throw error;
-        });
-    }
-    off() {
-        clearInterval(this.blink_timer);
-        this.led.write(0).catch(error => {
-            throw error;
-        });
-    }
-    toggle() {
-        clearInterval(this.blink_timer);
-        this.led.read()
-        .then(value => this.led.write(value ^ 1))
-        .catch(error => {
-            throw error;
-        });
-    }
-    blink(period_ms) {
-        if (typeof period_ms == 'number') {
-            clearInterval(this.blink_timer);
-            this.blink_timer = setInterval(() =>{
-                this.led.read()
-                .then(value => this.led.write(value ^ 1))
-                .catch(error => {
-                    throw error;
-                });
-            }, Math.round(period_ms));
-        }else{
-            throw new TypeError(`period_ms [${typeof period_ms}] must be a number!`);
-        }
-    }
+import StationRevision from '../revision.js'
+
+let Led
+
+if (StationRevision.revision >= 3) {
+  Led = V3LedDriver
+} else {
+  Led = V2LedDriver
 }
-export {Led};
+
+export { Led }

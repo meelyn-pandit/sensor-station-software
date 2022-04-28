@@ -1,19 +1,21 @@
-import Ads7924 from "./ads7924";
+import Ads7924 from "./ads7924"
 
 class Adc{
-    constructor(opts){
-        this.adc;
-        if(opts.type === "Ads7924"){
-            this.adc = new Ads7924();
-        }
+  constructor(opts){
+    this.adc
+    if(opts.type === "Ads7924"){
+      this.adc = new Ads7924()
     }
-    init(){
-        this.adc.init();
-    }
-    read(channel){
-        const channels = this.adc.read();
-        return channels[channel];
-    }
+  }
+
+  init(){
+    this.adc.init()
+  }
+
+  read(channel){
+    const channels = this.adc.read()
+    return channels[channel]
+  }
 }
 
-export default Adc;
+export default Adc

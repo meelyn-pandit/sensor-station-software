@@ -5,7 +5,7 @@ var modemRouter = require('./routes/modem')
 //var sensorRouter = require('./routes/sensor')
 var usbRouter = require('./routes/usb')
 var gpsRouter = require('./routes/gps')
-//var ledRouter = require('./routes/led')
+var ledRouter = require('./routes/led')
 var internetRouter = require('./routes/internet')
 var peripheralRouter = require('./routes/peripherals')
 const radioRouter = require('./routes/radio-server')
@@ -21,7 +21,7 @@ app.use('/modem', modemRouter)
 //app.use('/sensor', sensorRouter)
 app.use('/usb', usbRouter)
 app.use('/gps', gpsRouter)
-//app.use('/led', ledRouter)
+app.use('/led', ledRouter)
 app.use('/peripherals', peripheralRouter)
 app.use('/internet', internetRouter)
 app.use('/radio', radioRouter)
@@ -30,7 +30,12 @@ app.use('/control', controlRouter)
 // error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500)
-  res.send(err.message)
+  res.json({error: err.message})
+})
+
+app.use((req, res, next) => {
+  res.status(404)
+  res.json({error: 'page not found'})
 })
 
 module.exports = app
