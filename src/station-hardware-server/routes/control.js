@@ -1,7 +1,7 @@
-import { exec }  from 'child_process'
-const express = require('express')
+import { exec } from 'child_process'
+import express from 'express'
+import fs from 'fs'
 const router = express.Router()
-const fs = require('fs')
 
 const REBOOT_TEMPLATE = `#!/bin/bash
 echo 'updating crontab'
@@ -52,11 +52,11 @@ router.post('/update-reboot-schedule', (req, res) => {
   let hour = validate({ value: req.body.hour, min: 0, max: 24 })
   hour = hour ? hour : default_hour
   let dom = validate({ value: req.body.dom, min: 1, max: 32 })
-  dom = dom ? dom: default_dom
-  let mon = validate({ value: req.body.mon, min: 1, max: 13})
-  mon = mon ? mon: default_mon
-  let dow = validate({ value: req.body.dow, min: 0, max: 7})
-  dow = dow ? dow: default_dow
+  dom = dom ? dom : default_dom
+  let mon = validate({ value: req.body.mon, min: 1, max: 13 })
+  mon = mon ? mon : default_mon
+  let dow = validate({ value: req.body.dow, min: 0, max: 7 })
+  dow = dow ? dow : default_dow
 
   let when = `${minute} ${hour} ${dom} ${mon} ${dow}`
   let script = REBOOT_TEMPLATE.replace(/WHEN/, when)

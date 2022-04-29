@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch'
 
 class LedDriver {
   constructor(opts) {
@@ -7,38 +7,38 @@ class LedDriver {
       'b',
       'gps'
     ]
-    this.endpoint = 'http://localhost:3000/led';
+    this.endpoint = 'http://localhost:3000/led'
   }
 
   post(opts) {
     return fetch(opts.uri, {
       method: 'POST',
       body: opts.payload,
-      headers: { 'Content-Type': 'application/json'}
+      headers: { 'Content-Type': 'application/json' }
     })
   }
 
   toggleLight(opts) {
     if (this.leds.includes(opts.led)) {
-      let uri;
+      let uri
       if (opts.led == 'gps') {
-        uri = `${this.endpoint}/${opts.led}`;
+        uri = `${this.endpoint}/${opts.led}`
       } else {
-        uri = `${this.endpoint}/diag/${opts.led}`;
+        uri = `${this.endpoint}/diag/${opts.led}`
       }
-      console.log('toggle', uri);
+      console.log('toggle', uri)
       let payload = {
         state: opts.state
       }
       if (opts.blink_ms) {
-        payload.blink_ms = opts.blink_ms;
+        payload.blink_ms = opts.blink_ms
       }
       return this.post({
         uri: uri,
         payload: JSON.stringify(payload)
-      });
+      })
     }
-    return Promise.reject(`invalid led option ${opts.led}`);
+    return Promise.reject(`invalid led option ${opts.led}`)
   }
 
   toggleDiagA(opts) {
@@ -46,7 +46,7 @@ class LedDriver {
       led: 'a',
       state: opts.state,
       blink_ms: opts.blink_ms ? opts.blink_ms : null
-    });
+    })
   }
 
   toggleDiagB(opts) {
@@ -54,7 +54,7 @@ class LedDriver {
       led: 'b',
       state: opts.state,
       blink_ms: opts.blink_ms ? opts.blink_ms : null
-    });
+    })
   }
 
   toggleGps(opts) {
@@ -62,9 +62,9 @@ class LedDriver {
       led: 'gps',
       state: opts.state,
       blink_ms: opts.blink_ms ? opts.blink_ms : null
-    });
+    })
   }
 
 }
 
-export { LedDriver };
+export { LedDriver }

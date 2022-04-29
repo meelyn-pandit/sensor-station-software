@@ -1,23 +1,23 @@
-const fs = require('fs');
-const glob = require('glob');
-const path = require('path');
-const express = require('express');
-const router = express.Router();
-const icmp = require("icmp");
+import fs from 'fs'
+import glob from 'glob'
+import express from 'express'
+import icmp from 'icmp'
 import { exec } from 'child_process'
+
+const router = express.Router();
 
 const DEFAULT_PING_COUNT = 3;
 const PING_IP = '8.8.8.8';
 
-const ping = function() {
+const ping = function () {
   return new Promise((resolve, reject) => {
     icmp.send(PING_IP)
-    .then((ping_result) => {
-      resolve(ping_result.open);
-    })
-    .catch((err) => {
-      reject(err);
-    });
+      .then((ping_result) => {
+        resolve(ping_result.open);
+      })
+      .catch((err) => {
+        reject(err);
+      });
   })
 }
 
@@ -31,7 +31,7 @@ router.get('/gateway', (req, res) => {
       res.sendStatus(500)
       return
     }
-    res.send({gateway: stdout.trim()})
+    res.send({ gateway: stdout.trim() })
   })
 })
 
@@ -41,27 +41,27 @@ router.get('/status', (req, res, next) => {
   let ping_count = req.query.ping_count ? req.query.ping_count : DEFAULT_PING_COUNT;
   // issue a ping to the given IP address
   let promises = [];
-  for (let i=0; i<ping_count; i++) {
+  for (let i = 0; i < ping_count; i++) {
     promises.push(ping())
   }
   Promise.all(promises)
-  .then((results) => {
-    results.forEach((result) => {
-      result ? ping_success++ : ping_loss ++;
-    });
-    return res.json({
-      success: ping_success,
-      fail: ping_loss
-    });
-  })
-  .catch((err) => {
-    console.log('something went wrong with ping status...');
-    console.error(err);
-    return res.json({
-      success: 0,
-      fail: ping_count 
-    });
-  })
+    .then((results) => {
+      results.forEach((result) => {
+        result ? ping_success++ : ping_loss++;
+      });
+      return res.json({
+        success: ping_success,
+        fail: ping_loss
+      });
+    })
+    .catch((err) => {
+      console.log('something went wrong with ping status...');
+      console.error(err);
+      return res.json({
+        success: 0,
+        fail: ping_count
+      });
+    })
 });
 
 const getStatsForDir = (opts) => {
@@ -80,11 +80,11 @@ const getStatsForDir = (opts) => {
         try {
           let stats = fs.statSync(file);
           bytes += stats.size;
-        } catch(err) {
+        } catch (err) {
           reject(err);
         }
       });
-      resolve( {
+      resolve({
         bytes: bytes,
         file_count: files.length
       });
@@ -101,14 +101,14 @@ const getPendingUploads = () => {
         dir: '/data/rotated/*.gz'
       }),
       getStatsForDir({
-        delay: 61*60*1000,
+        delay: 61 * 60 * 1000,
         dir: '/data/SGdata/*/*.gz',
       })
     ];
     Promise.all(promises)
       .then((results) => {
         resolve({
-          ctt:results[0],
+          ctt: results[0],
           sg: results[1]
         });
       })

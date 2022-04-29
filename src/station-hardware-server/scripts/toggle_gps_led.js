@@ -1,7 +1,8 @@
-import { LedDriver } from './led-driver';
-const fetch = require('node-fetch');
+import { LedDriver } from './led-driver'
+import fetch from 'node-fetch'
+const fetch = require('node-fetch')
 
-const led = new LedDriver();
+const led = new LedDriver()
 
 fetch('http://localhost:3000/gps')
   .then(res => res.json())
@@ -12,24 +13,24 @@ fetch('http://localhost:3000/gps')
           led.toggleGps({
             state: 'on'
           })
-          break;
+          break
         case 2:
           led.toggleGps({
             state: 'blink',
             blink_ms: 500
-          });
-          break;
+          })
+          break
         case 1:
           led.toggleGps({
             state: 'blink',
             blink_ms: 200
-          });
-          break;
+          })
+          break
         default:
           led.toggleGps({
             state: 'off'
-          });
-          break;
+          })
+          break
       }
     }
-  });
+  })

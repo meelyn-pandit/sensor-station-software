@@ -1,14 +1,14 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express'
+var router = express.Router()
 
-const { GpsClient } = require('../../gps-client/index.js');
+const { GpsClient } = require('../../gps-client/index.js')
 
-let gps = new GpsClient({ max_gps_records: 100 });
-gps.start();
+let gps = new GpsClient({ max_gps_records: 100 })
+gps.start()
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.json(gps.info());
-});
+    res.json(gps.info())
+})
 
-module.exports = router;
+module.exports = router

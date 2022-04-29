@@ -1,4 +1,4 @@
-var express = require('express')
+import express from 'express'
 var router = express.Router()
 
 const { Led } = require('../../led-driver/index.js')
@@ -11,16 +11,16 @@ led_gps.init()
 led_diag_a.init()
 led_diag_b.init()
 
-function setLedState(led, options){
+function setLedState(led, options) {
 
-    const ret_ok = {res:true}
-    const ret_err = {res:false}
+    const ret_ok = { res: true }
+    const ret_err = { res: false }
 
-    if(("state" in options) == false){
+    if (("state" in options) == false) {
         return ret_err
     }
 
-    switch(options.state){
+    switch (options.state) {
         case 'on':
             led.on()
             break
@@ -32,7 +32,7 @@ function setLedState(led, options){
             break
         case 'blink':
             let blink_rate = 250
-            if("blink_rate_ms" in options){
+            if ("blink_rate_ms" in options) {
                 blink_rate = options.blink_rate_ms
             }
             led.blink(blink_rate)
@@ -49,13 +49,13 @@ router.get('/', function (req, res, next) {
     res.json({})
 })
 
-router.post('/diag/a', function(req, res) {
-    res.json(setLedState(led_diag_a, req.body))    
+router.post('/diag/a', function (req, res) {
+    res.json(setLedState(led_diag_a, req.body))
 })
-router.post('/diag/b', function(req, res) {
-    res.json(setLedState(led_diag_b, req.body))    
+router.post('/diag/b', function (req, res) {
+    res.json(setLedState(led_diag_b, req.body))
 })
-router.post('/gps', function(req, res) {
+router.post('/gps', function (req, res) {
     res.json(setLedState(led_gps, req.body))
 })
 

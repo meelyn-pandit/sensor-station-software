@@ -1,10 +1,8 @@
-var express = require('express')
+import express from 'express'
 var router = express.Router()
-const { exec } = require('child_process')
-const glob = require('glob')
-var fs = require('fs')
-var path = require('path')
-import { ComputeModule }  from './compute-module'
+import glob from 'glob'
+import fs from 'fs'
+import { ComputeModule } from './compute-module'
 import getDeviceId from '../../id-driver/index.js'
 
 const ModuleInfo = new ComputeModule()
@@ -38,22 +36,22 @@ function GetPackageVersions() {
 }
 
 
-let device_id 
-getDeviceId().then((id) =>{
+let device_id
+getDeviceId().then((id) => {
   device_id = id
-}).catch((err) =>{
+}).catch((err) => {
   console.log('Device ID Error')
   console.error(err)
   device_id = "error"
 })
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.json({welcome: true})
+router.get('/', function (req, res, next) {
+  res.json({ welcome: true })
 })
 
-router.get('/id', function(req, res, next) {
-  res.json({id: device_id})
+router.get('/id', function (req, res, next) {
+  res.json({ id: device_id })
 })
 
 router.get('/about', (req, res, next) => {
@@ -61,29 +59,29 @@ router.get('/about', (req, res, next) => {
     .then((info) => {
       info.station_id = device_id
       return info
-  })
-  .then((info) => {
-    try {
-      let bootcount = parseInt(fs.readFileSync('/etc/bootcount').toString().trim())
-      info.bootcount = bootcount
-      let station_image = fs.readFileSync('/etc/ctt/station-image').toString().trim()
-      info.station_image = station_image
-      let station_image_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
-      info.station_software = station_image_software
-    } catch(err) {
-      console.log('unable to load extra meta data', err.toString())
-    }
+    })
+    .then((info) => {
+      try {
+        let bootcount = parseInt(fs.readFileSync('/etc/bootcount').toString().trim())
+        info.bootcount = bootcount
+        let station_image = fs.readFileSync('/etc/ctt/station-image').toString().trim()
+        info.station_image = station_image
+        let station_image_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
+        info.station_software = station_image_software
+      } catch (err) {
+        console.log('unable to load extra meta data', err.toString())
+      }
       res.json(info)
-  })
-  .catch((err) => {
-    res.json({ err: err.toString() })
-  })
+    })
+    .catch((err) => {
+      res.json({ err: err.toString() })
+    })
 })
 
-router.get('/node/version', function(req, res, next) {
+router.get('/node/version', function (req, res, next) {
   GetPackageVersions()
     .then((packages) => {
-      res.json({packages: packages})
+      res.json({ packages: packages })
     })
     .catch((err) => {
       res.status(500).send()
