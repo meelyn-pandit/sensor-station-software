@@ -1,4 +1,4 @@
-var LCD = require('lcdi2c');
+var LCD = require('./lcdi2c');
 const { exec } = require('child_process');
 
 class Display {
