@@ -99,4 +99,4 @@ router.get('/wifi', function (req, res, next) {
   return res.json(fail)
 })
 
-module.exports = router
+export default router

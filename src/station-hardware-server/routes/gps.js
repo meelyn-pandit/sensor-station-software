@@ -11,4 +11,4 @@ router.get('/', function (req, res, next) {
     res.json(gps.info())
 })
 
-module.exports = router
+export default router

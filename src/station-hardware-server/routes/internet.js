@@ -135,4 +135,4 @@ router.get('/pending-upload', (req, res, next) => {
     });
 });
 
-module.exports = router;
+export default router

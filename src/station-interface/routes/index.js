@@ -379,4 +379,4 @@ router.post('/modem/stop', HardwareRouter)
 router.post('/modem/enable', HardwareRouter)
 router.post('/modem/disable', HardwareRouter)
 
-module.exports = router
+export default router

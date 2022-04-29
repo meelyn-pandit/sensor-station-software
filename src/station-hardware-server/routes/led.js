@@ -59,4 +59,4 @@ router.post('/gps', function (req, res) {
     res.json(setLedState(led_gps, req.body))
 })
 
-module.exports = router
+export default router

@@ -71,4 +71,4 @@ router.get('/config', (req, res, next) => {
   }
 })
 
-module.exports = router
+export default router

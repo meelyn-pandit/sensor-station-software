@@ -88,4 +88,4 @@ router.get('/node/version', function (req, res, next) {
     })
 })
 
-module.exports = router
+export default router

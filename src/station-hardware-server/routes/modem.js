@@ -99,4 +99,4 @@ router.post('/disable', (req, res, next) => {
     })
 })
 
-module.exports = router
+export default router

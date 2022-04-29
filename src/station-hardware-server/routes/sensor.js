@@ -37,4 +37,4 @@ router.get('/details', (req, res, next) => {
     })
 })
 
-module.exports = router
+export default router

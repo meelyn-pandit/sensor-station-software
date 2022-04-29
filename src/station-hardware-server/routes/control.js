@@ -82,4 +82,4 @@ router.post('/update-reboot-schedule', (req, res) => {
   })
 })
 
-module.exports = router
+export default router
