@@ -1,6 +1,6 @@
 import BlockDeviceCmd from './block-device-cmd.js'
 import MountUsb from './mount-usb.js'
-import { ncp } from 'ncp'
+import ncp from 'ncp'
 import path from 'path'
 
 class UsbStorage {

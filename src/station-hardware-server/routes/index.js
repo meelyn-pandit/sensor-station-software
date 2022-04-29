@@ -2,7 +2,7 @@ import express from 'express'
 var router = express.Router()
 import glob from 'glob'
 import fs from 'fs'
-import { ComputeModule } from './compute-module'
+import { ComputeModule } from './compute-module.js'
 import getDeviceId from '../../id-driver/index.js'
 
 const ModuleInfo = new ComputeModule()

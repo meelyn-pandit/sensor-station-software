@@ -1,4 +1,4 @@
-import { Modem } from './modem'
+import { Modem } from './modem.js'
 
 /**
  * modem interface around modem serial class
