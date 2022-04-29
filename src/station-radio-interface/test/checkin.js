@@ -1,4 +1,4 @@
-import { ServerApi } from '../server/server-api';
+import { ServerApi } from '../server/server-api.js'
 
-const api = new ServerApi();
-api.healthCheckin();
+const api = new ServerApi()
+api.healthCheckin()

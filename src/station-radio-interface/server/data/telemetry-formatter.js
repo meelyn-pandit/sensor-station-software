@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment'
 /**
  * file formatter for Telmetry Data
  */
@@ -24,8 +24,8 @@ class TelemetryFormatter {
       'SolarMa',
       'Celsius',
       'TTFF'
-    ];
-    this.date_format = opts.date_format;
+    ]
+    this.date_format = opts.date_format
   }
 
   /**
@@ -35,7 +35,7 @@ class TelemetryFormatter {
   formatRecord(record) {
     if (record.protocol) {
       // new protocol
-      let recorded_at = moment(new Date(record.data.time*1000)).utc();
+      let recorded_at = moment(new Date(record.data.time*1000)).utc()
       return [
         record.received_at.format(this.date_format),
         recorded_at.format(this.date_format),
@@ -52,9 +52,9 @@ class TelemetryFormatter {
         record.data.solar_ma,
         record.data.temp_c,
         record.data.ttff
-      ];
+      ]
     } 
   }
 }
 
-export { TelemetryFormatter };
+export { TelemetryFormatter }
