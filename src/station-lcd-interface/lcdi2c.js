@@ -13,8 +13,8 @@
  * http://www.espruino.com/HD44780
  * http://www.espruino.com/LCD1602
  */
-const i2c = require('i2c-bus');
-const sleep = require('sleep');
+import i2c from 'i2c-bus'
+import sleep from 'sleep'
 
 let LCD = class LCD {
     constructor(device, address, cols, rows) {
