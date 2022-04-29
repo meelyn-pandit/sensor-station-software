@@ -1,4 +1,4 @@
-import { ModemInterface } from './modem-interface';
-import { QuectelCommandSetParser } from './quectel-command-set';
+import { ModemInterface } from './modem-interface'
+import { QuectelCommandSetParser } from './quectel-command-set'
 
-export { ModemInterface, QuectelCommandSetParser };
+export { ModemInterface, QuectelCommandSetParser }

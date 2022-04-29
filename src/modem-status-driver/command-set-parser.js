@@ -50,7 +50,7 @@ class CommandSetParser {
     if (command_parser) {
       parsed_response = command_parser.parse(opts.response);
     } else {
-      throw(Error('command not found'));
+      throw (Error('command not found'));
     }
     response[command_parser.name] = parsed_response
     return response;
