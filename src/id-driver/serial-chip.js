@@ -19,8 +19,8 @@ class SerialChip {
 }
 
 const getDeviceId = async () => {
-  let serial_chip = new SerialChip()
-  return serial_chip.getId()
+	let serial_chip = new SerialChip()
+	return serial_chip.getId()
 }
 
 export { SerialChip, getDeviceId }

@@ -2,7 +2,7 @@ import i2c from 'i2c-bus'
 import 'regenerator-runtime/runtime'
 
 class RtcSerial {
-	constructor() {
+  constructor() {
     this.i2c_address = 0x57
     this.register = 0xf0
   }
