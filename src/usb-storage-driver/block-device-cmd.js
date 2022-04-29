@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+import { exec } from 'child_process'
 
 /*
 $ lsblk -f -l -o NAME,FSTYPE,UUID
@@ -20,41 +20,41 @@ mmcblk0boot1
 */
 
 class BlockDeviceCmd {
-    constructor(){
-    }
-    poll(){
+	constructor() {
+	}
+	poll() {
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            let child = exec('lsblk -f -l -o NAME,FSTYPE,UUID', (error,stdout, stderr) =>{
-                if(error){
-                    reject(error);
-                }
-            })    
-                       
-            child.stdout.on('data', (data) => {                       
-                let results = [];
-                data.split("\n").forEach(element => {
-                    if (element.includes("sd")) {
-                        let device = element.trim().split(/[ ]+/);
-                        if(device.length == 3){
-                            results.push({
-                                name:device[0],
-                                fs_type:device[1],
-                                uuid:device[2]
-                            });
-                        }
-                    }
-                })
+			let child = exec('lsblk -f -l -o NAME,FSTYPE,UUID', (error, stdout, stderr) => {
+				if (error) {
+					reject(error)
+				}
+			})
 
-                resolve(results);
-            });
-            
-            child.stderr.on('data', (data) => {
-                reject(data.toString());
-            });
-        });
-    }
+			child.stdout.on('data', (data) => {
+				let results = []
+				data.split("\n").forEach(element => {
+					if (element.includes("sd")) {
+						let device = element.trim().split(/[ ]+/)
+						if (device.length == 3) {
+							results.push({
+								name: device[0],
+								fs_type: device[1],
+								uuid: device[2]
+							})
+						}
+					}
+				})
+
+				resolve(results)
+			})
+
+			child.stderr.on('data', (data) => {
+				reject(data.toString())
+			})
+		})
+	}
 }
 
-export default BlockDeviceCmd;
+export default BlockDeviceCmd

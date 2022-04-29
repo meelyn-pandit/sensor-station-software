@@ -1,4 +1,4 @@
-import BlockDeviceCmd from './block-device-cmd';
-import UsbStorage from "./usb-storage"
+import BlockDeviceCmd from './block-device-cmd.js'
+import UsbStorage from './usb-storage.js'
 
-export {UsbStorage, BlockDeviceCmd};
+export { UsbStorage, BlockDeviceCmd }

@@ -1,4 +1,4 @@
-import { exec, spawn } from 'child_process'
+import { spawn } from 'child_process'
 
 export default (cmd, args) => {
   return new Promise((resolve, reject) => {
