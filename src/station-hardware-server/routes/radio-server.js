@@ -1,7 +1,7 @@
 import fs from 'fs'
 import WebSocket from 'ws'
+import express from 'express'
 
-const express = require('express')
 const router = express.Router()
 const WebSocketURL = 'ws://localhost:8001'
 const ConfigFileURI = '/etc/ctt/station-config.json'
