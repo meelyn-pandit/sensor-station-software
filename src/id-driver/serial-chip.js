@@ -1,5 +1,4 @@
 import i2c from 'i2c-bus'
-import 'regenerator-runtime/runtime'
 
 class SerialChip {
 	constructor() {
