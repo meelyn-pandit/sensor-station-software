@@ -1,6 +1,6 @@
 let socket;
-const initialize_websocket = function() {
-  let url = 'ws://'+window.location.hostname+':8001';
+const initialize_websocket = function () {
+  let url = 'ws://' + window.location.hostname + ':8001';
   socket = new WebSocket(url);
   socket.addEventListener('close', (event) => {
     alert('station connection disconnected');
@@ -8,9 +8,9 @@ const initialize_websocket = function() {
   socket.addEventListener('open', (event) => {
     console.log('opened websocket');
   });
-  socket.onmessage = function(msg) {
+  socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
-    switch(data.msg_type) {
+    switch (data.msg_type) {
       case 'log':
         document.querySelector('#terminal').textContent += data.data;
         break;
@@ -20,8 +20,8 @@ const initialize_websocket = function() {
   };
 };
 
-const init = function() {
-  document.querySelector('#station-update').addEventListener('click', function(e) {
+const init = function () {
+  document.querySelector('#station-update').addEventListener('click', function (e) {
     res = confirm('Are you sure you want to run the station updater?  This requires a steady internet connection and a few minutes to complete.')
     if (res) {
       console.log('issuing update command');
@@ -34,7 +34,7 @@ const init = function() {
   });
 };
 
-(function() {
+(function () {
   initialize_websocket();
   init();
 })();

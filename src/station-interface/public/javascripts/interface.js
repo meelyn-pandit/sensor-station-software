@@ -6,30 +6,30 @@ let beep_hist = {};
 const DATE_FMT = 'YYYY-MM-DD HH:mm:ss';
 let socket;
 
-const setText = function(tag, value) {
-  let id = '#'+tag;
+const setText = function (tag, value) {
+  let id = '#' + tag;
   document.querySelector(id).textContent = value;
 };
 
-const clear_table = function(table) {
+const clear_table = function (table) {
   while (table.firstChild.nextSibling) {
     table.removeChild(table.firstChild.nextSibling);
   }
 };
 
-const clear = function() {
+const clear = function () {
   beeps = [];
   nodes = {};
   tags.clear();
   beep_hist = {};
 
-  document.querySelectorAll('.radio').forEach(function(radio_table)  {
+  document.querySelectorAll('.radio').forEach(function (radio_table) {
     clear_table(radio_table);
     clear_table(document.querySelector('#tags'));
   });
 };
 
-const download_node_health = function() {
+const download_node_health = function () {
   let lines = [];
   let keys = [
     'RecordedAt',
@@ -43,11 +43,11 @@ const download_node_health = function() {
   lines.push(keys);
   let record;
   let node_health;
-  Object.keys(nodes).forEach(function(node_id) {
+  Object.keys(nodes).forEach(function (node_id) {
     node_health = nodes[node_id];
     node_health.NodeId = node_id;
     record = [];
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       record.push(node_health[key]);
     });
     lines.push(record);
@@ -61,89 +61,89 @@ const download_node_health = function() {
     link.setAttribute("download", "node-report.csv");
     document.body.appendChild(link); // Required for FF
     link.click();
-  } catch(err) {
+  } catch (err) {
     let csvContent = lines.join('\r\n');
-    navigator.msSaveBlob(new Blob([csvContent], {type: 'text/csv;charset=utf-8;' }), "node-report.csv");
+    navigator.msSaveBlob(new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }), "node-report.csv");
   }
 };
 
-const initialize_controls = function() {
+const initialize_controls = function () {
   document.querySelector('#max-row-count').value = MAX_ROW_COUNT
-  document.querySelector('#update-max-row-count').addEventListener('click', function(e) {
+  document.querySelector('#update-max-row-count').addEventListener('click', function (e) {
     MAX_ROW_COUNT = document.querySelector('#max-row-count').value
     localStorage.setItem('max-row-count', MAX_ROW_COUNT)
     clip_beep_tables()
   })
 
-  document.querySelector('#restart-radios').addEventListener('click', function(e) {
+  document.querySelector('#restart-radios').addEventListener('click', function (e) {
     let result = confirm('Are you sure you want to restart the radio software?')
     if (result) {
       document.querySelector('#restart-radios').setAttribute('disabled', true)
       $.ajax({
         url: '/radio-restart',
         method: 'post',
-        success: function(res) {
+        success: function (res) {
           alert('Radio server has been restarted - you will need to refresh the page.')
         },
-        error: function(err) {
+        error: function (err) {
           alert('error restarting radio software')
         }
       })
     }
   });
-  document.querySelector('#download-nodes').addEventListener('click', function(evt) {
+  document.querySelector('#download-nodes').addEventListener('click', function (evt) {
     download_node_health();
   });
-  document.querySelector('#upload-files').addEventListener('click', function(evt) {
+  document.querySelector('#upload-files').addEventListener('click', function (evt) {
     socket.send(JSON.stringify({
-      msg_type: 'cmd', 
-      cmd: 'upload', 
+      msg_type: 'cmd',
+      cmd: 'upload',
     }));
     document.querySelector('#upload-files').setAttribute('disabled', true);
   });
-  document.querySelector('#start-modem').addEventListener('click', function(e) {
+  document.querySelector('#start-modem').addEventListener('click', function (e) {
     let res = window.confirm('Are you sure you want to start the modem?');
     if (res) {
       $.ajax({
         url: '/modem/start',
         method: 'post',
-        success: function(res) {
+        success: function (res) {
           alert('Modem startup initiated');
         }
       })
     }
   });
-  document.querySelector('#stop-modem').addEventListener('click', function(e) {
+  document.querySelector('#stop-modem').addEventListener('click', function (e) {
     let res = window.confirm('WARNING: Are you sure you want to stop the modem?');
     if (res) {
       $.ajax({
         url: '/modem/stop',
         method: 'post',
-        success: function(res) {
+        success: function (res) {
           alert('Stopping modem connection');
         }
       })
     }
   });
-  document.querySelector('#enable-modem').addEventListener('click', function(e) {
+  document.querySelector('#enable-modem').addEventListener('click', function (e) {
     let res = window.confirm('Are you sure you want to enable the modem?');
     if (res) {
       $.ajax({
         url: '/modem/enable',
         method: 'post',
-        success: function(res) {
+        success: function (res) {
           alert('Modem enabled');
         }
       })
     }
   });
-  document.querySelector('#disable-modem').addEventListener('click', function(e) {
+  document.querySelector('#disable-modem').addEventListener('click', function (e) {
     let res = window.confirm('WARNING: Are you sure you want to PERMANENTLY diable the modem?');
     if (res) {
       $.ajax({
         url: '/modem/disable',
         method: 'post',
-        success: function(res) {
+        success: function (res) {
           alert('Modem disabled');
         }
       })
@@ -151,14 +151,14 @@ const initialize_controls = function() {
   });
 
   document.querySelectorAll('button[name="toggle_node_radio"]').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       let radio_id = e.target.getAttribute('value');
-      let res = window.confirm('Are you sure you want to toggle NODE listening mode for radio '+radio_id+'?');
+      let res = window.confirm('Are you sure you want to toggle NODE listening mode for radio ' + radio_id + '?');
       if (res) {
         document.querySelector(`#config_radio_${radio_id}`).textContent = 'Node'
         socket.send(JSON.stringify({
-          msg_type: 'cmd', 
-          cmd: 'toggle_radio', 
+          msg_type: 'cmd',
+          cmd: 'toggle_radio',
           data: {
             type: 'node',
             channel: radio_id
@@ -168,14 +168,14 @@ const initialize_controls = function() {
     });
   });
   document.querySelectorAll('button[name="toggle_tag_radio"]').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       let radio_id = e.target.getAttribute('value');
-      let res = window.confirm('Are you sure you want to toggle TAG listening mode for radio '+radio_id+'?');
+      let res = window.confirm('Are you sure you want to toggle TAG listening mode for radio ' + radio_id + '?');
       if (res) {
         document.querySelector(`#config_radio_${radio_id}`).textContent = 'Tag'
         socket.send(JSON.stringify({
-          msg_type: 'cmd', 
-          cmd: 'toggle_radio', 
+          msg_type: 'cmd',
+          cmd: 'toggle_radio',
           data: {
             type: 'tag',
             channel: radio_id
@@ -185,14 +185,14 @@ const initialize_controls = function() {
     });
   });
   document.querySelectorAll('button[name="toggle_ook_radio"]').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       let radio_id = e.target.getAttribute('value');
-      let res = window.confirm('Are you sure you want to toggle OOK listening mode for radio '+radio_id+'?');
+      let res = window.confirm('Are you sure you want to toggle OOK listening mode for radio ' + radio_id + '?');
       if (res) {
         document.querySelector(`#config_radio_${radio_id}`).textContent = 'OOK'
         socket.send(JSON.stringify({
-          msg_type: 'cmd', 
-          cmd: 'toggle_radio', 
+          msg_type: 'cmd',
+          cmd: 'toggle_radio',
           data: {
             type: 'ook',
             channel: radio_id
@@ -210,10 +210,10 @@ const initialize_controls = function() {
       $.ajax({
         url: '/reboot',
         method: 'post',
-        success: function(data) {
+        success: function (data) {
           alert('rebooting');
         },
-        error: function(err) {
+        error: function (err) {
           alert('error trying to reboot', err.toString());
         }
       });
@@ -225,10 +225,10 @@ const initialize_controls = function() {
       $.ajax({
         url: '/clear-log',
         method: 'post',
-        success: function(data) {
+        success: function (data) {
           alert('Clear Log Success');
         },
-        error: function(err) {
+        error: function (err) {
           alert('error clearing log file', err.toString());
         }
       });
@@ -242,66 +242,66 @@ const initialize_controls = function() {
       data: {
         contents: data.value
       },
-      success: function(data) {
+      success: function (data) {
         alert('saved sg deployment file to disk');
       },
-      error: function(err) {
-        alert('error saving sg deployment file '+err.toString());
+      error: function (err) {
+        alert('error saving sg deployment file ' + err.toString());
       }
     });
   });
-  document.querySelector('#server-checkin').addEventListener('click', function(evt) {
+  document.querySelector('#server-checkin').addEventListener('click', function (evt) {
     socket.send(JSON.stringify({
-      msg_type: 'cmd', 
-      cmd: 'checkin', 
+      msg_type: 'cmd',
+      cmd: 'checkin',
       data: {}
     }));
     document.querySelector('#server-checkin').setAttribute('disabled', true);
-    setTimeout(function() {
+    setTimeout(function () {
       document.querySelector('#server-checkin').removeAttribute('disabled');
     }, 5000)
   });
   document.querySelectorAll('button[name="delete-data"]').forEach((btn) => {
     btn.addEventListener('click', (evt) => {
       let dataset = evt.target.value;
-      let result = window.confirm('Are you sure you want to delete all files for '+dataset);
+      let result = window.confirm('Are you sure you want to delete all files for ' + dataset);
       let url;
       if (result) {
-        switch(dataset) {
-          case('ctt-uploaded'):
-          url = '/delete-ctt-data-uploaded';
-          break;
-          case('ctt-rotated'):
-          url = '/delete-ctt-data-rotated';
-          break;
-          case('sg-uploaded'):
-          url = '/delete-sg-data-uploaded';
-          break;
-          case('sg-rotated'):
-          url = '/delete-sg-data-rotated';
-          break;
+        switch (dataset) {
+          case ('ctt-uploaded'):
+            url = '/delete-ctt-data-uploaded';
+            break;
+          case ('ctt-rotated'):
+            url = '/delete-ctt-data-rotated';
+            break;
+          case ('sg-uploaded'):
+            url = '/delete-sg-data-uploaded';
+            break;
+          case ('sg-rotated'):
+            url = '/delete-sg-data-rotated';
+            break;
           default:
             alert('invalid dataset to delete');
         }
         $.ajax({
           url: url,
           method: 'post',
-          success: function(data) {
+          success: function (data) {
             if (data.res) {
               alert('delete success');
             }
           },
-          error: function(err) {
+          error: function (err) {
             alert('error deleting files', err.toString());
           }
         });
         return;
-      } 
+      }
     });
   });
 };
 
-const format_beep = function(beep) {
+const format_beep = function (beep) {
   if (beep.data) {
     let tag_id, rssi, node_id, tag_at;
     let beep_at = moment(new Date(beep.received_at)).utc();
@@ -311,8 +311,8 @@ const format_beep = function(beep) {
       if (beep.meta.data_type == 'node_coded_id') {
         node_id = beep.meta.source.id;
         rssi = beep.data.rssi;
-        tag_id =beep.data.id;
-        tag_at = moment(new Date(beep.data.rec_at*1000));
+        tag_id = beep.data.id;
+        tag_at = moment(new Date(beep.data.rec_at * 1000));
       }
       if (beep.meta.data_type == 'coded_id') {
         rssi = beep.meta.rssi;
@@ -322,7 +322,7 @@ const format_beep = function(beep) {
       if (beep.meta.data_type == 'telemetry') {
         tag_id = beep.meta.source.id;
         rssi = beep.meta.rssi;
-        tag_at = moment(new Date(beep.data.time*1000));
+        tag_at = moment(new Date(beep.data.time * 1000));
       }
     }
 
@@ -349,7 +349,7 @@ const format_beep = function(beep) {
   }
 }
 
-const format_node_health = function(msg) {
+const format_node_health = function (msg) {
   let node_id, rssi, batt, temp, fw, sol_v, sol_ma, sum_sol_ma, fix_at, lat, lng;
   if (msg.protocol) {
     node_id = msg.meta.source.id;
@@ -362,7 +362,7 @@ const format_node_health = function(msg) {
     sol_ma = msg.data.sol_ma;
     sum_sol_ma = msg.data.sum_sol_ma;
     temp_c = msg.data.temp_c;
-    fix_at = moment(new Date(msg.data.fix_at*1000)).utc();
+    fix_at = moment(new Date(msg.data.fix_at * 1000)).utc();
   }
   if (msg.data.node_alive) {
     node_id = msg.data.node_alive.id;
@@ -389,9 +389,9 @@ const format_node_health = function(msg) {
 }
 
 
-const handle_beep = function(beep) {
+const handle_beep = function (beep) {
   if (beep.protocol) {
-    switch(beep.meta.data_type) {
+    switch (beep.meta.data_type) {
       case 'coded_id':
         handle_tag_beep(format_beep(beep));
         break;
@@ -417,27 +417,27 @@ const handle_beep = function(beep) {
     }
   }
 };
-let DONGLES_ENABLED=false;
+let DONGLES_ENABLED = false;
 let MAX_ROW_COUNT = 1000;
 
-const clip_beep_tables = function() {
+const clip_beep_tables = function () {
   let children
-  document.querySelectorAll('.radio').forEach(function(table) {
+  document.querySelectorAll('.radio').forEach(function (table) {
     children = []
-    table.childNodes.forEach(function(child) {
+    table.childNodes.forEach(function (child) {
       children.push(child)
     })
-    children.slice(MAX_ROW_COUNT, table.children.length).forEach(function(child) {
+    children.slice(MAX_ROW_COUNT, table.children.length).forEach(function (child) {
       table.removeChild(child)
     })
   })
 }
 
-const handle_tag_beep = function(beep) {
+const handle_tag_beep = function (beep) {
   let validated = false;
   let tag_id = beep.tag_id;
   if (tag_id.length > 8) {
-    tag_id = tag_id.slice(0,8);
+    tag_id = tag_id.slice(0, 8);
     validated = true;
   }
   if (DONGLES_ENABLED == false) {
@@ -446,12 +446,12 @@ const handle_tag_beep = function(beep) {
       document.querySelector('#dongles').style.display = 'block'
     }
   }
-  let BEEP_TABLE = document.querySelector('#radio_'+beep.channel);
+  let BEEP_TABLE = document.querySelector('#radio_' + beep.channel);
   let tr = document.createElement('tr');
   if (validated == true) {
-    tr.style.border= "2px solid #22dd22";
+    tr.style.border = "2px solid #22dd22";
   } else {
-    tr.style.border= "2px solid red";
+    tr.style.border = "2px solid red";
   }
   let td = document.createElement('td');
   td.textContent = beep.tag_at.format(DATE_FMT);
@@ -473,7 +473,7 @@ const handle_tag_beep = function(beep) {
   let beep_count = beep_hist[tag_id];
   if (tags.has(tag_id)) {
     beep_hist[tag_id] += 1;
-    document.querySelector('#cnt_'+tag_id).textContent = beep_hist[tag_id];
+    document.querySelector('#cnt_' + tag_id).textContent = beep_hist[tag_id];
   } else {
     beep_hist[tag_id] = 1;
     tags.add(tag_id);
@@ -482,7 +482,7 @@ const handle_tag_beep = function(beep) {
     td = createElement(tag_id);
     tr.appendChild(td);
     td = document.createElement('td');
-    td.setAttribute('id','cnt_'+tag_id);
+    td.setAttribute('id', 'cnt_' + tag_id);
     td.textContent = beep_hist[tag_id];
     tr.appendChild(td);
     let input = document.createElement('input');
@@ -498,7 +498,7 @@ const handle_tag_beep = function(beep) {
     td = document.createElement('td');
     let button = document.createElement('button');
     button.setAttribute('class', 'btn btn-sm btn-primary tag-alias');
-    button.textContent='Update';
+    button.textContent = 'Update';
     button.setAttribute('value', tag_id);
     button.addEventListener('click', (evt) => {
       let tag_id = evt.target.getAttribute('value');
@@ -510,7 +510,7 @@ const handle_tag_beep = function(beep) {
 
     button = document.createElement('button');
     button.setAttribute('class', 'btn btn-sm btn-danger');
-    button.textContent='Remove';
+    button.textContent = 'Remove';
     button.addEventListener('click', (evt) => {
       x = evt;
       let row = evt.target.parentElement.parentElement;
@@ -527,22 +527,22 @@ const handle_tag_beep = function(beep) {
   }
 
 };
-const createElement = function(text) {
+const createElement = function (text) {
   let td = document.createElement('td');
   td.textContent = text;
   return td;
 };
 
-const handle_stats = function(stats) {
+const handle_stats = function (stats) {
   let record;
   let reports = {};
   let received_at, old_received_at;
   let n = 0;
   let channel_stats = {}
 
-  Object.keys(stats.channels).forEach(function(channel) {
+  Object.keys(stats.channels).forEach(function (channel) {
     let channel_data = stats.channels[channel];
-    Object.keys(channel_data.nodes.health).forEach(function(node_id) {
+    Object.keys(channel_data.nodes.health).forEach(function (node_id) {
       record = channel_data.nodes.health[node_id];
       received_at = moment(record.Time);
       if (reports[node_id]) {
@@ -558,17 +558,17 @@ const handle_stats = function(stats) {
     });
     n = 0;
     let beeps, node_beeps, telemetry_beeps;
-    Object.keys(channel_data.beeps).forEach(function(tag_id) {
+    Object.keys(channel_data.beeps).forEach(function (tag_id) {
       n += channel_data.beeps[tag_id];
     });
     beeps = n;
     n = 0;
-    Object.keys(channel_data.nodes.beeps).forEach(function(tag_id) {
+    Object.keys(channel_data.nodes.beeps).forEach(function (tag_id) {
       n += channel_data.nodes.beeps[tag_id];
     });
     node_beeps = n;
     n = 0;
-    Object.keys(channel_data.telemetry).forEach(function(tag_id) {
+    Object.keys(channel_data.telemetry).forEach(function (tag_id) {
       n += channel_data.telemetry[tag_id];
     });
     telemetry_beeps = n;
@@ -583,12 +583,12 @@ const handle_stats = function(stats) {
   render_channel_stats(channel_stats);
 };
 
-const render_channel_stats = function(channel_stats) {
+const render_channel_stats = function (channel_stats) {
   let beep_info, node_beep_info, telemetry_beep_info;
-  Object.keys(channel_stats).forEach(function(channel) {
-    beep_info= `#beep_count_${channel}`;
-    node_beep_info= `#node_beep_count_${channel}`;
-    telemetry_beep_info= `#telemetry_beep_count_${channel}`;
+  Object.keys(channel_stats).forEach(function (channel) {
+    beep_info = `#beep_count_${channel}`;
+    node_beep_info = `#node_beep_count_${channel}`;
+    telemetry_beep_info = `#telemetry_beep_count_${channel}`;
     let stats = channel_stats[channel];
     document.querySelector(beep_info).textContent = stats.beeps;
     document.querySelector(node_beep_info).textContent = stats.node_beeps;
@@ -596,17 +596,17 @@ const render_channel_stats = function(channel_stats) {
   });
 };
 
-const render_nodes = function(reports) {
+const render_nodes = function (reports) {
   let NODE_TABLE = document.querySelector('#node-history');
   while (NODE_TABLE.firstChild.nextSibling) {
     NODE_TABLE.removeChild(NODE_TABLE.firstChild.nextSibling);
   }
   let report;
   let tr, td;
-  Object.keys(reports).forEach(function(node_id, i) {
+  Object.keys(reports).forEach(function (node_id, i) {
     report = reports[node_id];
     tr = document.createElement('tr');
-    tr.appendChild(createElement(i+1));
+    tr.appendChild(createElement(i + 1));
     tr.appendChild(createElement(node_id));
     tr.appendChild(createElement(moment(report.Time).format(DATE_FMT)));
     tr.appendChild(createElement(report.NodeRSSI));
@@ -619,7 +619,7 @@ const render_nodes = function(reports) {
   });
 };
 
-const render_pie = function(id, data) {
+const render_pie = function (id, data) {
   $(id).highcharts({
     chart: {
       type: 'pie'
@@ -641,13 +641,13 @@ const render_pie = function(id, data) {
   });
 };
 
-const render_mem_chart = function(free, used) {
+const render_mem_chart = function (free, used) {
   let data = [{
     name: 'Memory Usage',
     data: [{
       name: 'Free',
       y: free
-    },{
+    }, {
       name: 'Used',
       y: used
     }]
@@ -655,31 +655,31 @@ const render_mem_chart = function(free, used) {
   render_pie('#mem-chart', data);
 };
 
-const render_cpu_chart = function(load_avg) {
+const render_cpu_chart = function (load_avg) {
   let data = [{
     name: '15 Minute CPU Load Average',
     data: [{
       name: 'Used',
-      y: load_avg*100, 
-    },{
+      y: load_avg * 100,
+    }, {
       name: 'Free CPU',
-      y: (1-load_avg)*100 
+      y: (1 - load_avg) * 100
     }]
   }];
   render_pie('#cpu-chart', data);
 };
 
-const render_tag_hist = function() {
-  setInterval(function() {
+const render_tag_hist = function () {
+  setInterval(function () {
     let tag_ids = [];
-    let sorted_keys = Object.keys(beep_hist).sort(function(a,b) {
+    let sorted_keys = Object.keys(beep_hist).sort(function (a, b) {
       if (a < b) {
         return -1;
       }
       return 1;
     });
     let values = [];
-    sorted_keys.forEach(function(tag) {
+    sorted_keys.forEach(function (tag) {
       let count;
       let alias = localStorage.getItem(tag);
       if (!alias) {
@@ -725,7 +725,7 @@ const render_tag_hist = function() {
 };
 
 let RAW_LOG;
-const updateStats = function() {
+const updateStats = function () {
   socket.send(JSON.stringify({
     msg_type: 'cmd',
     cmd: 'about'
@@ -736,8 +736,8 @@ const updateStats = function() {
   }));
 };
 
-const initialize_websocket = function() {
-  let url = 'ws://'+window.location.hostname+':8001';
+const initialize_websocket = function () {
+  let url = 'ws://' + window.location.hostname + ':8001';
   socket = new WebSocket(url);
   socket.addEventListener('close', (event) => {
     alert('Station connection disconnected - you will need to restart your browser once the radio software has restarted');
@@ -746,90 +746,90 @@ const initialize_websocket = function() {
     updateStats();
     setInterval(updateStats, 15000);
   });
-  socket.onmessage = function(msg) {
+  socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
     let tr, td;
-    switch(data.msg_type) {
-    case('beep'):
-      handle_beep(data);
-      break;
+    switch (data.msg_type) {
+      case ('beep'):
+        handle_beep(data);
+        break;
 
-    case('stats'):
-      handle_stats(data);
-      break;
-    case('about'):
-      let about = data;
-      document.querySelector('#station-id').textContent = about.station_id;
-      document.querySelector('#station-image').textContent = about.station_image;
-      document.querySelector('#software-start').textContent = moment(about.begin).format(DATE_FMT);
-      document.querySelector('#serial').textContent = about.serial;
-      document.querySelector('#hardware').textContent = about.hardware;
-      document.querySelector('#revision').textContent = about.revision;
-      document.querySelector('#bootcount').textContent = about.bootcount;
-      let total = Math.round(about.total_mem / 1024 / 1024.0);
-      let free = Math.round(about.free_mem/ 1024/1024.0);
-      let used = total - free;
-      render_mem_chart(free, used);
-      render_cpu_chart(about.loadavg_15min);
-      setText('memory',  used+' MB of '+total+' MB used');
-      setText('uptime', moment(new Date()).subtract(about.uptime, 's'));
-      break;
-    case('log'):
-      tr = document.createElement('tr');
-      td = document.createElement('td');
-      td.textContent = moment(new Date()).utc().format(DATE_FMT);
-      tr.appendChild(td);
-      td = document.createElement('td');
-      td.textContent = data.data;
-      tr.appendChild(td);
-      RAW_LOG.insertBefore(tr, RAW_LOG.firstChild.nextSibling);
-      break;
-    case('node-alive'):
-      break;
-    case('gps'):
-      setText('lat', data.gps.lat.toFixed(6));
-      setText('lng', data.gps.lon.toFixed(6));
-      setText('time', moment(new Date(data.gps.time)));
-      setText('alt', data.gps.alt);
-      let n = 0;
-      data.sky.satellites.forEach((sat) => {
-        if (sat.used == true) n += 1;
-      });
-      setText('nsats', `${n} of ${data.sky.satellites.length} used`);
-      break;
-    case('fw'):
-      document.querySelector('#raw_log').value += data.data
-      break
-    default:
-      console.log('WTF dunno', data);
+      case ('stats'):
+        handle_stats(data);
+        break;
+      case ('about'):
+        let about = data;
+        document.querySelector('#station-id').textContent = about.station_id;
+        document.querySelector('#station-image').textContent = about.station_image;
+        document.querySelector('#software-start').textContent = moment(about.begin).format(DATE_FMT);
+        document.querySelector('#serial').textContent = about.serial;
+        document.querySelector('#hardware').textContent = about.hardware;
+        document.querySelector('#revision').textContent = about.revision;
+        document.querySelector('#bootcount').textContent = about.bootcount;
+        let total = Math.round(about.total_mem / 1024 / 1024.0);
+        let free = Math.round(about.free_mem / 1024 / 1024.0);
+        let used = total - free;
+        render_mem_chart(free, used);
+        render_cpu_chart(about.loadavg_15min);
+        setText('memory', used + ' MB of ' + total + ' MB used');
+        setText('uptime', moment(new Date()).subtract(about.uptime, 's'));
+        break;
+      case ('log'):
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        td.textContent = moment(new Date()).utc().format(DATE_FMT);
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.textContent = data.data;
+        tr.appendChild(td);
+        RAW_LOG.insertBefore(tr, RAW_LOG.firstChild.nextSibling);
+        break;
+      case ('node-alive'):
+        break;
+      case ('gps'):
+        setText('lat', data.gps.lat.toFixed(6));
+        setText('lng', data.gps.lon.toFixed(6));
+        setText('time', moment(new Date(data.gps.time)));
+        setText('alt', data.gps.alt);
+        let n = 0;
+        data.sky.satellites.forEach((sat) => {
+          if (sat.used == true) n += 1;
+        });
+        setText('nsats', `${n} of ${data.sky.satellites.length} used`);
+        break;
+      case ('fw'):
+        document.querySelector('#raw_log').value += data.data
+        break
+      default:
+        console.log('WTF dunno', data);
 
-//      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
+      //      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
     }
   };
 };
 
-const updateChrony = function() {
+const updateChrony = function () {
   $.ajax({
     url: '/chrony',
     method: 'get',
-    success: function(data) {
-      document.querySelector('#chrony').textContent= data;
+    success: function (data) {
+      document.querySelector('#chrony').textContent = data;
     },
-    error: function(err) {
+    error: function (err) {
       console.error(err);
     }
   });
 };
 
-const get_config = function() {
+const get_config = function () {
   $.ajax({
     url: '/config',
-    success: function(contents) {
-      let i=0;
+    success: function (contents) {
+      let i = 0;
       let radio_id, value;
-      contents.radios.forEach(function(radio) {
+      contents.radios.forEach(function (radio) {
         i++;
-        radio_id = "#config_radio_"+i;
+        radio_id = "#config_radio_" + i;
         switch (radio.config[0]) {
           case "preset:node3":
             value = "Node";
@@ -846,16 +846,16 @@ const get_config = function() {
         }
         document.querySelector(radio_id).textContent = value;
       });
-       
+
     }
   })
 };
 
-const build_row = function(opts) {
+const build_row = function (opts) {
   let tr = document.createElement('tr')
   let th = document.createElement('th')
   let td = document.createElement('td')
-  th.textContent = opts.header 
+  th.textContent = opts.header
   span = document.createElement('span')
   span.setAttribute('id', opts.id)
   td.appendChild(span)
@@ -864,12 +864,12 @@ const build_row = function(opts) {
   return tr
 };
 
-const build_radio_component = function(n) {
+const build_radio_component = function (n) {
   let wrapper = document.createElement('div')
 
   let h2 = document.createElement('h2')
   h2.setAttribute('style', 'text-align: center;')
-  h2.textContent = 'Radio '+n
+  h2.textContent = 'Radio ' + n
   wrapper.appendChild(h2)
   let h5 = document.createElement('h5')
   let span = document.createElement('span')
@@ -883,18 +883,18 @@ const build_radio_component = function(n) {
   let table = document.createElement('table')
   table.setAttribute('class', 'table table-sm table-bordered table-dark')
   table.setAttribute('id', `radio_stats_${n}`)
-  let row = build_row({n:n, header: 'Beeps', id: `beep_count_${n}`})
+  let row = build_row({ n: n, header: 'Beeps', id: `beep_count_${n}` })
   table.appendChild(row)
-  row = build_row({n:n, header: 'Nodes', id: `node_beep_count_${n}`})
+  row = build_row({ n: n, header: 'Nodes', id: `node_beep_count_${n}` })
   table.appendChild(row)
-  row = build_row({n:n, header: 'Telemetry', id: `telemetry_beep_count_${n}`})
+  row = build_row({ n: n, header: 'Telemetry', id: `telemetry_beep_count_${n}` })
   table.appendChild(row)
   wrapper.appendChild(table)
   let div = document.createElement('div')
   div.setAttribute('style', 'overflow:scroll; height:400px;')
   table = document.createElement('table')
   table.setAttribute('class', 'table table-sm table-bordered table-dark radio')
-  table.setAttribute('id',`radio_${n}`)
+  table.setAttribute('id', `radio_${n}`)
   tr = document.createElement('tr')
   tr.setAttribute('class', 'table-primary')
   tr.setAttribute('style', 'color:#111;')
@@ -951,61 +951,61 @@ const build_radio_component = function(n) {
   return wrapper
 };
 
-const initialize_software_versions = function() {
+const initialize_software_versions = function () {
   fetch('/software')
-  .then(res=>res.json())
-  .then((json) => {
-    let table = document.querySelector('#meta')
-    let tr, th, td
-    json.packages.forEach((version) => {
-      tr = document.createElement('tr')
-      th = document.createElement('th')
-      th.textContent = version.name
-      tr.appendChild(th)
-      td = document.createElement('td')
-      td.textContent = version.version
-      tr.appendChild(td)
-      table.appendChild(tr)
+    .then(res => res.json())
+    .then((json) => {
+      let table = document.querySelector('#meta')
+      let tr, th, td
+      json.packages.forEach((version) => {
+        tr = document.createElement('tr')
+        th = document.createElement('th')
+        th.textContent = version.name
+        tr.appendChild(th)
+        td = document.createElement('td')
+        td.textContent = version.version
+        tr.appendChild(td)
+        table.appendChild(tr)
+      })
     })
-  })
-  .catch((err) => {
-    console.error('error getting software version')
-    console.error(err)
-  })
+    .catch((err) => {
+      console.error('error getting software version')
+      console.error(err)
+    })
 };
 
-const render_gateway = function() {
+const render_gateway = function () {
   fetch('/internet-gateway')
-  .then(function(res) { return res.json()})
-  .then(function(json) {
-    document.querySelector('#internet-gateway').textContent = json.gateway
-  })
-  .catch(function(err) {
-    console.error('error rendering gateway')
-    console.error(err)
-  })
+    .then(function (res) { return res.json() })
+    .then(function (json) {
+      document.querySelector('#internet-gateway').textContent = json.gateway
+    })
+    .catch(function (err) {
+      console.error('error rendering gateway')
+      console.error(err)
+    })
 }
 
-const initialize_reboot = function() {
+const initialize_reboot = function () {
   let dom_select = document.querySelector('#reboot-dom')
   let values = [{
     value: '*',
     name: 'Any Day Of Month'
   }]
-  for (let i=1; i<32; i++) {
+  for (let i = 1; i < 32; i++) {
     values.push({
       value: i,
       name: i.toString()
     })
   }
-  values.forEach(function(value) {
+  values.forEach(function (value) {
     let opt = document.createElement('option')
     opt.setAttribute('value', value.value)
     opt.textContent = value.name
     dom_select.appendChild(opt)
   })
 
-  document.querySelector('#reboot-hour').addEventListener('change', function(e) {
+  document.querySelector('#reboot-hour').addEventListener('change', function (e) {
     if (e.target.value > 23) {
       e.target.value = 23
     }
@@ -1014,16 +1014,16 @@ const initialize_reboot = function() {
     }
   })
 
-  document.querySelector('#reboot-minute').addEventListener('change', function(e) {
+  document.querySelector('#reboot-minute').addEventListener('change', function (e) {
     if (e.target.value > 59) {
-      e.target.value = 59 
+      e.target.value = 59
     }
     if (e.target.value < 0) {
       e.target.value = 0
     }
   })
 
-  document.querySelector('#update-reboot-schedule').addEventListener('click', function(e) {
+  document.querySelector('#update-reboot-schedule').addEventListener('click', function (e) {
     e.target.setAttribute('disabled', true)
     let body = {
       hour: document.querySelector('#reboot-hour').value,
@@ -1034,68 +1034,68 @@ const initialize_reboot = function() {
     }
     fetch('/update-reboot-schedule', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     })
-    .then(function(res) {
-      if (res.ok) {
-        alert('Reboot schedule successfully updated')
-        e.target.removeAttribute('disabled')
-      } else {
-        console.log(res)
-        console.error('invalid response', res.status)
-      }
-    })
+      .then(function (res) {
+        if (res.ok) {
+          alert('Reboot schedule successfully updated')
+          e.target.removeAttribute('disabled')
+        } else {
+          console.log(res)
+          console.error('invalid response', res.status)
+        }
+      })
   })
 
   fetch('/reboot-schedule')
-  .then(function(req) { return req.json() })
-  .then(function(json) {
-    document.querySelector('#reboot-hour').value = json.h
-    document.querySelector('#reboot-minute').value = json.m
-    document.querySelector('#reboot-dow').value = json.dow
-    document.querySelector('#reboot-dom').value = json.dom
-  })
+    .then(function (req) { return req.json() })
+    .then(function (json) {
+      document.querySelector('#reboot-hour').value = json.h
+      document.querySelector('#reboot-minute').value = json.m
+      document.querySelector('#reboot-dow').value = json.dow
+      document.querySelector('#reboot-dom').value = json.dom
+    })
 }
 
-;(function() {
-  document.querySelector('#sg_link').setAttribute('href', 'http://'+window.location.hostname+':3010');
-  render_gateway()
-  initialize_reboot()
-  setInterval(render_gateway, 5000)
-  let component, col
-  let max_row_count = localStorage.getItem('max-row-count')
-  if (max_row_count) {
-    MAX_ROW_COUNT = max_row_count
-  } else {
-    localStorage.setItem('max-row-count', MAX_ROW_COUNT)
-  }
-  initialize_software_versions()
-  for (let i=1; i<=5; i++) {
-    component = build_radio_component(i)
-    col = document.createElement('div')
-    col.classList.add('col-lg')
-    col.appendChild(component)
-    document.querySelector('#main-radios').appendChild(col)
-  }
-  for (let i=6; i<=12; i++) {
-    component = build_radio_component(i)
-    col = document.createElement('div')
-    col.classList.add('col-lg')
-    col.appendChild(component)
-    document.querySelector('#extra-radios').appendChild(col)
-  }
-  initialize_websocket();
-  initialize_controls();
-  get_config();
-  render_tag_hist();
-  RAW_LOG = document.querySelector('#raw_log');
-  updateChrony();
-  setInterval(updateChrony, 30000);
-  $.ajax({
-    url: '/sg-deployment',
-    success: function(contents) {
-      document.querySelector('#sg-deployment').value = contents;
+  ; (function () {
+    document.querySelector('#sg_link').setAttribute('href', 'http://' + window.location.hostname + ':3010');
+    render_gateway()
+    initialize_reboot()
+    setInterval(render_gateway, 5000)
+    let component, col
+    let max_row_count = localStorage.getItem('max-row-count')
+    if (max_row_count) {
+      MAX_ROW_COUNT = max_row_count
+    } else {
+      localStorage.setItem('max-row-count', MAX_ROW_COUNT)
     }
-  });
-})();
+    initialize_software_versions()
+    for (let i = 1; i <= 5; i++) {
+      component = build_radio_component(i)
+      col = document.createElement('div')
+      col.classList.add('col-lg')
+      col.appendChild(component)
+      document.querySelector('#main-radios').appendChild(col)
+    }
+    for (let i = 6; i <= 12; i++) {
+      component = build_radio_component(i)
+      col = document.createElement('div')
+      col.classList.add('col-lg')
+      col.appendChild(component)
+      document.querySelector('#extra-radios').appendChild(col)
+    }
+    initialize_websocket();
+    initialize_controls();
+    get_config();
+    render_tag_hist();
+    RAW_LOG = document.querySelector('#raw_log');
+    updateChrony();
+    setInterval(updateChrony, 30000);
+    $.ajax({
+      url: '/sg-deployment',
+      success: function (contents) {
+        document.querySelector('#sg-deployment').value = contents;
+      }
+    });
+  })();
