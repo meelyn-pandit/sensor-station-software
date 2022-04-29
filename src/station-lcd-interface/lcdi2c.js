@@ -1,4 +1,8 @@
 /**
+ * Source Code Origination: https://github.com/craigmw/lcdi2c
+ * npm install fails to compile i2c-bus for node >v10 so this code pulled directly in
+ */
+/**
  * lcdi2c.js - Add I2C LCD character display using PCF8574 I2C port expander.
  * https://github.com/wilberforce/lcd-pcf8574 but replaced calls to i2c library with
  * calls to i2c-bus. Currently, only works in synchronous output mode. Asynch mode does not work.
