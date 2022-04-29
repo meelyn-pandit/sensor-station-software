@@ -1,5 +1,5 @@
-const EventEmitter = require('events')
-const SerialPort = require('serialport')
+import EventEmitter from 'events'
+import SerialPort from 'serialport'
 import { v4 as uuidv4 } from 'uuid'
 
 /**
