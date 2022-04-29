@@ -37,4 +37,4 @@ app.use((req, res, next) => {
   res.json({ error: 'page not found' })
 })
 
-module.exports = app
+export default app

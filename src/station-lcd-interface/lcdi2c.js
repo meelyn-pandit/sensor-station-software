@@ -340,4 +340,4 @@ let LCD = class LCD {
     }
 };
 
-module.exports = LCD;
+export default LCD
