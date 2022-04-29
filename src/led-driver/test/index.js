@@ -1,4 +1,4 @@
-import {Led} from '../index';
+import { Led } from '../index';
 // 38.39.40
 let x = new Led(38);
 let y = new Led(39);
@@ -15,9 +15,9 @@ x.off();
 
 x.blink(250);
 
-setTimeout(()=>{
+setTimeout(() => {
     // x.off();
-    setInterval(()=>{
+    setInterval(() => {
         x.toggle();
     }, 2000);
 }, 5000)
