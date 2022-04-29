@@ -1,7 +1,6 @@
 import express from 'express'
+import { Led } from '../../led-driver/index.js'
 var router = express.Router()
-
-const { Led } = require('../../led-driver/index.js')
 
 let led_gps = new Led(38)
 let led_diag_a = new Led(39)

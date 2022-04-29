@@ -1,7 +1,6 @@
 import express from 'express'
+import { GpsClient } from '../../gps-client/index.js'
 var router = express.Router()
-
-const { GpsClient } = require('../../gps-client/index.js')
 
 let gps = new GpsClient({ max_gps_records: 100 })
 gps.start()
