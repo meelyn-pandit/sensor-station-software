@@ -1,37 +1,38 @@
-const Gpio = require('onoff').Gpio;
-const i2c = require('i2c-bus');
+//const Gpio = require('onoff').Gpio
+import { Gpio } from 'onoff'
+import i2c from 'i2c-bus'
 
 class Ads7924 {
     constructor(i2c_port = 1, address = 0x48, reset_pin=19){
-        this.i2cPort_ = i2c_port;        
-        this.address_ = address;
-        this.reset_ = new Gpio(reset_pin, 'out');
-        this.i2c_;
+        this.i2cPort_ = i2c_port        
+        this.address_ = address
+        this.reset_ = new Gpio(reset_pin, 'out')
+        this.i2c_
     }
 
     init(){
         this.reset_.writeSync(1, err => {
             if(err){
-                throw err;
+                throw err
             }
-        });
+        })
         this.i2c_ = i2c.open(this.i2cPort_, (err) => {
             if(err) {
-                console.log( 'Unable to open I2C port on device ' + this.i2cPort_ + ' ERROR: ' + err );
-                console.log( this );
-                throw(err);
-            };
-        });  
+                console.log( 'Unable to open I2C port on device ' + this.i2cPort_ + ' ERROR: ' + err )
+                console.log( this )
+                throw(err)
+            }
+        })  
     }
     read(){        
         this.i2c_.writeByteSync(this.address_, 0x15, 0x80) // PWRCONFIG
-        this.i2c_.writeByteSync(this.address_, 0x00, 0xCC); // MODECNTRL
-        this.i2c_.writeByteSync(this.address_, 0x14, 0x1F); // ACQCONFIG
+        this.i2c_.writeByteSync(this.address_, 0x00, 0xCC) // MODECNTRL
+        this.i2c_.writeByteSync(this.address_, 0x14, 0x1F) // ACQCONFIG
         
-        let regs = [];
+        let regs = []
         for(let reg = 0; reg < 0x16; reg++){
-            let value = this.i2c_.readByteSync(this.address_, reg);
-            regs.push(value);
+            let value = this.i2c_.readByteSync(this.address_, reg)
+            regs.push(value)
         }      
 
         return [
@@ -42,4 +43,4 @@ class Ads7924 {
     }
 }
 
-export default Ads7924;
+export default Ads7924

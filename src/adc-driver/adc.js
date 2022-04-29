@@ -1,4 +1,4 @@
-import Ads7924 from "./ads7924"
+import Ads7924 from "./ads7924.js"
 
 class Adc{
   constructor(opts){

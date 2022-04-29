@@ -10,7 +10,8 @@
     "start-hardware-server": "node ./src/station-hardware-server/bin/www.js",
     "start-radio-interface": "node ./lib/station-radio-interface/index.js",
     "start-lcd-interface": "node ./lib/station-lcd-interface/index.js",
-    "start-web-interface": "node ./lib/station-interface/bin/www.js"
+    "start-web-interface": "node ./lib/station-interface/bin/www.js",
+    "test-gps": "node ./src/gps-client/test/index.js"
   },
   "author": "Bob Fogg",
   "license": "ISC",

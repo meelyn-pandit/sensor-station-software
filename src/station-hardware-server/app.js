@@ -1,15 +1,14 @@
-var express = require('express')
-
-var indexRouter = require('./routes/index')
-var modemRouter = require('./routes/modem')
-//var sensorRouter = require('./routes/sensor')
-var usbRouter = require('./routes/usb')
-var gpsRouter = require('./routes/gps')
-var ledRouter = require('./routes/led')
-var internetRouter = require('./routes/internet')
-var peripheralRouter = require('./routes/peripherals')
-const radioRouter = require('./routes/radio-server')
-const controlRouter = require('./routes/control')
+import express from 'express'
+import indexRouter from './routes/index.js'
+import modemRouter from './routes/modem.js'
+//import sensorRouter from './routes/sensor.js'
+import usbRouter from './routes/usb.js'
+import gpsRouter from './routes/gps.js'
+import ledRouter from './routes/led.js'
+import internetRouter from './routes/internet.js'
+import peripheralRouter from './routes/peripherals.js'
+import radioRouter from './routes/radio-server.js'
+import controlRouter from './routes/control.js'
 
 var app = express()
 
@@ -28,7 +27,7 @@ app.use('/radio', radioRouter)
 app.use('/control', controlRouter)
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.json({error: err.message})
 })
