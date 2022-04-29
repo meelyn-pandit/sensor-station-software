@@ -1,4 +1,4 @@
-var Gpio = require('onoff').Gpio
+import { Gpio } from 'onoff'
 
 class Led {
   constructor(gpio) {
