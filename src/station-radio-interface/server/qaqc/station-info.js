@@ -14,14 +14,14 @@ class StationInfoPacket {
   }
 
  getPayload() {
-	 	let imei = Buffer.alloc(8)
-		imei.writeBigInt64LE(this.imei)
-		let sim = Buffer.alloc(8)
-		sim.writeBigInt64LE(this.sim)
+     let imei = Buffer.alloc(8)
+    imei.writeBigInt64LE(this.imei)
+    let sim = Buffer.alloc(8)
+    sim.writeBigInt64LE(this.sim)
     return Buffer.concat([
-			imei,
-			sim
-		])
+      imei,
+      sim
+    ])
   }
 
 }

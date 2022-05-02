@@ -22,7 +22,7 @@ class Tmp102 {
         let digitalTemp = 0
 
         // Bit 0 of second byte will always be 0 in 12-bit readings and 1 in 13-bit
-        if (reg1 & 0x01)	// 13 bit mode
+        if (reg1 & 0x01)  // 13 bit mode
         {
             // Combine bytes to create a signed int
             digitalTemp = ((reg0) << 5) | (reg1 >> 3)
@@ -32,7 +32,7 @@ class Tmp102 {
                 digitalTemp |= 0xE000
             }
         }
-        else	// 12 bit mode
+        else  // 12 bit mode
         {
             // Combine bytes to create a signed int 
             digitalTemp = ((reg0) << 4) | (reg1 >> 4)
