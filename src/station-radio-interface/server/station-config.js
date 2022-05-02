@@ -71,6 +71,7 @@ class StationConfig {
 			radio_map: radio_map,
 			config: config
 		})
+		this.data = merged_config
 		return merged_config
 	}
 
@@ -80,12 +81,13 @@ class StationConfig {
 
 	save() {
 		// strip radio path from config to be threaded dynamically on load
-		this.data.radios.forEach(radio => {
+		let cloned_config = JSON.parse(JSON.stringify(this.data))
+		cloned_config.radios.forEach(radio => {
 			if (radio.path) {
 				delete radio.path
 			}
 		})
-		let contents = JSON.stringify(this.data, null, 2)
+		let contents = JSON.stringify(cloned_config, null, 2)
 		fs.writeFileSync(this.config_filepath, contents)
 	}
 

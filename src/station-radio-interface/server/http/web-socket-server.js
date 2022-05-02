@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 import moment from 'moment'
-import WebSocket from 'ws'
+import WebSocket, { WebSocketServer } from 'ws'
 
 class SensorSocketServer extends EventEmitter {
 	constructor(opts) {
@@ -23,7 +23,7 @@ class SensorSocketServer extends EventEmitter {
 	}
 
 	buildServer() {
-		const wss = new WebSocket.Server({
+		const wss = new WebSocketServer({
 			port: this.port
 		})
 

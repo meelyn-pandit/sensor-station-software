@@ -12,6 +12,7 @@ import fs from 'fs'
 import heartbeats from 'heartbeats'
 import path from 'path'
 import _ from 'lodash'
+import moment from 'moment'
 
 /**
  * manager class for controlling / reading radios
@@ -61,9 +62,12 @@ class BaseStation {
 	 * load config - start the data manager, gps client, web socket server, timers, radios
 	 */
 	async init() {
-		let loaded_config = await this.config.load()
+		await this.config.load()
+		/** DO NOT MERGE DEFAULT CONFIG for now...
 		// merge default config with current config if fields have been added
-		this.config.data = _.merge(this.config.default_config, this.config.data)
+		// this.config.data = _.merge(this.config.default_config, this.config.data)
+		*/
+
 		// save the config to disk
 		this.config.save()
 
@@ -306,7 +310,7 @@ class BaseStation {
 	 * get base station id
 	 */
 	getId() {
-		return fs.readFileSync('/etc/ctt/station-id').toString()
+		return fs.readFileSync('/etc/ctt/station-id').toString().trim()
 	}
 
 	/**
@@ -332,11 +336,10 @@ class BaseStation {
 	 * start the radio receivers
 	 */
 	startRadios() {
+		console.log('starting radio receivers')
 		this.stationLog('starting radio receivers')
 		this.config.data.radios.forEach((radio) => {
 			if (radio.path) {
-				console.log('opening radio')
-				console.log(radio)
 				let beep_reader = new RadioReceiver({
 					baud_rate: 115200,
 					port_uri: radio.path,
