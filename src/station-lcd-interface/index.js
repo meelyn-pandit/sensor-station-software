@@ -1,25 +1,25 @@
 // Import Statements
-import MenuItem from "./menu-item"
-import MenuManager from "./menu-manager"
+import MenuItem from "./menu-item.js"
+import MenuManager from "./menu-manager.js"
 
 // Tasks
-import { IpAddressTask } from "./tasks/ip-address-task"
-import { CellularIds, CellularCarrier } from "./tasks/cellular-task"
-import { GpsTask } from "./tasks/gps-task"
-import { SensorTemperatureTask } from "./tasks/sensor-temp-task"
-import { SensorVoltageTask } from "./tasks/sensor-voltage-task"
-import { ServerConnectRequest } from "./tasks/server-task"
-import { SystemImageTask, SystemIdsTask, SystemMemoryTask, SystemUptimeTask } from "./tasks/system-about-task"
-import { SystemRestartTask } from "./tasks/system-restart-task"
-import { SystemTimeTask } from "./tasks/system-time-task"
-import { UsbDownloadTask } from "./tasks/usb-download-task"
-import { MountUsbTask } from "./tasks/usb-mount-task"
-import { UnmountUsbTask } from "./tasks/usb-unmount-task"
-import { UsbWifiUploadTask } from "./tasks/usb-wifi-upload-task"
-import { LedTask } from "./tasks/led-task"
-import { HostnameTask } from "./tasks/hostname-task"
-import { InternetTask } from "./tasks/internet-task"
-import { QaqcRequest } from './tasks/qaqc-task'
+import { IpAddressTask } from "./tasks/ip-address-task.js"
+import { CellularIds, CellularCarrier } from "./tasks/cellular-task.js"
+import { GpsTask } from "./tasks/gps-task.js"
+import { SensorTemperatureTask } from "./tasks/sensor-temp-task.js"
+import { SensorVoltageTask } from "./tasks/sensor-voltage-task.js"
+import { ServerConnectRequest } from "./tasks/server-task.js"
+import { SystemImageTask, SystemIdsTask, SystemMemoryTask, SystemUptimeTask } from "./tasks/system-about-task.js"
+import { SystemRestartTask } from "./tasks/system-restart-task.js"
+import { SystemTimeTask } from "./tasks/system-time-task.js"
+import { UsbDownloadTask } from "./tasks/usb-download-task.js"
+import { MountUsbTask } from "./tasks/usb-mount-task.js"
+import { UnmountUsbTask } from "./tasks/usb-unmount-task.js"
+import { UsbWifiUploadTask } from "./tasks/usb-wifi-upload-task.js"
+import { LedTask } from "./tasks/led-task.js"
+import { HostnameTask } from "./tasks/hostname-task.js"
+import { InternetTask } from "./tasks/internet-task.js"
+import { QaqcRequest } from './tasks/qaqc-task.js'
 
 // Require Statements
 import { Gpio } from 'onoff' // RaspberryPI Gpio functions
@@ -27,10 +27,10 @@ import { Gpio } from 'onoff' // RaspberryPI Gpio functions
 // App Config
 
 const host = 'http://localhost:3000'
-const UP_BUTTON = 17 //4
-const DOWN_BUTTON = 22 //5
-const SELECT_BUTTON = 27 //6
-const BACK_BUTTON = 8 //7
+const UP_BUTTON = 4
+const DOWN_BUTTON = 5
+const SELECT_BUTTON = 6
+const BACK_BUTTON = 7
 
 /*
 		Build the menu: Each item MUST be given:
