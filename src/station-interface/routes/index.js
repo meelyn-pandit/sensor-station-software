@@ -12,6 +12,8 @@ const SG_DEPLOYMENT_FILE = '/data/sg_files/deployment.txt'
 const LOG_FILE = '/data/sensor-station.log'
 const ConfigFileURI = '/etc/ctt/station-config.json'
 
+const router = express.Router()
+
 router.get('/', function (req, res, next) {
   res.render('main', { title: 'CTT Sensor Station', message: 'pug' })
 })

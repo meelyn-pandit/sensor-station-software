@@ -5,7 +5,7 @@
  */
 
 import app from '../app.js'
-const http = require('http')
+import http from 'http'
 
 /**
  * Get port from environment and store in Express.
