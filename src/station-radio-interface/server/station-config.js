@@ -100,11 +100,12 @@ class StationConfig {
         ]
       }
     })
-    this.save(this.filename)
-      .catch((err) => {
-        // error writing changes to disk
-        console.error(err)
-      })
+    try {
+      this.save(this.filename)
+    } catch(err) {
+      console.log('ERROR saving config file')
+      console.error(err)
+    }
   }
 }
 
