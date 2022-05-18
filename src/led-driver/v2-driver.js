@@ -1,5 +1,11 @@
 import { Gpio } from 'onoff'
 
+const Pins = {
+  GPS: 38,
+  A: 39,
+  B: 40
+}
+
 class Led {
   constructor(gpio) {
     this.led = new Gpio(gpio, 'out')
@@ -43,4 +49,23 @@ class Led {
     }
   }
 }
-export { Led }
+
+class GpsLed extends Led {
+  constructor() {
+    super(Pins.GPS) 
+  }
+}
+
+class DiagALed extends Led {
+  constructor() { 
+    super(Pins.A)
+  }
+}
+
+class DiagBLed extends Led {
+  constructor() {
+    super(Pins.B)
+  }
+}
+
+export { Led, GpsLed, DiagALed, DiagBLed }

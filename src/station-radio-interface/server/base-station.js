@@ -58,6 +58,10 @@ class BaseStation {
     this.data_manager.log(msgs)
   }
 
+  initLeds() {
+    this.station_leds.init()
+  }
+
   /**
    * load config - start the data manager, gps client, web socket server, timers, radios
    */
@@ -90,7 +94,7 @@ class BaseStation {
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
-    this.toggleLeds()
+    this.initLeds()
   }
 
   toggleRadioMode(opts) {
@@ -244,8 +248,12 @@ class BaseStation {
   /**
    * control on-board LEDs
    */
-  toggleLeds() {
+  async toggleLeds() {
     this.station_leds.toggleAll(this.gps_client.latest_gps_fix)
+      .catch(err => {
+        console.log('unable to toggle LEDs')
+        console.error(err)
+       })
   }
 
   /**
@@ -289,6 +297,7 @@ class BaseStation {
     this.heartbeat.createEvent(this.config.data.record.rotation_frequency_minutes * 60, this.rotateDataFiles.bind(this))
     this.heartbeat.createEvent(this.config.data.record.sensor_data_frequency_minutes * 60, this.pollSensors.bind(this))
     this.heartbeat.createEvent(this.config.data.record.checkin_frequency_minutes * 60, this.checkin.bind(this))
+    
     this.heartbeat.createEvent(this.config.data.led.toggle_frequency_seconds, this.toggleLeds.bind(this))
     this.heartbeat.createEvent(this.config.data.record.alive_frequency_seconds, this.writeAliveMsg.bind(this))
     if (this.config.data.record.enabled === true) {
@@ -359,6 +368,8 @@ class BaseStation {
           this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
         })
         beep_reader.on('error', (err) => {
+          console.log('reader error', err)
+          console.error(err)
           this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
         })
         beep_reader.on('close', (info) => {

@@ -4,11 +4,12 @@ import modemRouter from './routes/modem.js'
 //import sensorRouter from './routes/sensor.js'
 import usbRouter from './routes/usb.js'
 import gpsRouter from './routes/gps.js'
-import ledRouter from './routes/led.js'
 import internetRouter from './routes/internet.js'
 import peripheralRouter from './routes/peripherals.js'
 import radioRouter from './routes/radio-server.js'
 import controlRouter from './routes/control.js'
+import revision from '../revision.js'
+import ledRouter from './routes/led.js'
 
 var app = express()
 

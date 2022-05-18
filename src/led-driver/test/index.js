@@ -1,26 +1,16 @@
-import { Led } from '../index';
-// 38.39.40
-let x = new Led(38);
-let y = new Led(39);
-let z = new Led(40);
+import { GpsLed, DiagALed, DiagBLed } from '../v3-driver.js';
 
-x.on();
-y.on();
-z.on();
+let gps = new GpsLed()
+let diag_a = new DiagALed()
+let diag_b = new DiagBLed()
 
-x.on();
-x.off();
-x.on();
-x.off();
+const run = async() => {
+  await gps.on()
+  await diag_a.on()
+  await diag_b.on()
 
-x.blink(250);
+  gps.blink(500)
+  diag_a.blink(250)
+}
 
-setTimeout(() => {
-    // x.off();
-    setInterval(() => {
-        x.toggle();
-    }, 2000);
-}, 5000)
-
-
-
+run()
