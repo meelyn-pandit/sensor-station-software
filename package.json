@@ -14,6 +14,7 @@
     "read-v3-serial": "node ./src/id-driver/serial-chip.js",
     "get-version": "node ./src/id-driver/get-version.js",
     "test-expander": "node ./src/io-expander/test/test.js",
+    "test-adc": "node ./src/adc-driver/test/max11645.js", 
     "test-leds": "node ./src/led-driver/test/index.js"
   },
   "author": "Bob Fogg",

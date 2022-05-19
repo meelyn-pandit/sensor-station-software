@@ -8,6 +8,7 @@ class I2C {
 	 * @param {*} address  - i2c address
 	 */
 	constructor(opts) {
+    console.log('init i2c', opts)
 		this.#address = opts.address
 		this.#bus = opts.bus
 	}
@@ -30,7 +31,7 @@ class I2C {
 	 */
 	async write(buffer) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
-		let results = await i2c1.write(this.#address, buffer.length, buffer)
+		let results = await i2c1.i2cWrite(this.#address, buffer.length, buffer)
 		await i2c1.close()
     return results
 	}
@@ -54,7 +55,7 @@ class I2C {
 	 */
 	async read(buffer) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
-		let results = await i2c1.read(this.#address, buffer.length, buffer)
+		let results = await i2c1.i2cRead(this.#address, buffer.length, buffer)
 		await i2c1.close()
     return results
 	}
