@@ -1,7 +1,7 @@
 import express from 'express'
 import indexRouter from './routes/index.js'
 import modemRouter from './routes/modem.js'
-//import sensorRouter from './routes/sensor.js'
+import sensorRouter from './routes/sensor.js'
 import usbRouter from './routes/usb.js'
 import gpsRouter from './routes/gps.js'
 import internetRouter from './routes/internet.js'
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/', indexRouter)
 app.use('/modem', modemRouter)
-//app.use('/sensor', sensorRouter)
+app.use('/sensor', sensorRouter)
 app.use('/usb', usbRouter)
 app.use('/gps', gpsRouter)
 app.use('/led', ledRouter)

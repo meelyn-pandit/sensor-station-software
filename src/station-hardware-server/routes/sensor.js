@@ -1,39 +1,36 @@
 import express from 'express'
-import { Adc, Tmp102 } from '../../adc-driver/index.js'
+import SensorMonitor from '../../adc-driver/index.js'
 const router = express.Router()
 
-let options = { type: "Ads7924" }
-const adc = new Adc(options)
-const temp = new Tmp102()
-adc.init()
-temp.init()
+let sensor_data = {
+  voltages: {},
+  temperature: {}
+}
 
-let temperature = {}
-let voltages = {}
-
-setInterval(() => {
-
-    voltages.battery = (adc.read(0) * (5.016 / 4096) * 6).toFixed(2)
-    voltages.solar = (adc.read(1) * (5.016 / 4096) * 6).toFixed(2)
-    voltages.rtc = (adc.read(2) * (5.016 / 4096)).toFixed(2)
-
-    temperature.celsius = temp.read().toFixed(0)
-    temperature.fahrenheit = (temperature.celsius * 1.8 + 32).toFixed(0)
-
-}, 5000)
+try {
+  let Monitor = new SensorMonitor()
+  Monitor.start(5000)
+  Monitor.on('sensor', (data) => {
+    sensor_data.voltages = data.voltages
+    sensor_data.temperature = data.temperature
+  })
+  Monitor.read()
+} catch(err) {
+  console.error(err)
+}
 
 router.get('/voltages', function (req, res, next) {
-    res.json(voltages)
+    res.json(sensor_data.voltages)
 })
 
 router.get('/temperature', function (req, res, next) {
-    res.json(temperature)
+    res.json(sensor_data.temperature)
 })
 
 router.get('/details', (req, res, next) => {
     res.json({
-        voltages: voltages,
-        temperature: temperature
+        voltages: sensor_data.voltages,
+        temperature: sensor_data.temperature
     })
 })
 

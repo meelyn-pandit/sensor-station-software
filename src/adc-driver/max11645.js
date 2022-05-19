@@ -1,4 +1,3 @@
-import I2C from '../i2c.js'
 import i2c from 'i2c-bus'
 
 class Max11645 {
