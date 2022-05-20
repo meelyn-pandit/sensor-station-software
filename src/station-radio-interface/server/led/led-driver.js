@@ -10,7 +10,7 @@ class LedDriver {
     this.endpoint = 'http://localhost:3000/led'
   }
 
-  post(opts) {
+  async post(opts) {
     return fetch(opts.uri, {
       method: 'POST',
       body: opts.payload,
@@ -18,7 +18,7 @@ class LedDriver {
     })
   }
 
-  toggleLight(opts) {
+  async toggleLight(opts) {
     if (this.leds.includes(opts.led)) {
       let uri
       if (opts.led == 'gps') {
@@ -40,7 +40,7 @@ class LedDriver {
     return Promise.reject(`invalid led option ${opts.led}`)
   }
 
-  toggleDiagA(opts) {
+  async toggleDiagA(opts) {
     return this.toggleLight({
       led: 'a',
       state: opts.state,
@@ -48,7 +48,7 @@ class LedDriver {
     })
   }
 
-  toggleDiagB(opts) {
+  async toggleDiagB(opts) {
     return this.toggleLight({
       led: 'b',
       state: opts.state,
@@ -56,7 +56,7 @@ class LedDriver {
     })
   }
 
-  toggleGps(opts) {
+  async toggleGps(opts) {
     return this.toggleLight({
       led: 'gps',
       state: opts.state,

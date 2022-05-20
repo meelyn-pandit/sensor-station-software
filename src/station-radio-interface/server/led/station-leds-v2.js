@@ -10,7 +10,7 @@ class StationLeds {
     this.gps_delay_timeout = 60 * 1000 // 60 seconds for gps light to go out
   }
 
-  toggleGps(data) {
+  async toggleGps(data) {
     if (data) {
       let now = new Date()
       let gps_time = new Date(data.time)
@@ -20,23 +20,22 @@ class StationLeds {
       } else {
         switch (data.mode) {
           case 3:
-            this.led_driver.toggleGps({ state: 'on' })
+            await this.led_driver.toggleGps({ state: 'on' })
             break
           case 2:
-            this.led_driver.toggleGps({ state: 'blink', blink_ms: 500 })
+            await this.led_driver.toggleGps({ state: 'blink', blink_ms: 500 })
             break
           case 1:
-            this.led_driver.toggleGps({ state: 'blink', blink_ms: 200 })
+            await this.led_driver.toggleGps({ state: 'blink', blink_ms: 200 })
             break
           default:
-            this.led_driver.toggelGps({ state: 'off' })
+            await this.led_driver.toggelGps({ state: 'off' })
             break
         }
       }
     } else {
-      this.led_driver.toggleGps({ state: 'off' })
+      await this.led_driver.toggleGps({ state: 'off' })
     }
-
   }
 
   async init() {
@@ -59,14 +58,16 @@ class StationLeds {
       })
   }
 
-  toggleOperational() {
-    this.led_driver.toggleDiagA({ state: 'toggle' })
+  async toggleOperational() {
+    return this.led_driver.toggleDiagA({ state: 'toggle' })
   }
 
-  toggleAll(gps) {
-    this.toggleGps(gps)
-    this.toggleInternet()
-    this.toggleOperational()
+  async toggleAll(gps) {
+		return Promise.all([
+			this.toggleGps(gps),
+			this.toggleOperational(),
+			this.toggleInternet(),
+		])
   }
 }
 
