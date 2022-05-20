@@ -1,7 +1,8 @@
 import Command from '../command.js'
 
-const getDeviceId = () => {
-  return Command('hashlet', ['serial-num', '|', 'cut', '-c5-16'])
+const getDeviceId = async () => {
+  const id = await Command('hashlet', ['serial-num'])
+	return id.substring(4,16)
 }
 
 export default getDeviceId 
