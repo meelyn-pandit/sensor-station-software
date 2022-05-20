@@ -20,6 +20,7 @@ import { LedTask } from "./tasks/led-task.js"
 import { HostnameTask } from "./tasks/hostname-task.js"
 import { InternetTask } from "./tasks/internet-task.js"
 import { QaqcRequest } from './tasks/qaqc-task.js'
+import ButtonMap from './button-map.js'
 
 // Require Statements
 import { Gpio } from 'onoff' // RaspberryPI Gpio functions
@@ -27,10 +28,6 @@ import { Gpio } from 'onoff' // RaspberryPI Gpio functions
 // App Config
 
 const host = 'http://localhost:3000'
-const UP_BUTTON = 17 //4
-const DOWN_BUTTON = 22 //5
-const SELECT_BUTTON = 27 //6
-const BACK_BUTTON = 8 //7
 
 /*
     Build the menu: Each item MUST be given:
@@ -121,7 +118,7 @@ menu.init()
     pressed multiple times in rapid sucession.
 */
 
-const button_up = new Gpio(UP_BUTTON, 'in', 'rising', { debounceTimeout: 50 })
+const button_up = new Gpio(ButtonMap.Up, 'in', 'rising', { debounceTimeout: 50 })
 button_up.watch((err, value) => {
   if (err) {
     throw err
@@ -129,7 +126,7 @@ button_up.watch((err, value) => {
   menu.up()
 })
 
-const button_down = new Gpio(DOWN_BUTTON, 'in', 'rising', { debounceTimeout: 50 })
+const button_down = new Gpio(ButtonMap.Down, 'in', 'rising', { debounceTimeout: 50 })
 button_down.watch((err, value) => {
   if (err) {
     throw err
@@ -137,7 +134,7 @@ button_down.watch((err, value) => {
   menu.down()
 })
 
-const button_select = new Gpio(SELECT_BUTTON, 'in', 'rising', { debounceTimeout: 50 })
+const button_select = new Gpio(ButtonMap.Select, 'in', 'rising', { debounceTimeout: 50 })
 button_select.watch((err, value) => {
   if (err) {
     throw err
@@ -145,7 +142,7 @@ button_select.watch((err, value) => {
   menu.select()
 })
 
-const button_back = new Gpio(BACK_BUTTON, 'in', 'rising', { debounceTimeout: 50 })
+const button_back = new Gpio(ButtonMap.Back, 'in', 'rising', { debounceTimeout: 50 })
 button_back.watch((err, value) => {
   if (err) {
     throw err
