@@ -161,7 +161,7 @@ let display = new Display({
   columns: 20,
   rows: 4,
   i2cAddresses: [0x3f, 0x27],
-  debug: true
+  debug: false
 })
 
 export default display

@@ -15,7 +15,9 @@
     "get-version": "node ./src/id-driver/get-version.js",
     "test-expander": "node ./src/io-expander/test/test.js",
     "test-adc": "node ./src/adc-driver/test/max11645.js", 
-    "test-leds": "node ./src/led-driver/test/index.js"
+    "test-leds": "node ./src/led-driver/test/index.js",
+    "test-id": "node ./src/id-driver/v3-driver.js",
+    "test-revision": "node ./src/id-driver/station-revision.js"
   },
   "author": "Bob Fogg",
   "license": "ISC",

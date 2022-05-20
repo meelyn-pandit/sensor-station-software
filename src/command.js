@@ -1,6 +1,7 @@
 import { spawn } from 'child_process'
 
 export default (cmd, args) => {
+  console.log('running command', cmd, args)
   return new Promise((resolve, reject) => {
     const command_process = spawn(cmd, args)
     let buffer = ''
