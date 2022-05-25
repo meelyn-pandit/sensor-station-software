@@ -54,6 +54,33 @@ router.get('/id', function (req, res, next) {
   res.json({ id: device_id })
 })
 
+const get_about_info = () => {
+	let bootcount 
+	try {
+		bootcount = parseInt(fs.readFileSync('/etc/bootcount').toString().trim())
+	} catch(err) {
+		// error reading bootcount
+		bootcount = 0
+	}
+	let station_image
+	try {
+		station_image = fs.readFileSync('/etc/ctt/station-image').toString().trim()
+	} catch(err) {
+		// cannot read station image...
+	}
+	let station_software
+	try {
+		station_image_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
+	} catch(err) {
+		// cannot read station software last update time
+	}
+	return {
+		bootcount: bootcount,
+		station_iamge: station_image,
+		station_software: station_software
+	}
+}
+
 router.get('/about', (req, res, next) => {
   ModuleInfo.info()
     .then((info) => {
@@ -61,16 +88,10 @@ router.get('/about', (req, res, next) => {
       return info
     })
     .then((info) => {
-      try {
-        let bootcount = parseInt(fs.readFileSync('/etc/bootcount').toString().trim())
-        info.bootcount = bootcount
-        let station_image = fs.readFileSync('/etc/ctt/station-image').toString().trim()
-        info.station_image = station_image
-        let station_image_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
-        info.station_software = station_image_software
-      } catch (err) {
-        console.log('unable to load extra meta data', err.toString())
-      }
+			let about_info = get_about_info()
+			info.bootcount = abount_info.bootcount
+			info.station_image = about_info.station_image
+			info.station_software = about_info.station_software 
       res.json(info)
     })
     .catch((err) => {
