@@ -4,37 +4,9 @@ import glob from 'glob'
 import fs from 'fs'
 import { ComputeModule } from './compute-module.js'
 import getDeviceId from '../../id-driver/index.js'
+import package_info from '../../../package.json' assert { type: "json" }
 
 const ModuleInfo = new ComputeModule()
-
-/**
- * get a list of CTT software packages / versions
- */
-function GetPackageVersions() {
-  return new Promise((resolve, reject) => {
-    let file_pattern = '/home/pi/ctt/*/package.json'
-    let packages = []
-    glob(file_pattern, (err, filenames) => {
-      if (err) {
-        reject(err)
-      }
-      filenames.forEach((filename) => {
-        try {
-          let contents = JSON.parse(fs.readFileSync(filename))
-          packages.push({
-            name: contents.name,
-            version: contents.version
-          })
-        } catch (err) {
-          console.error('unable to parse package.json')
-          console.error(err)
-        }
-      })
-      resolve(packages)
-    })
-  })
-}
-
 
 let device_id
 getDeviceId().then((id) => {
@@ -100,13 +72,7 @@ router.get('/about', (req, res, next) => {
 })
 
 router.get('/node/version', function (req, res, next) {
-  GetPackageVersions()
-    .then((packages) => {
-      res.json({ packages: packages })
-    })
-    .catch((err) => {
-      res.status(500).send()
-    })
+	res.json({ version: package_info.version})
 })
 
 export default router
