@@ -1,12 +1,19 @@
 import express from 'express'
-var router = express.Router()
-import glob from 'glob'
 import fs from 'fs'
-import { ComputeModule } from './compute-module.js'
 import getDeviceId from '../../id-driver/index.js'
-import package_info from '../../../package.json' assert { type: "json" }
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const ModuleInfo = new ComputeModule()
+const router = express.Router()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const read_package_version = () => {
+  let contents = fs.readFileSync(path.resolve(__dirname, '../../../package.json'))
+  return JSON.parse(contents)
+}
+
+const package_info = read_package_version()
 
 let device_id
 getDeviceId().then((id) => {
