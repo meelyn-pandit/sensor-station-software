@@ -89,7 +89,7 @@ router.get('/about', (req, res, next) => {
     })
     .then((info) => {
 			let about_info = get_about_info()
-			info.bootcount = abount_info.bootcount
+			info.bootcount = about_info.bootcount
 			info.station_image = about_info.station_image
 			info.station_software = about_info.station_software 
       res.json(info)
