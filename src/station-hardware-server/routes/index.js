@@ -2,7 +2,10 @@ import express from 'express'
 import fs from 'fs'
 import getDeviceId from '../../id-driver/index.js'
 import path from 'path'
+import { ComputeModule } from './compute-module.js'
 import { fileURLToPath } from 'url'
+
+const ModuleInfo = new ComputeModule()
 
 const router = express.Router()
 const __filename = fileURLToPath(import.meta.url)
