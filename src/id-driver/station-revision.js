@@ -5,9 +5,12 @@ import fs from 'fs'
 const ID_FILE = '/etc/ctt/station-id'
 const VERSION_FILE = '/etc/ctt/station-revision'
 
+const V3_PREFIX = 'V3'
+
 const get_v3_id = async () => {
-  const serial = new RtcSerial()
-  return serial.getId()
+  const rtc_serial = new RtcSerial()
+  let rtc_id = await rtc_serial.getId()
+	return V3_PREFIX.concat(rtc_id.substring(6))
 }
 
 const run = async () => {
