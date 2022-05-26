@@ -87,6 +87,10 @@ export default {
     base_log_directory: "/data",
     mobile: false
   },
+	upload: {
+		ctt: true,
+		sensorgnome: true
+	},
   led: {
     toggle_frequency_seconds: 1
   },
