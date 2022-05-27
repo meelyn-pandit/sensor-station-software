@@ -22,6 +22,7 @@ class StationUploader:
         self.internet_check_ping_count = 3
         self.ensureDirs()
         self.station_id = self.getStationId()
+        self.station_config_file = '/etc/ctt/station-config.json'
 
         self.TIMEOUT = 20
         self.MAX_ATTEMPTS = 3
@@ -137,11 +138,43 @@ class StationUploader:
             print('no internet connection - not uploading anything')
         return False
 
+    def getUploadStatus(self):
+        status = None
+        try:
+            with open(self.station_config_file, 'r') as inFile:
+                config = json.loads(inFile.read())
+                status = config.get('upload')
+        except Exception as err:
+            print('error checking station config for upload status')
+            print(err)
+        return status
+
 def go():
     uploader = StationUploader()
-    res = uploader.uploadAllCttFiles()
-    if res is True:
-        uploader.uploadAllSgFiles()
+    default_status = {
+        'ctt': True,
+        'sensorgnome': True
+    }
+    # check on status on whether to upload data files
+    status = uploader.getUploadStatus()
+    if status is None:
+        # if no status found - use default  - upload all
+        status = default_status
+
+    # init to true 
+    upload_result = True
+    if status['ctt'] is True:
+        upload_result = uploader.uploadAllCttFiles()
+    else:
+        print('not uploading CTT files')
+
+    if status['sensorgnome'] is True:
+        # check prior upload result = continue if true
+        if upload_result is True:
+            # upload file if prior upload succeeded
+            uploader.uploadAllSgFiles()
+        else:
+            print('not uploading sensorgnome files')
 
 if __name__ == '__main__':
     go()
