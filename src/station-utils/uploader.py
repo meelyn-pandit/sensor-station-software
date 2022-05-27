@@ -1,4 +1,4 @@
-#!/home/ctt/ctt/.envs/station/bin/python3 
+#!/lib/ctt/.envs/station/bin/python3 
 import datetime
 import time
 import json
