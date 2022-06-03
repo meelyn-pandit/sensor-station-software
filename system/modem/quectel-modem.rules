@@ -1,0 +1,14 @@
+# Symlink for Station Modem
+
+# note bInterfaceNumber
+SUBSYSTEMS=="usb", ENV{.LOCAL_ifNum}="$attr{bInterfaceNumber}"
+
+# adding symlink for modem
+SUBSYSTEM=="tty", ACTION=="add", \
+	ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="0125", \
+	ENV{.LOCAL_ifNum}=="02", SYMLINK+="station_modem"
+
+# adding symlink for modem
+SUBSYSTEM=="tty", ACTION=="add", \
+	ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="0125", \
+	ENV{.LOCAL_ifNum}=="03", SYMLINK+="station_modem_status"

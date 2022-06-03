@@ -1,0 +1,12 @@
+[Unit]
+Description=Modem Connect
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/pppd call gprs
+Type=simple
+PIDFile=/tmp/modem-service.id
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target station-boot.service
