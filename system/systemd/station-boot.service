@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/etc/ctt/scripts/save-station-id
+ExecStart=/lib/ctt/sensor-station-software/scripts/save-station-id.sh
 RemainAfterExit=true
 
 [Install]
