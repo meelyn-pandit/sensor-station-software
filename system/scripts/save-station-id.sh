@@ -8,8 +8,8 @@ if test -f $RADIO_MAP; then
 fi
 if test $version -ge 3; then
 	echo 'linking v3 radio map'
-	ln -s /etc/ctt/radios/v3-radio-map.js $RADIO_MAP
+	ln -s /lib/ctt/sensor-station-software/system/radios/v3-radio-map.js $RADIO_MAP
 else
 	echo 'lniking v2 radio map'
-	ln -s /etc/ctt/radios/v2-radio-map.js $RADIO_MAP
+	ln -s /lib/ctt/sensor-station-software/system/radios/v2-radio-map.js $RADIO_MAP
 fi
