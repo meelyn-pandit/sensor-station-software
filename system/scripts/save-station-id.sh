@@ -8,8 +8,8 @@ BOOT_CONFIG=/boot/config.txt
 
 # check station version
 typeset -i version=$(cat /etc/ctt/station-revision)
-RADIO_MAP=/etc/ctt/radio-map.json
 
+RADIO_MAP=/etc/ctt/radio-map.json
 # set radio map
 if test -h $RADIO_MAP; then
 	echo 'deleting current radio map'
@@ -46,3 +46,10 @@ else
 	fi
 
 fi
+
+# copy modem controls
+echo 'copying modem scripts from monorepo'
+cp /lib/ctt/sensor-station-software/system/modem/ppp-gprs /etc/ppp/peers/gprs
+cp /lib/ctt/sensor-station-software/system/modem/twilio-chatscript /etc/chatscripts/twilio
+cp /lib/ctt/sensor-station-software/system/modem/simcom-chat-disconnect /etc/chatscripts/disconnect
+
