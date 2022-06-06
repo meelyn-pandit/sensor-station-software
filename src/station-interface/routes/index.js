@@ -281,10 +281,10 @@ router.get('/config', (req, res, next) => {
 })
 
 router.post('/radio-restart', (req, res) => {
-  const cmd = spawn('/usr/local/bin/pm2', ['restart', 'station-radio-interface'])
+  const cmd = spawn('systemctl', ['restart', 'station-radio-interface'])
   console.log('issuing radio restart')
   cmd.on('error', (err) => {
-    console.error(error)
+    console.error(err)
     res.sendStatus(500)
   })
   cmd.stdout.on('data', (data) => {
