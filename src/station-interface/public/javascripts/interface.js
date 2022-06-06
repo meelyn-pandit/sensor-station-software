@@ -762,6 +762,7 @@ const initialize_websocket = function () {
         document.querySelector('#station-id').textContent = about.station_id;
         document.querySelector('#station-image').textContent = about.station_image;
         document.querySelector('#software-start').textContent = moment(about.begin).format(DATE_FMT);
+        document.querySelector('#software-update').textContent = moment(about.station_software);
         document.querySelector('#serial').textContent = about.serial;
         document.querySelector('#hardware').textContent = about.hardware;
         document.querySelector('#revision').textContent = about.revision;
@@ -951,22 +952,39 @@ const build_radio_component = function (n) {
   return wrapper
 };
 
+const build_version_element = function(opts) {
+	let tr = document.createElement('tr')
+	let th = document.createElement('th')
+	th.textContent = opts.name
+	tr.appendChild(th)
+	let td = document.createElement('td')
+	td.textContent = opts.version
+	tr.appendChild(td)
+	return tr
+}
+
 const initialize_software_versions = function () {
   fetch('/software')
     .then(res => res.json())
     .then((json) => {
       let table = document.querySelector('#meta')
-      let tr, th, td
-      json.packages.forEach((version) => {
-        tr = document.createElement('tr')
-        th = document.createElement('th')
-        th.textContent = version.name
-        tr.appendChild(th)
-        td = document.createElement('td')
-        td.textContent = version.version
-        tr.appendChild(td)
+      let tr
+			if (json.packages) {
+				json.packages.forEach((version) => {
+					tr = build_version_element({
+						name: version.name,
+            version: version.version
+					})
+					table.appendChild(tr)
+				})
+			} 
+			if (json.version) {
+				tr = build_version_element({
+					name: 'System',
+					version: json.version
+				})
         table.appendChild(tr)
-      })
+			}
     })
     .catch((err) => {
       console.error('error getting software version')
