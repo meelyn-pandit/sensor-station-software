@@ -22,13 +22,13 @@ if [ -d $dir ]; then
   sudo git pull
   # checking if package.json has changed
   changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)" 
-  check_run package.json "npm update"
+  check_run package.json "npm install"
 else
   cd $home
   echo "cloning sensor-station-software repo to $dir"
   sudo git clone $git_url
   cd $dir
-  npm update
+  npm install
 fi
 
 sudo systemctl restart station-hardware-server
