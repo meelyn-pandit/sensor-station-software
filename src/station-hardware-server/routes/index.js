@@ -52,13 +52,13 @@ const get_about_info = () => {
 	}
 	let station_software
 	try {
-		station_image_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
+		station_software = fs.readFileSync('/etc/ctt/station-software').toString().trim()
 	} catch(err) {
 		// cannot read station software last update time
 	}
 	return {
 		bootcount: bootcount,
-		station_iamge: station_image,
+		station_image: station_image,
 		station_software: station_software
 	}
 }
