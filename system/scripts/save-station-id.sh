@@ -18,6 +18,7 @@ fi
 
 # handle versioning - radio map / rtc boot config
 if test $version -ge 3; then
+	# V3 station
 	# link appropriate radio map
 	echo 'linking v3 radio map'
 	ln -s /lib/ctt/sensor-station-software/system/radios/v3-radio-map.js $RADIO_MAP
@@ -32,6 +33,7 @@ if test $version -ge 3; then
 		reboot
 	fi
 else
+	# V2 station
 	# link appropriate radio map
 	echo 'linking v2 radio map'
 	ln -s /lib/ctt/sensor-station-software/system/radios/v2-radio-map.js $RADIO_MAP
@@ -45,6 +47,12 @@ else
 		reboot
 	fi
 
+	# let's kick the gps for gps hats
+	sudo raspi-gpio set 27 op dh
+	sleep 1
+	sudo raspi-gpio set 27 op dl
+	sleep 1
+	sudo raspi-gpio set 27 op dh
 fi
 
 # copy modem controls
