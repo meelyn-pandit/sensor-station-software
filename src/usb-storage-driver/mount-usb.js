@@ -14,14 +14,20 @@ class MountUsb {
         fs.mkdirSync(this.dir)
       }
 
+			let error
       // $ 'mount /dev/${drive} ${this.dir}'
       let child = exec(`mount ${device} ${this.dir}`, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }
+				error = stderr
       })
       child.on('close', (code) => {
-        resolve(code)
+				if (code != 0) {
+					reject(`usb mount error ${error}`)
+				} else {
+					resolve(code)
+				}
       })
     })
   }
@@ -32,14 +38,19 @@ class MountUsb {
       if (fs.existsSync(this.dir) == false) {
         resolve()
       }
-
+			let error
       let child = exec(`umount ${this.dir}`, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }
+				error = stderr
       })
       child.on('close', (code) => {
-        resolve()
+				if (code != 0) {
+					reject(`usb umount error ${error}`)
+				} else {
+					resolve(code)
+				}
       })
     })
   }
