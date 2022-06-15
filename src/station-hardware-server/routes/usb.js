@@ -27,10 +27,12 @@ class WifiConfig {
    * @param {*} opts.psk
    */
   write(opts) {
-		if (opts.ssid && opts.psk) {
-			const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
-			const file_contents = `${this.wifi_header}${network_info}`
-			fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+		if (opts.ssid) {
+      if (opts.psk) {
+        const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
+        const file_contents = `${this.wifi_header}${network_info}`
+        fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+      }
 		}
 		throw new Error('missing ssid and/or psk')
   }
