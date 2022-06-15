@@ -1,6 +1,7 @@
 import express from 'express'
 import fs from 'fs'
 import { UsbStorage } from '../../usb-storage-driver/index.js'
+import drivelist from 'drivelist'
 const router = express.Router()
 
 class WifiConfig {
@@ -41,14 +42,12 @@ let usb = new UsbStorage()
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-
-  new BlockDeviceCmd().poll()
+  drivelist.list()
     .then((devices) => {
-      res.json(devices)
+      res.json(devices.filter(device => { return device.busType == 'USB'}))
     }).catch((error) => {
       res.json(null)
     })
-
 })
 
 const success = { status: "success" }
