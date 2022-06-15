@@ -27,14 +27,20 @@ class WifiConfig {
    * @param {*} opts.psk
    */
   write(opts) {
-		if (opts.ssid) {
+    let valid_opts = false
+    if (opts.ssid) {
       if (opts.psk) {
-        const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
-        const file_contents = `${this.wifi_header}${network_info}`
-        fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+        valid_opts = true
       }
-		}
-		throw new Error('missing ssid and/or psk')
+    }
+    if (valid_opts) {
+      const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
+      const file_contents = `${this.wifi_header}${network_info}`
+      console.log('station-hardware overwriting wpa_supplicant file')
+      fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+    } else {
+      throw new Error('missing ssid and/or psk')
+    }
   }
 }
 
