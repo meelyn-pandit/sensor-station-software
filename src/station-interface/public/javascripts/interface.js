@@ -1076,6 +1076,10 @@ const initialize_reboot = function () {
     })
 }
 
+const build_sg_tag_file_upload = function() {
+
+}
+
   ; (function () {
     document.querySelector('#sg_link').setAttribute('href', 'http://' + window.location.hostname + ':3010');
     render_gateway()

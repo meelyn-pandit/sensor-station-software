@@ -48,6 +48,10 @@ router.post('/save-sg-deployment', (req, res, next) => {
   })
 })
 
+router.post('/upload-sg-tag-file', (req, res) => {
+
+})
+
 const prepareData = (filelist) => {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(TMP_FILE)) {
