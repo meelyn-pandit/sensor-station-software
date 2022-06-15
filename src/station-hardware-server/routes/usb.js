@@ -1,6 +1,6 @@
 import express from 'express'
 import fs from 'fs'
-import { UsbStorage, BlockDeviceCmd } from '../../usb-storage-driver/index.js'
+import { UsbStorage } from '../../usb-storage-driver/index.js'
 const router = express.Router()
 
 class WifiConfig {
@@ -9,6 +9,10 @@ class WifiConfig {
   }
   init(country) {
     return new Promise((resolve, reject) => {
+			if (!country) {
+				// default to US if not defined
+				country = 'US'
+			}
       try {
         const file = this.path
         const contents = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=${country}\n`
