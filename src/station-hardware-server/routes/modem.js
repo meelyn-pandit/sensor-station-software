@@ -80,7 +80,7 @@ router.post('/start', (req, res, next) => {
 })
 
 router.post('/enable', (req, res, next) => {
-  RunCommand('systemctl', ['enable', 'modem'])
+  RunCommand('systemctl', ['enable', '/lib/ctt/sensor-station-software/system/modem/modem.service'])
     .then((response) => {
       res.status(204).send()
     })
