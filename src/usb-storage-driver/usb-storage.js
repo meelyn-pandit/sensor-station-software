@@ -1,7 +1,7 @@
-import BlockDeviceCmd from './block-device-cmd.js'
 import MountUsb from './mount-usb.js'
 import ncp from 'ncp'
 import path from 'path'
+import drivelist from 'drivelist'
 
 class UsbStorage {
   
@@ -14,16 +14,22 @@ class UsbStorage {
 
       this.unmount()
         .then(() => {
-          return new BlockDeviceCmd().poll()
+					drivelist.list().then(devices => {
+						return devices.filter(device => device.busType='USB')
+					})
         }).then((devices) => {
           if (devices.length > 0) {
-            return this.drive.mount(devices[0].name)
+            return this.drive.mount(devices[0].device)
           } else {
             reject("No Usb Devices Detected")
           }
-        }).then(() => {
+        }).then((code) => {
+					if (code != 0) {
+						reject(`code: ${code} mount response`)
+					}
           resolve()
         }).catch((err) => {
+					console.log('usb mount err', err)
           reject(err)
         })
     })
@@ -37,6 +43,7 @@ class UsbStorage {
         }).then(() => {
           resolve()
         }).catch((err) => {
+					console.log('usb umount err', err)
           resolve(err)
         })
     })

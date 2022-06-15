@@ -5,20 +5,20 @@ class MountUsb {
   constructor(dir) {
     this.dir = dir
   }
-  mount(drive) {
+  mount(device) {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(this.dir) == false) {
         fs.mkdirSync(this.dir)
       }
 
       // $ 'mount /dev/${drive} ${this.dir}'
-      let child = exec(`mount /dev/${drive} ${this.dir}`, (error, stdout, stderr) => {
+      let child = exec(`mount ${device} ${this.dir}`, (error, stdout, stderr) => {
         if (error) {
           reject(error)
         }
       })
       child.on('close', (code) => {
-        resolve()
+        resolve(code)
       })
     })
   }
