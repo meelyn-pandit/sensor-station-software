@@ -9,7 +9,8 @@ class UsbStorage {
     this.mount_point = mount_point
     this.drive = new MountUsb(mount_point)
   }
-  mount() {
+
+  async mount() {
     return new Promise((resolve, reject) => {
 			// first run the unmount script to clean the mount directory (rm)
       this.unmount().then(() => {
@@ -40,23 +41,19 @@ class UsbStorage {
       })
     })
   }
-  unmount() {
-    return new Promise((resolve, reject) => {
-      this.drive.unmount()
-        .then(() => {
-          return this.drive.clean()
-        }).then(() => {
-          resolve()
-        }).catch((err) => {
-					console.log('usb umount err', err)
-          resolve(err)
-        })
-    })
+
+  async unmount() {
+    return this.drive.unmount()
+      .then(() => {
+        return this.drive.clean()
+      })
   }
+
   copyTo(src, pattern, callback) {
     ncp.ncp.limit = 16
     ncp(src, this.mount_point, { filter: pattern }, callback)
   }
+
   copyFrom(src, dest, callback) {
     ncp.ncp.limit = 16
     ncp(path.join(this.mount_point, src), dest, callback)

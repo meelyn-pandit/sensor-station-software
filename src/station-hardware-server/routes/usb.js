@@ -65,6 +65,8 @@ router.get('/unmount', (req, res) => {
     .then(() => {
       res.json(success)
     }).catch((err) => {
+      console.log('hardware-server USB umount error')
+      console.error(err)
       res.json(fail)
     })
 })
