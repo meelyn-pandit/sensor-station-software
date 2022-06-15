@@ -2,11 +2,14 @@ import { exec } from 'child_process'
 import fs from 'fs'
 
 class MountUsb {
+
   constructor(dir) {
     this.dir = dir
   }
+
   mount(device) {
     return new Promise((resolve, reject) => {
+			console.log('mounting USB drive', device)
       if (fs.existsSync(this.dir) == false) {
         fs.mkdirSync(this.dir)
       }
@@ -22,7 +25,9 @@ class MountUsb {
       })
     })
   }
+
   unmount() {
+		console.log('unmounting USB drive', this.dir)
     return new Promise((resolve, reject) => {
       if (fs.existsSync(this.dir) == false) {
         resolve()
@@ -38,6 +43,7 @@ class MountUsb {
       })
     })
   }
+
   clean() {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(this.dir) == false) {
