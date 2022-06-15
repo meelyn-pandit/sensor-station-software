@@ -7,6 +7,10 @@ const router = express.Router()
 
 class WifiConfig {
 
+	/**
+	 * 
+	 * @param {*} country 
+	 */
   constructor(country) {
     if (!country) {
       // default to US
@@ -17,30 +21,18 @@ class WifiConfig {
     this.wifi_header = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=${country}\n`
   }
 
-  init() {
-    if (fs.existsSync(this.wpa_supplicant_location)) {
-      // wpa_supplicant exists (as it should) - read it
-      let contents = fs.readFileSync(this.wpa_supplicant_location).toString()
-      // check if this wifi header is found 
-      if (contents.search(this.wifi_header) < 0) {
-        // header is not found - re-create file
-        console.log('overwriting wpa_supplicant file with new header')
-        fs.writeFileSync(this.wpa_supplicant_location, this.wifi_header)
-      } else {
-        console.log('wpa_supplicant header found - not doing anything')
-      }
-    }
-  }
-
   /**
-   * 
+   * write wpa_supplicant.conf file - only supports 1 network at a time
    * @param {*} opts.ssid
    * @param {*} opts.psk
    */
-  addNetwork(opts) {
-    console.log('adding wifi network', opts)
-    const network_info = `\nnetwork={\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}`
-    fs.appendFileSync(this.wpa_supplicant_location, network_info)
+  write(opts) {
+		if (opts.ssid && opts.psk) {
+			const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
+			const file_contents = `${this.wifi_header}${network_info}`
+			fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+		}
+		throw new Error('missing ssid and/or psk')
   }
 }
 
@@ -88,6 +80,9 @@ router.get('/data', (req, res, next) => {
   })
 })
 
+/**
+ * load WiFi credentials from USB mount point
+ */
 router.get('/wifi', function (req, res, next) {
   const path = "/mnt/usb/wifi/credentials.json"
   let response = fail
@@ -97,15 +92,19 @@ router.get('/wifi', function (req, res, next) {
       // load JSON file with credentials
       var data = JSON.parse(fs.readFileSync(path, 'utf8'))
       let wifi = new WifiConfig(data.country)
-      wifi.init(data.country)
-      wifi.addNetwork(data.ssid, data.psk)
+      wifi.write({
+				ssid: data.ssid, 
+				psk: data.psk
+			})
       // finished
       response = success
     } catch(err) {
       console.log('something went wrong adding wifi network')
       console.log(err)
     }
-  }
+  } else {
+		console.log('hardware-server WiFi crendentials path does not exist', path)
+	}
   res.json(response)
 })
 
