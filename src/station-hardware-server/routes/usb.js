@@ -20,7 +20,7 @@ class WifiConfig {
   init() {
     if (fs.existsSync(this.wpa_supplicant_location)) {
       // wpa_supplicant exists (as it should) - read it
-      let contents = fs.readFileSync(this.wpa_supplicant_location)
+      let contents = fs.readFileSync(this.wpa_supplicant_location).toString()
       // check if this wifi header is found 
       if (contents.search(this.wifi_header) < 0) {
         // header is not found - re-create file
