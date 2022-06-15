@@ -16,7 +16,7 @@ class UsbStorage {
         // list drives
         return drivelist.list().then(devices => {
           // filter USB drives
-          return devices.filter(device => { device.busType='USB' })
+          return devices.filter(device => { return device.busType == 'USB' })
         })
       }).then((devices) => {
         // validate more than 0 USB drives attached
