@@ -6,7 +6,6 @@ import drivelist from 'drivelist'
 const router = express.Router()
 
 class WifiConfig {
-
 	/**
 	 * 
 	 * @param {*} country 
@@ -59,15 +58,23 @@ router.get('/', function (req, res, next) {
 const success = { status: "success" }
 const fail = { status: "fail" }
 
+/**
+ * mount USB drive to /mnt/usb
+ */
 router.get('/mount', (req, res) => {
   usb.mount()
     .then(() => {
       res.json(success)
     }).catch((err) => {
+      console.log('hardware-server USB mount error')
+      console.error(err)
       res.json(fail)
     })
 })
 
+/**
+ * unmount USB drive at /mnt/usb
+ */
 router.get('/unmount', (req, res) => {
   usb.unmount()
     .then(() => {
@@ -92,6 +99,7 @@ router.get('/data', (req, res, next) => {
 
 /**
  * load WiFi credentials from USB mount point
+ * overwrite wpa_supplicant file
  */
 router.get('/wifi', function (req, res, next) {
   const path = "/mnt/usb/wifi/credentials.json"
