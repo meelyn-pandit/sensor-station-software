@@ -11,32 +11,37 @@ class UsbStorage {
   }
   mount() {
     return new Promise((resolve, reject) => {
-
-      this.unmount()
-        .then(() => {
-					drivelist.list().then(devices => {
-						return devices.filter(device => device.busType='USB')
-					})
-        }).then((devices) => {
-          if (devices.length > 0) {
-            return this.drive.mount(devices[0].device)
-          } else {
-            reject("No Usb Devices Detected")
-          }
-        }).then((code) => {
-					if (code != 0) {
-						reject(`code: ${code} mount response`)
-					}
-          resolve()
-        }).catch((err) => {
-					console.log('usb mount err', err)
-          reject(err)
+			// first run the unmount script to clean the mount directory (rm)
+      this.unmount().then(() => {
+        // list drives
+        return drivelist.list().then(devices => {
+          // filter USB drives
+          return devices.filter(device => { device.busType='USB' })
         })
+      }).then((devices) => {
+        // validate more than 0 USB drives attached
+        if (devices.length > 0) {
+          // return first drive in the list...
+          return this.drive.mount(devices[0].device)
+        } else {
+          reject("No Usb Devices Detected")
+        }
+      }).then((code) => {
+        // command line response code
+        if (code != 0) {
+          // reject if the reponse code is non 0
+          reject(`code: ${code} mount response`)
+        }
+        // finished
+        resolve()
+      }).catch((err) => {
+        console.log('usb mount err', err)
+        reject(err)
+      })
     })
   }
   unmount() {
     return new Promise((resolve, reject) => {
-
       this.drive.unmount()
         .then(() => {
           return this.drive.clean()
