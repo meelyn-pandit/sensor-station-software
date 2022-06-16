@@ -1,6 +1,6 @@
 import UsbStorage from "../usb-storage.js"
 import fs from 'fs'
-
+import UsbScanner from '../usb-scanner.js'
 
 function testCopy() {
   let usb = new UsbStorage()
@@ -49,6 +49,14 @@ function testWifi() {
       console.log(`Mount error ${res}`)
     })
 }
+
+const scan = async () => {
+  let scanner = new UsbScanner()
+  let usb_device = await scanner.retriveUsb()
+  console.log(usb_device)
+}
+
+scan()
 
 // testCopy()
 // testWifi()

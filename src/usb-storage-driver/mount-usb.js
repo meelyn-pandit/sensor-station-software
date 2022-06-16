@@ -47,7 +47,7 @@ class MountUsb {
       })
       child.on('close', (code) => {
 				if (code != 0) {
-					reject(`usb umount error ${error}`)
+					reject(`usb umount error code ${error}`)
 				} else {
 					resolve(code)
 				}
