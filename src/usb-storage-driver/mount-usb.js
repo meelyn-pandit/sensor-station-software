@@ -1,5 +1,6 @@
 import { exec } from 'child_process'
 import fs from 'fs'
+import Command from '../command.js'
 
 class MountUsb {
 
@@ -7,69 +8,33 @@ class MountUsb {
     this.dir = dir
   }
 
-  mount(device) {
-    return new Promise((resolve, reject) => {
-			console.log('mounting USB drive', device)
-      if (fs.existsSync(this.dir) == false) {
-        fs.mkdirSync(this.dir)
-      }
+  async mount(device) {
+    console.log('mount-usb mounting USB drive', device)
+    // check if the mount directory exists
+    if (fs.existsSync(this.dir) == false) {
+      // make the mount directory
+      fs.mkdirSync(this.dir)
+    }
 
-			let error
-      // $ 'mount /dev/${drive} ${this.dir}'
-      let child = exec(`mount ${device} ${this.dir}`, (error, stdout, stderr) => {
-        if (error) {
-          reject(error)
-        }
-				error = stderr
-      })
-      child.on('close', (code) => {
-				if (code != 0) {
-					reject(`usb mount error ${error}`)
-				} else {
-					resolve(code)
-				}
-      })
-    })
+    return Command(`mount ${device} ${this.dir}`)
   }
 
-  unmount() {
-		console.log('unmounting USB drive', this.dir)
-    return new Promise((resolve, reject) => {
-      if (fs.existsSync(this.dir) == false) {
-        resolve()
-      }
-			let error
-      let child = exec(`umount ${this.dir}`, (error, stdout, stderr) => {
-        if (error) {
-          reject(error)
-        }
-				error = stderr
-      })
-      child.on('close', (code) => {
-				if (code != 0) {
-					reject(`usb umount error code ${error}`)
-				} else {
-					resolve(code)
-				}
-      })
-    })
+  async unmount() {
+		console.log('mount-usb unmounting USB drive', this.dir)
+    if (fs.existsSync(this.dir) == false) {
+      // the path does not exist - 
+      return
+    }
+    return Command(`umount ${this.dir}`)
   }
 
-  clean() {
-    return new Promise((resolve, reject) => {
-      if (fs.existsSync(this.dir) == false) {
-        resolve()
-      }
-      let child = exec(`rm -rf ${this.dir}`, (error, stdout, stderr) => {
-        if (error) {
-          console.log(error)
-          reject(error)
-        }
-      })
-      child.on('close', (code) => {
-        resolve()
-      })
-    })
+  async clean() {
+    console.log('mount-usb cleaning up mount dir', this.dir)
+    if (fs.existsSync(this.dir) == false) {
+      console.log('mount-usb mount directory does not exist - ignorning')
+      resolve()
+    }
+    return Command(`rm -rf ${this.dir}`)
   }
 }
 
