@@ -1,13 +1,14 @@
 import MountUsb from './mount-usb.js'
 import ncp from 'ncp'
 import path from 'path'
-import drivelist from 'drivelist'
+import UsbScanner from './usb-scanner.js'
 
 class UsbStorage {
   
   constructor(mount_point = "/mnt/usb") {
     this.mount_point = mount_point
     this.drive = new MountUsb(mount_point)
+    this.scanner = new UsbScanner()
   }
 
   async mount() {
@@ -15,15 +16,12 @@ class UsbStorage {
 			// first run the unmount script to clean the mount directory (rm)
       this.unmount().then(() => {
         // list drives
-        return drivelist.list().then(devices => {
-          // filter USB drives
-          return devices.filter(device => { return device.busType == 'USB' })
-        })
-      }).then((devices) => {
+        return this.scanner.retriveUsb()
+      }).then((device) => {
         // validate more than 0 USB drives attached
-        if (devices.length > 0) {
+        if (device) {
           // return first drive in the list...
-          return this.drive.mount(devices[0].device)
+          return this.drive.mount(device.path)
         } else {
           reject("No Usb Devices Detected")
         }
