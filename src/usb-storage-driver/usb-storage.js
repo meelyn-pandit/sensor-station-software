@@ -26,7 +26,7 @@ class UsbStorage {
     // validate usb drive has been detected
     if (usb_device) {
       // return first drive in the list...
-      await this.drive.mount(device.path)
+      await this.drive.mount(usb_device.path)
     } else {
       reject("No Usb Devices Detected")
     }

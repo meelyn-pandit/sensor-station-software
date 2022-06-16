@@ -34,7 +34,7 @@ class UsbScanner {
         if (usb_device.children.length > 0) {
           // return the first partition of the USB device
           const device = usb_device.children[0]
-          console.log(`identified child partition; file type: ${usb_device.fstype}`)
+          console.log(`identified child partition; file type: ${device.fstype}`)
           return device
         }
       } else {
