@@ -22,10 +22,11 @@ class UsbStorage {
       console.log('usb-storage unable to unmount', this.mount_point, 'prior to mount phase')
     }
       // get a USB drive
-    const usb_device = this.scanner.retriveUsb()
+    const usb_device = await this.scanner.retriveUsb()
     // validate usb drive has been detected
     if (usb_device) {
       // return first drive in the list...
+      
       await this.drive.mount(usb_device.path)
     } else {
       reject("No Usb Devices Detected")
