@@ -16,7 +16,11 @@ class UsbStorage {
    */
   async mount() {
     // first run the unmount script to clean the mount directory (rm)
-    await this.unmount()
+    try {
+      await this.unmount()
+    } catch(err) {
+      console.log('usb-storage unable to unmount', this.mount_point, 'prior to mount phase')
+    }
       // get a USB drive
     const usb_device = this.scanner.retriveUsb()
     // validate usb drive has been detected
