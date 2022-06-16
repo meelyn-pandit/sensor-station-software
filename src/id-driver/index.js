@@ -1,5 +1,5 @@
 import RunCommand from '../command.js'
 
-export default () => {
-  return RunCommand('station-id', [])
+export default async () => {
+  return RunCommand('station-id')
 }
