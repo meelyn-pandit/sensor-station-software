@@ -86,6 +86,9 @@ router.get('/unmount', (req, res) => {
     })
 })
 
+/**
+ * copy data files from station to USB 
+ */
 router.get('/data', (req, res, next) => {
   req.setTimeout(1000 * 60 * 10) // set a 10 minute timeout for the usb transfer process to complete
   usb.copyTo("/data", /.*$/, (err) => {

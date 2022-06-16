@@ -17,7 +17,8 @@
     "test-adc": "node ./src/adc-driver/test/max11645.js",
     "test-leds": "node ./src/led-driver/test/index.js",
     "test-id": "node ./src/id-driver/v3-driver.js",
-    "test-revision": "node ./src/id-driver/station-revision.js"
+    "test-revision": "node ./src/id-driver/station-revision.js",
+    "test-usb-scanner": "node ./src/usb-storage-driver/test/index.js"
   },
   "author": "Bob Fogg",
   "license": "ISC",
