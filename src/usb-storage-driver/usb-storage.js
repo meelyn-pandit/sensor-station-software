@@ -51,7 +51,10 @@ class UsbStorage {
    */
   copyTo(src, pattern, callback) {
     ncp.ncp.limit = 16
-    ncp(src, this.mount_point, { filter: pattern }, callback)
+    ncp(src, this.mount_point, { 
+      filter: pattern,
+      dereference: true
+    }, callback)
   }
 
   /**
