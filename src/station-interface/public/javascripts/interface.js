@@ -1082,12 +1082,9 @@ const build_sg_tag_file_upload = function() {
 
 const init_sg = () => {
   document.querySelector('#upload-sensorgnome-tag-db').addEventListener('click', (evt) => {
-    console.log('uploading tag file')
     let tag_file = document.querySelector('#tag-db-file').files[0]
-    console.log(tag_file)
-    console.log(tag_file.name)
+    console.log('uploading tag file', tag_file.name)
     const file_ext = tag_file.name.split('.').pop()
-    console.log('ext', file_ext)
     const valid_exts = ['csv', 'sqlite']
     if (!valid_exts.includes(file_ext.toLowerCase())) {
       // invalid file extenstion - expected csv or sqlite
@@ -1095,11 +1092,10 @@ const init_sg = () => {
       return
     }
     const reader = new FileReader()
-    reader.readAsBinaryString(tag_file)
+    reader.readAsArrayBuffer(tag_file)
     reader.onload = (e) => {
       let contents = e.target.result
       console.log('loaded file contents', contents.length)
-      console.log(contents)
       fetch('/upload-sg-tag-file', {
         method: 'POST',
         body: contents,

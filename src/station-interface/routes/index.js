@@ -52,7 +52,6 @@ router.post('/save-sg-deployment', (req, res, next) => {
 const BASE_SG_TAG_DB_NAME = 'SG_tag_database'
 router.post('/upload-sg-tag-file', (req, res) => {
   console.log('tag database upload')
-  console.log(req.body)
   const ext = req.get('file-extension')
   const filename = `${BASE_SG_TAG_DB_NAME}.${ext}`
   console.log('about to delete sg tag db files')
