@@ -4,6 +4,7 @@ import logger from 'morgan'
 import indexRouter from './routes/index.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import bb from 'express-busboy'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 console.log('startin on', __dirname)
@@ -21,6 +22,10 @@ app.use('/highcharts', express.static(path.join(__dirname, '../../node_modules/h
 app.use('/bootstrap', express.static(path.join(__dirname, '../../node_modules/bootstrap')))
 app.use('/jquery', express.static(path.join(__dirname, '../../node_modules/jquery')))
 app.use('/moment', express.static(path.join(__dirname, '../../node_modules/moment')))
+
+bb.extend(app, {
+  upload: true
+})
 
 app.use('/', indexRouter)
 

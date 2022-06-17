@@ -1080,44 +1080,53 @@ const build_sg_tag_file_upload = function() {
 
 }
 
-  ; (function () {
-    document.querySelector('#sg_link').setAttribute('href', 'http://' + window.location.hostname + ':3010');
-    render_gateway()
-    initialize_reboot()
-    setInterval(render_gateway, 5000)
-    let component, col
-    let max_row_count = localStorage.getItem('max-row-count')
-    if (max_row_count) {
-      MAX_ROW_COUNT = max_row_count
-    } else {
-      localStorage.setItem('max-row-count', MAX_ROW_COUNT)
+const init_sg = () => {
+  document.querySelector('#upload-sensorgnome-tag-db').addEventListener('click', (evt) => {
+    console.log('uploading tag file')
+    let tag_file = document.querySelector('#tag-db-file').files[0]
+    console.log('got file??', tag_file)
+  })
+}
+
+; (function () {
+  document.querySelector('#sg_link').setAttribute('href', 'http://' + window.location.hostname + ':3010');
+  render_gateway()
+  initialize_reboot()
+  setInterval(render_gateway, 5000)
+  let component, col
+  let max_row_count = localStorage.getItem('max-row-count')
+  if (max_row_count) {
+    MAX_ROW_COUNT = max_row_count
+  } else {
+    localStorage.setItem('max-row-count', MAX_ROW_COUNT)
+  }
+  initialize_software_versions()
+  for (let i = 1; i <= 5; i++) {
+    component = build_radio_component(i)
+    col = document.createElement('div')
+    col.classList.add('col-lg')
+    col.appendChild(component)
+    document.querySelector('#main-radios').appendChild(col)
+  }
+  for (let i = 6; i <= 12; i++) {
+    component = build_radio_component(i)
+    col = document.createElement('div')
+    col.classList.add('col-lg')
+    col.appendChild(component)
+    document.querySelector('#extra-radios').appendChild(col)
+  }
+  initialize_websocket();
+  initialize_controls();
+  get_config();
+  render_tag_hist();
+  RAW_LOG = document.querySelector('#raw_log');
+  updateChrony();
+  setInterval(updateChrony, 30000);
+  init_sg()
+  $.ajax({
+    url: '/sg-deployment',
+    success: function (contents) {
+      document.querySelector('#sg-deployment').value = contents;
     }
-    initialize_software_versions()
-    for (let i = 1; i <= 5; i++) {
-      component = build_radio_component(i)
-      col = document.createElement('div')
-      col.classList.add('col-lg')
-      col.appendChild(component)
-      document.querySelector('#main-radios').appendChild(col)
-    }
-    for (let i = 6; i <= 12; i++) {
-      component = build_radio_component(i)
-      col = document.createElement('div')
-      col.classList.add('col-lg')
-      col.appendChild(component)
-      document.querySelector('#extra-radios').appendChild(col)
-    }
-    initialize_websocket();
-    initialize_controls();
-    get_config();
-    render_tag_hist();
-    RAW_LOG = document.querySelector('#raw_log');
-    updateChrony();
-    setInterval(updateChrony, 30000);
-    $.ajax({
-      url: '/sg-deployment',
-      success: function (contents) {
-        document.querySelector('#sg-deployment').value = contents;
-      }
-    });
-  })();
+  });
+})();
