@@ -1091,7 +1091,7 @@ const init_sg = () => {
       let contents = e.target.result
       console.log('loaded file contents', contents.length)
       console.log(contents)
-      fetch('/upload-tag-sg-file', {
+      fetch('/upload-sg-tag-file', {
         method: 'POST',
         body: contents
       }).then(res => res.json())
