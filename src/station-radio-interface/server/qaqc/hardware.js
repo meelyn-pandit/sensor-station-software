@@ -1,4 +1,7 @@
 import { QaqcPacket } from './packet.js'
+import int64 from 'int64-buffer'
+
+const Uint64LE = int64.Uint64LE
 
 class HardwarePacket {
   constructor(opts) {
@@ -41,10 +44,12 @@ class HardwarePacket {
     let date_buffer = Buffer.alloc(8)
     try {
       let date = new Date(this.system_time)
-      date_buffer.writeBigUint64LE(date.getTime())
+      let ms = new Uint64LE(date.getTime().toString(), 10)
+      date_buffer = ms.toBuffer()
     } catch (err) {
       console.error('invalid date for hardware qaqc packet', this.system_time)
       console.error(err)
+      date_buffer = Buffer.alloc(8)
     }
 
     return Buffer.concat([

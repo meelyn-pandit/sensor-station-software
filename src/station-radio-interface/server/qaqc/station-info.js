@@ -1,4 +1,7 @@
 import { QaqcPacket } from './packet.js'
+import int64 from 'int64-buffer'
+
+const Uint64LE = int64.Uint64LE
 
 class StationInfoPacket {
   constructor(opts) {
@@ -14,13 +17,11 @@ class StationInfoPacket {
   }
 
  getPayload() {
-     let imei = Buffer.alloc(8)
-    imei.writeBigInt64LE(this.imei)
-    let sim = Buffer.alloc(8)
-    sim.writeBigInt64LE(this.sim)
+    let imei = new Uint64LE(this.imei, 10)
+    let sim = new Uint64LE(this.sim, 10)
     return Buffer.concat([
-      imei,
-      sim
+      imei.toBuffer(),
+      sim.toBuffer()
     ])
   }
 

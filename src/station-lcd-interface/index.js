@@ -16,10 +16,10 @@ import { UsbDownloadTask } from "./tasks/usb-download-task.js"
 import { MountUsbTask } from "./tasks/usb-mount-task.js"
 import { UnmountUsbTask } from "./tasks/usb-unmount-task.js"
 import { UsbWifiUploadTask } from "./tasks/usb-wifi-upload-task.js"
-import { LedTask } from "./tasks/led-task.js"
 import { HostnameTask } from "./tasks/hostname-task.js"
 import { InternetTask } from "./tasks/internet-task.js"
 import { QaqcRequest } from './tasks/qaqc-task.js'
+import { BashUpdateTask } from './tasks/bash-update.js'
 import ButtonMap from './button-map.js'
 
 // Require Statements
@@ -57,7 +57,8 @@ let items = new MenuItem("main", null, [
     ]),
     new MenuItem("QAQC", new QaqcRequest(host), []),
     new MenuItem("Time", new SystemTimeTask(host), []),
-    new MenuItem("Restart", new SystemRestartTask(), [])
+    new MenuItem("Restart", new SystemRestartTask(), []),
+    new MenuItem("Bash Update", new BashUpdateTask(), [])
   ]),
   new MenuItem("Network", null, [
     new MenuItem("Cellular", null, [
@@ -72,26 +73,6 @@ let items = new MenuItem("main", null, [
   new MenuItem("Power", new SensorVoltageTask(host), []),
   new MenuItem("Temperature", new SensorTemperatureTask(host), []),
   new MenuItem("Location", new GpsTask(host), []),
-  new MenuItem("Led", null, [
-    new MenuItem("Diagnostic A", null, [
-      new MenuItem("On", new LedTask(host, { header: "Diagnostic A", endpoint: 'led/diag/a', state: 'on' }), []),
-      new MenuItem("Off", new LedTask(host, { header: "Diagnostic A", endpoint: 'led/diag/a', state: 'off' }), []),
-      new MenuItem("Toggle", new LedTask(host, { header: "Diagnostic A", endpoint: 'led/diag/a', state: 'toggle' }), []),
-      new MenuItem("Blink", new LedTask(host, { header: "Diagnostic A", endpoint: 'led/diag/a', state: 'blink' }), [])
-    ]),
-    new MenuItem("Diagnostic B", null, [
-      new MenuItem("On", new LedTask(host, { header: "Diagnostic B", endpoint: 'led/diag/b', state: 'on' }), []),
-      new MenuItem("Off", new LedTask(host, { header: "Diagnostic B", endpoint: 'led/diag/b', state: 'off' }), []),
-      new MenuItem("Toggle", new LedTask(host, { header: "Diagnostic B", endpoint: 'led/diag/b', state: 'toggle' }), []),
-      new MenuItem("Blink", new LedTask(host, { header: "Diagnostic B", endpoint: 'led/diag/b', state: 'blink' }), [])
-    ]),
-    new MenuItem("Gps", null, [
-      new MenuItem("On", new LedTask(host, { header: 'Gps', endpoint: 'led/gps', state: 'on' }), []),
-      new MenuItem("Off", new LedTask(host, { header: 'Gps', endpoint: 'led/gps', state: 'off' }), []),
-      new MenuItem("Toggle", new LedTask(host, { header: 'Gps', endpoint: 'led/gps', state: 'toggle' }), []),
-      new MenuItem("Blink", new LedTask(host, { header: 'Gps', endpoint: 'led/gps', state: 'blink' }), [])
-    ])
-  ])
 ])
 
 

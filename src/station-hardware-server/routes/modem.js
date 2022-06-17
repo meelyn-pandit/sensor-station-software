@@ -2,6 +2,7 @@
 import express from 'express'
 import { exec, spawn } from 'child_process'
 import { ModemInterface, QuectelCommandSetParser } from '../../modem-status-driver/index.js'
+import RunCommand from '../../command.js'
 var router = express.Router()
 
 const Modem = new ModemInterface({
@@ -38,29 +39,8 @@ router.get('/ppp', (req, res, next) => {
   })
 })
 
-const RunCommand = (cmd, args) => {
-  console.log('about to run command', cmd)
-  return new Promise((resolve, reject) => {
-    const command_process = spawn(cmd, args)
-    command_process.stdout.on('data', (data) => {
-      console.log(data.toString())
-    })
-    command_process.stderr.on('data', (data) => {
-      console.error(data.toString())
-    })
-    command_process.on('close', (code) => {
-      resolve(code)
-    })
-    command_process.on('error', (err) => {
-      console.error('error processing command', cmd)
-      console.error(err)
-      reject(err)
-    })
-  })
-}
-
 router.post('/stop', (req, res, next) => {
-  RunCommand('systemctl', ['stop', 'modem'])
+  RunCommand('systemctl stop modem')
     .then((response) => {
       res.status(204).send()
     })
@@ -70,7 +50,7 @@ router.post('/stop', (req, res, next) => {
 })
 
 router.post('/start', (req, res, next) => {
-  RunCommand('systemctl', ['start', 'modem'])
+  RunCommand('systemctl start modem')
     .then((response) => {
       res.status(204).send()
     })
@@ -80,9 +60,13 @@ router.post('/start', (req, res, next) => {
 })
 
 router.post('/enable', (req, res, next) => {
-  RunCommand('systemctl', ['enable', '/lib/ctt/sensor-station-software/system/modem/modem.service'])
+  RunCommand('systemctl enable /lib/ctt/sensor-station-software/system/modem/modem.service')
     .then((response) => {
-      res.status(204).send()
+      // start the modem after enabling
+      RunCommand('systemctl restart modem')
+        .then((response) => {
+          res.status(204).send()
+        })
     })
     .catch((err) => {
       res.status(500).send(err.toString())
@@ -90,7 +74,7 @@ router.post('/enable', (req, res, next) => {
 })
 
 router.post('/disable', (req, res, next) => {
-  RunCommand('systemctl', ['disable', 'modem'])
+  RunCommand('systemctl disable modem')
     .then((response) => {
       res.status(204).send()
     })

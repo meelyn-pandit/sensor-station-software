@@ -1,4 +1,7 @@
 import { QaqcPacket } from './packet.js'
+import int64 from 'int64-buffer'
+
+const Uint64LE = int64.Uint64LE
 
 class GpsPacket {
   constructor(opts) {
@@ -22,10 +25,12 @@ class GpsPacket {
 
     try {
       let date = new Date(this.gps_time)
-      buffer.writeBigUint64LE(date.getTime())
+      let ms = new Uint64LE(date.getTime().toString(), 10)
+      buffer = ms.toBuffer()
     } catch (err) {
       console.error('error getting time', this.gps_time)
       console.error(err)
+      buffer = Buffer.alloc(8)
     }
     return buffer
   }

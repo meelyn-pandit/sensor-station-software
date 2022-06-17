@@ -12,7 +12,7 @@ const get_version = async () => {
   } catch(err) {
     console.error(err)
     console.log('2')
-    await Command('/usr/local/bin/hashlet', ['cut', '-c5-16', '>', '/etc/ctt/station-id'])
+    await Command('/usr/local/bin/hashlet cut -c5-16 > /etc/ctt/station-id')
     process.exit(0)
   }
 }

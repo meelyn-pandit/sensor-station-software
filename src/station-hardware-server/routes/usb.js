@@ -1,74 +1,95 @@
 import express from 'express'
 import fs from 'fs'
-import { UsbStorage, BlockDeviceCmd } from '../../usb-storage-driver/index.js'
+import { UsbStorage } from '../../usb-storage-driver/index.js'
+import drivelist from 'drivelist'
+
 const router = express.Router()
 
 class WifiConfig {
-  constructor(path) {
-    this.path = path
+	/**
+	 * 
+	 * @param {*} country 
+	 */
+  constructor(country) {
+    if (!country) {
+      // default to US
+      country = 'US'
+    }
+    this.country = country 
+    this.wpa_supplicant_location = '/etc/wpa_supplicant/wpa_supplicant.conf'
+    this.wifi_header = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=${country}\n`
   }
-  init(country) {
-    return new Promise((resolve, reject) => {
-      try {
-        const file = this.path
-        const contents = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=${country}\n`
-        fs.appendFile(file, contents, { flag: 'w' }, () => {
-          resolve()
-        })
-      } catch (err) {
-        reject(err)
+
+  /**
+   * write wpa_supplicant.conf file - only supports 1 network at a time
+   * @param {*} opts.ssid
+   * @param {*} opts.psk
+   */
+  write(opts) {
+    let valid_opts = false
+    if (opts.ssid) {
+      if (opts.psk) {
+        valid_opts = true
       }
-    })
-  }
-  addNetwork(ssid, psk) {
-    try {
-      const file = this.path
-      const contents = `\nnetwork={\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}`
-      fs.appendFileSync(file, contents)
-    } catch (err) {
-      console.log("err")
+    }
+    if (valid_opts) {
+      const network_info = `\nnetwork={\n\tssid=\"${opts.ssid}\"\n\tpsk=\"${opts.psk}\"\n}`
+      const file_contents = `${this.wifi_header}${network_info}`
+      console.log('station-hardware overwriting wpa_supplicant file')
+      fs.writeFileSync(this.wpa_supplicant_location, file_contents)
+    } else {
+      throw new Error('missing ssid and/or psk')
     }
   }
 }
 
-
-
-let usb = new UsbStorage()
+const usb = new UsbStorage()
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-
-  new BlockDeviceCmd().poll()
+  drivelist.list()
     .then((devices) => {
-      res.json(devices)
+      res.json(devices.filter(device => { return device.busType == 'USB'}))
     }).catch((error) => {
       res.json(null)
     })
-
 })
 
 const success = { status: "success" }
 const fail = { status: "fail" }
 
-router.get('/mount', function (req, res, next) {
+/**
+ * mount USB drive to /mnt/usb
+ */
+router.get('/mount', (req, res) => {
   usb.mount()
     .then(() => {
       res.json(success)
     }).catch((err) => {
+      console.log('hardware-server USB mount error')
+      console.error(err)
       res.json(fail)
     })
 })
 
-router.get('/unmount', function (req, res, next) {
+/**
+ * unmount USB drive at /mnt/usb
+ */
+router.get('/unmount', (req, res) => {
   usb.unmount()
     .then(() => {
       res.json(success)
     }).catch((err) => {
+      console.log('hardware-server USB umount error')
+      console.error(err)
       res.json(fail)
     })
 })
 
-router.get('/data', function (req, res, next) {
+/**
+ * copy data files from station to USB 
+ */
+router.get('/data', (req, res, next) => {
   req.setTimeout(1000 * 60 * 10) // set a 10 minute timeout for the usb transfer process to complete
   usb.copyTo("/data", /.*$/, (err) => {
     if (err) {
@@ -79,24 +100,33 @@ router.get('/data', function (req, res, next) {
   })
 })
 
+/**
+ * load WiFi credentials from USB mount point
+ * overwrite wpa_supplicant file
+ */
 router.get('/wifi', function (req, res, next) {
-
   const path = "/mnt/usb/wifi/credentials.json"
+  let response = fail
 
   if (fs.existsSync(path)) {
-    var data = JSON.parse(fs.readFileSync(path, 'utf8'))
-
-    let wifi = new WifiConfig("/etc/wpa_supplicant/wpa_supplicant.conf")
-    wifi.init(data.country)
-      .then(() => {
-        wifi.addNetwork(data.ssid, data.psk)
-      }).catch((err) => {
-        console.log(err)
-      })
-
-    return res.json(success)
-  }
-  return res.json(fail)
+    try {
+      // load JSON file with credentials
+      var data = JSON.parse(fs.readFileSync(path, 'utf8'))
+      let wifi = new WifiConfig(data.country)
+      wifi.write({
+				ssid: data.ssid, 
+				psk: data.psk
+			})
+      // finished
+      response = success
+    } catch(err) {
+      console.log('something went wrong adding wifi network')
+      console.log(err)
+    }
+  } else {
+		console.log('hardware-server WiFi crendentials path does not exist', path)
+	}
+  res.json(response)
 })
 
 export default router

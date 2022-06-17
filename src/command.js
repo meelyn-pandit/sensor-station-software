@@ -1,24 +1,15 @@
-import { spawn } from 'child_process'
+import { exec } from 'child_process'
 
-export default (cmd, args) => {
-  console.log('running command', cmd, args)
+export default async (cmd) => {
+  console.log('executing command', cmd)
   return new Promise((resolve, reject) => {
-    const command_process = spawn(cmd, args)
-    let buffer = ''
-    let err = ''
-    let code
-    command_process.stdout.on('data', (data) => {
-      buffer += data.toString()
-    })
-    command_process.stderr.on('data', (data) => {
-      err += data.toString()
-    })
-    command_process.on('close', (code) => {
-      resolve(buffer.trim())
-    })
-    command_process.on('error', (err) => {
-      reject(err)
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.log(`command error ${cmd}; ${stderr}`)
+        reject(error)
+        return
+      }
+      resolve(stdout)
     })
   })
-
 }
