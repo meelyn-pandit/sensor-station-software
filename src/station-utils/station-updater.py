@@ -33,7 +33,7 @@ class StationUpdater:
         update_script = self.getUpdateScript()
         if update_script:
             with open(self.tmp_file, 'w') as outFile:
-                outFile.write(response.text)
+                outFile.write(update_script)
             with open(self.update_log, 'a') as outFile:
                 # run bash script
                 now = datetime.datetime.utcnow()
