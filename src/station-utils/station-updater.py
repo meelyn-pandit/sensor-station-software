@@ -30,7 +30,7 @@ class StationUpdater:
             return response.text
 
     def update(self):
-        update_script = this.getUpdateScript()
+        update_script = self.getUpdateScript()
         if update_script:
             with open(self.tmp_file, 'w') as outFile:
                 outFile.write(response.text)
