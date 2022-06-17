@@ -50,7 +50,7 @@ router.post('/save-sg-deployment', (req, res, next) => {
 
 router.post('/upload-sg-tag-file', (req, res) => {
   console.log('tag database upload')
-  console.log(req.files)
+  console.log(req.body)
   res.json({ res: true})
 })
 

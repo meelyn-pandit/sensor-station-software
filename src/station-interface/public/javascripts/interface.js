@@ -1091,6 +1091,20 @@ const init_sg = () => {
       let contents = e.target.result
       console.log('loaded file contents', contents.length)
       console.log(contents)
+      fetch('/upload-tag-sg-file', {
+        method: 'POST',
+        body: contents
+      }).then(res => res.json())
+      .then(json => {
+        if (json.res == true) {
+          alert('Tag database upload complete')
+        } else {
+          alert('invalid response for tag database upload')
+        }
+      }).catch((err) => {
+        console.error(err)
+        alert('An error occured attempting to upload the SG tag file database')
+      })
     }
   })
 }
