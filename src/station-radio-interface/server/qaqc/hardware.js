@@ -1,5 +1,7 @@
 import { QaqcPacket } from './packet.js'
-import { Uint64LE } from 'int64-buffer'
+import int64 from 'int64-buffer'
+
+const Uint64LE = int64.Uint64LE
 
 class HardwarePacket {
   constructor(opts) {
