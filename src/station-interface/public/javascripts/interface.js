@@ -1085,6 +1085,13 @@ const init_sg = () => {
     console.log('uploading tag file')
     let tag_file = document.querySelector('#tag-db-file').files[0]
     console.log('got file??', tag_file)
+    const reader = new FileReader()
+    reader.readAsBinaryString(tag_file)
+    reader.onload = (e) => {
+      let contents = e.target.result
+      console.log('loaded file contents', contents.length)
+      console.log(contents)
+    }
   })
 }
 
