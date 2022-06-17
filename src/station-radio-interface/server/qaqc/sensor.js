@@ -5,6 +5,9 @@ class SensorPacket {
     this.battery = opts.battery
     this.solar = opts.solar
     this.rtc = opts.rtc
+    if (this.rtc < 0) {
+      this.rtc = 0
+    }
     this.temp_c = opts.temp_c
     this.station_id = opts.station_id
 
