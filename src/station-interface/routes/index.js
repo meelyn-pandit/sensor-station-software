@@ -6,6 +6,7 @@ import { spawn } from 'child_process'
 import archiver from 'archiver'
 import bodyParser from 'body-parser'
 import fetch from 'node-fetch'
+import RunCommand from '../../command.js'
 
 const TMP_FILE = '/tmp/download.zip'
 const SG_DEPLOYMENT_FILE = '/data/sg_files/deployment.txt'
@@ -48,10 +49,23 @@ router.post('/save-sg-deployment', (req, res, next) => {
   })
 })
 
+const BASE_SG_TAG_DB_NAME = 'SG_tag_database'
 router.post('/upload-sg-tag-file', (req, res) => {
   console.log('tag database upload')
   console.log(req.body)
-  res.json({ res: true})
+  const ext = req.get('file-extension')
+  const filename = `${BASE_SG_TAG_DB_NAME}.${ext}`
+  console.log('about to delete sg tag db files')
+  RunCommand(`rm /data/sg_files/${BASE_SG_TAG_DB_NAME}*`)
+    .then(() => {
+      let uri = `/data/sg_files/${filename}`
+      console.log('writing tag database file')
+      fs.writeFileSync(uri, req.body)
+      res.json({ res: true })
+    }).catch((err) => {
+      console.log('something went wrong handling new SG tag database file')
+      console.error(err)
+    })
 })
 
 const prepareData = (filelist) => {
