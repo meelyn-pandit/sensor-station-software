@@ -285,8 +285,9 @@ html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
     div(class="row")
       div(class="col-sm")
         div(style="text-align:center;")
-          input(type="file" id="tag-db-file" name="tag-db")
-          button(class="btn btn-danger" id="upload-sensorgnome-tag-db") Upload Tag Database File
+          form(id="tag-db-upload-form" enctype="multipart/form-data" method="post" action="/upload-tag-db-file")
+            input(type="file" id="tag-db-file" name="tag-db")
+            input(class="btn btn-danger" id="upload-sensorgnome-tag-db" type="submit" value="submit") 
 
     div(style="min-height:15px")
     div(class="row")
