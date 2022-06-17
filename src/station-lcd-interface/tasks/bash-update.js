@@ -12,11 +12,11 @@ class BashUpdateTask {
       console.log('executing bash update')
       execFile('bash-update-station', (error, stdout, stderr) => {
         if (error) {
-          resolve('run error')
+          resolve([this.header, 'run error'])
           return
         }
         console.log(stdout)
-        resolve('finished')
+        resolve([this.header, 'finished'])
       })
     })
   }
