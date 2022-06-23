@@ -1,5 +1,6 @@
 import RunCommand from '../command.js'
 
 export default async () => {
-  return RunCommand('station-id')
+  const station_id = RunCommand('station-id')
+  return station_id.trim()
 }
