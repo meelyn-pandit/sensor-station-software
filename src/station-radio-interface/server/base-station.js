@@ -48,6 +48,7 @@ class BaseStation {
     this.begin = moment(new Date()).utc()
     this.heartbeat = heartbeats.createHeart(1000)
     this.server_api = new ServerApi()
+    this.radio_fw = {}
   }
 
   /**
@@ -97,6 +98,12 @@ class BaseStation {
     this.initLeds()
   }
 
+  /**
+   * 
+   * @param {Object} opts 
+   * @param {Number} opts.channel
+   * @param {String} opts.mode
+   */
   toggleRadioMode(opts) {
     if (opts.channel in Object.keys(this.active_radios)) {
       this.stationLog(`toggling ${opts.mode} mode on channel ${opts.channel}`)
@@ -141,7 +148,12 @@ class BaseStation {
         case ('update-station'):
           this.runCommand('update-station')
           break
-
+        case ('radio-firmware'):
+          this.broadcast(JSON.stringify({
+            msg_type: 'radio-firmware',
+            firmware: this.radio_fw,
+          }))
+          break
         case ('qaqc'):
           this.qaqc()
           break
@@ -227,12 +239,20 @@ class BaseStation {
     })
   }
 
+  getRadioFirmware() {
+    return Object.keys(this.radio_fw)
+      .map((channel) => ({
+          channel: channel,
+          version: this.radio_fw[channel],
+        }))
+  }
+
   /**
    * checkin to the server
    */
   checkin() {
     this.stationLog('server checkin initiated')
-    this.server_api.healthCheckin(this.data_manager.stats.stats)
+    this.server_api.healthCheckin(this.data_manager.stats.stats, this.getRadioFirmware())
       .then((response) => {
         if (response == true) {
           this.stationLog('server checkin success')
@@ -291,8 +311,8 @@ class BaseStation {
    */
   startTimers() {
     // start data rotation timer
-    // checkin after 10 seconds of station running
-    setTimeout(this.checkin.bind(this), 10000)
+    // checkin after 5 seconds of station running
+    setTimeout(this.checkin.bind(this), 10 * 1000)
     // this.heartbeat.createEvent(5, this.qaqc.bind(this))
     this.heartbeat.createEvent(this.config.data.record.rotation_frequency_minutes * 60, this.rotateDataFiles.bind(this))
     this.heartbeat.createEvent(this.config.data.record.sensor_data_frequency_minutes * 60, this.pollSensors.bind(this))
@@ -359,9 +379,12 @@ class BaseStation {
           beep.msg_type = 'beep'
           this.broadcast(JSON.stringify(beep))
         })
+        beep_reader.on('radio-fw', (fw_version) => {
+          this.radio_fw[radio.channel] = fw_version
+        })
         beep_reader.on('open', (info) => {
           this.stationLog('opened radio on port', radio.channel)
-          this.active_radios[info.port_uri] = info
+          // this.active_radios[info.port_uri] = info
           beep_reader.issueCommands(radio.config)
         })
         beep_reader.on('write', (msg) => {
@@ -370,6 +393,8 @@ class BaseStation {
         beep_reader.on('error', (err) => {
           console.log('reader error', err)
           console.error(err)
+          // error on the radio - probably a path error
+          beep_reader.stopPollingFirmware()
           this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
         })
         beep_reader.on('close', (info) => {
