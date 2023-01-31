@@ -28,13 +28,18 @@ fi
 
 sudo sh -c "date -u +'%Y-%m-%d %H:%M:%S' > /etc/ctt/station-software"
 
-echo 'Sensor Station Update Complete'
-echo
+echo '*******************************************'
+echo 'CTT Sensor Station Software Update Complete'
+echo '*******************************************'
 
 sudo systemctl restart station-hardware-server
 sudo systemctl restart station-lcd-interface
 sudo systemctl restart station-radio-interface
 sudo systemctl restart station-web-interface
+
+echo '********************'
+echo 'Updating Sensorgnome'
+echo '********************'
 
 # pull sensorgnome code updates
 dir="$home/sensorgnome/sensorgnome"
@@ -44,3 +49,11 @@ git pull
 changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)" 
 check_run package.json "npm install"
 sudo systemctl restart sensorgnome
+
+echo
+echo 'Checking for OTA updates'
+bash-update-station
+echo 
+echo '***********************'
+echo 'STATION UPDATE COMPLETE'
+echo '***********************'
