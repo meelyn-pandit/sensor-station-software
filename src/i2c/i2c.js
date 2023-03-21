@@ -1,5 +1,9 @@
+// https://github.com/fivdi/i2c-bus#readme
 import i2c from 'i2c-bus'
 
+/**
+ * i2c interface for reading / writing
+ */
 class I2C {
   #address
   #bus
@@ -8,15 +12,14 @@ class I2C {
 	 * @param {*} address  - i2c address
 	 */
 	constructor(opts) {
-    console.log('init i2c', opts)
 		this.#address = opts.address
 		this.#bus = opts.bus
 	}
 
 	/**
 	 * 
-	 * @param {*} opts.register 
-	 * @param {*} opts.buffer
+	 * @param {Number} opts.register 1 byte register, ie 0x58
+	 * @param {Buffer} opts.buffer buffer object to write to 
 	 */
 	async writeRegister(opts) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
@@ -27,7 +30,7 @@ class I2C {
 
 	/**
 	 * 
-	 * @param {*} buffer 
+	 * @param {Buffer} buffer 
 	 */
 	async write(buffer) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
@@ -38,8 +41,8 @@ class I2C {
 
 	/**
 	 * 
-	 * @param {*} opts.register
-	 * @param {*} opts.buffer
+	 * @param {Number} opts.register
+	 * @param {Buffer} opts.buffer
 	 * @returns 
 	 */
 	async readRegister(opts) {
@@ -51,7 +54,7 @@ class I2C {
 
 	/**
 	 * 
-	 * @param {*} buffer 
+	 * @param {Buffer} buffer 
 	 */
 	async read(buffer) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
