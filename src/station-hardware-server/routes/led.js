@@ -1,5 +1,5 @@
 import express from 'express'
-import { Led, GpsLed, DiagALed, DiagBLed } from '../../led-driver/v2-driver.js'
+import { GpsLed, DiagALed, DiagBLed } from '../../hardware/led-driver/v2-driver.js'
 import revision from '../../revision.js'
 
 var router = express.Router()

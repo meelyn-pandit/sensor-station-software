@@ -9,7 +9,9 @@ class I2C {
   #bus
 	/**
 	 * 
-	 * @param {*} address  - i2c address
+	 * @param {Object} opts
+	 * @param {Number} opts.address
+	 * @param {Number} opts.bus
 	 */
 	constructor(opts) {
 		this.#address = opts.address

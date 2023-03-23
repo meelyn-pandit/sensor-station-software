@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { SetState, Reset, EnablePullUp, SetDirection } from '../../../io-expander/expander.js'
+import { SetState, Reset, EnablePullUp, SetDirection } from '../../../hardware/io-expander/expander.js'
 
 const LEDS = {
   GPS: 0,

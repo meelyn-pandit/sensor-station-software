@@ -1,5 +1,5 @@
 import Addresses from './addresses.js'
-import i2c from './i2c/i2c.js'
+import i2c from '../i2c/i2c.js'
 
 const I2C = new i2c({
   address: 0x70,

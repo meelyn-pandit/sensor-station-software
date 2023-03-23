@@ -1,4 +1,4 @@
-import RtcEeprom from './rtc-serial.js'
+import RtcEeprom from './ds3231.js'
 
 const V3_PREFIX = 'V3'
 

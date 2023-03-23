@@ -1,6 +1,6 @@
 import express from 'express'
 import fs from 'fs'
-import getDeviceId from '../../id-driver/index.js'
+import getDeviceId from '../../hardware/id-driver/index.js'
 import path from 'path'
 import { ComputeModule } from './compute-module.js'
 import { fileURLToPath } from 'url'
