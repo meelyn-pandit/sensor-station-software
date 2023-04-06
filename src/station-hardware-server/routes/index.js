@@ -24,7 +24,7 @@ getDeviceId().then((id) => {
 }).catch((err) => {
   console.log('Device ID Error')
   console.error(err)
-  device_id = "error"
+  device_id = "file_error"
 })
 
 /* GET home page. */

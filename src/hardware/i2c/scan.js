@@ -10,7 +10,9 @@ export default async (bus_id) => {
   return new Promise((resolve, reject) => {
     bus.scan((err, addresses) => {
       if (err) return reject(err)
-      resolve(addresses)
+      bus.close().then(() => {
+        resolve(addresses)
+      })
     })
   })
 }

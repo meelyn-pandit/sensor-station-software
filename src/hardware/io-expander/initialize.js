@@ -10,6 +10,7 @@ import {
 const AllPins = HardwarePins.Buttons.concat(HardwarePins.Configs)
 
 export default async function() {
+  console.log('initializing IO expander')
   await Reset()
   // set pins to pull up
   await EnablePullUp(AllPins)

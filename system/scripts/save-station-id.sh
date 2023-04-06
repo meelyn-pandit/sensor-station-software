@@ -4,7 +4,7 @@ V3_RTC=mcp7941x
 BOOT_CONFIG=/boot/config.txt
 
 # get station-id from chip or read from disk
-/usr/local/bin/node /lib/ctt/sensor-station-software/src/hardware/id-driver/station-revision.js
+/usr/local/bin/node /lib/ctt/sensor-station-software/src/hardware/initialize.js
 
 # check station version
 typeset -i version=$(cat /etc/ctt/station-revision)
