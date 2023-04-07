@@ -8,17 +8,20 @@ import Atsha204a from './atsha204a.js'
 import Ds3231 from './ds3231.js'
 
 // prefix for V3 station IDs
-const PREFIX = 'V3'
+const V3_PREFIX = 'V3'
 
 const IdChips = {
   DS3231: async() => {
     const buffer = await Ds3231()
-    return PREFIX.concat(buffer.slice(3).toString('hex').toUpperCase())
+    return V3_PREFIX.concat(buffer.slice(3).toString('hex').toUpperCase())
   },
-  AT24MAC602: async() => {
+  AT24MAC602: async(revision) => {
     const buffer = await At24Mac602.ReadEUI64()
-    const sliced_buffer = Buffer.concat([buffer.slice(0,3), buffer.slice(5)])
-    return PREFIX.concat(sliced_buffer.toString('hex').toUpperCase())
+    // for the At24MAC602 chip - slice the first 2 of 3 manufacturer bytes 
+    const sliced_buffer = Buffer.concat([buffer.slice(2,3), buffer.slice(5)])
+    // V3 prefix  - append V3DD where DD is the provided revision
+    const prefix = V3_PREFIX.concat(revision.toString().padStart(2, '0'))
+    return prefix.concat(sliced_buffer.toString('hex').toUpperCase())
   },
   ATSHA204A: async() => {
     return Atsha204a()
@@ -86,6 +89,7 @@ class StationIdInterface {
    */
   async getV3StationId(revision) {
     let id
+    const human_revision = revision + 1
     switch(revision) {
       case 0:
         // revision 0 - use DS3231 RTC EEPROM chip for ID
@@ -93,7 +97,7 @@ class StationIdInterface {
         break
       case 1:
         // revision 1 - use AT24MAC602 Serial EEPROM 
-        id = await IdChips.AT24MAC602()
+        id = await IdChips.AT24MAC602(human_revision)
         break
       default: 
         throw new Error('Cannot identify station revision')
