@@ -45,13 +45,6 @@ class StationLeds {
       })
   }
 
-  async init() {
-    await Reset()
-    let pins = Object.values(BUTTONS).concat(CFGS)
-    await EnablePullUp(pins)
-    await SetDirection(pins)
-  }
-
   async toggleAll(gps) {
     let gps_status = this.checkGps(gps)
     let internet_status

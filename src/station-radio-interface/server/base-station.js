@@ -59,10 +59,6 @@ class BaseStation {
     this.data_manager.log(msgs)
   }
 
-  initLeds() {
-    this.station_leds.init()
-  }
-
   /**
    * load config - start the data manager, gps client, web socket server, timers, radios
    */
@@ -95,7 +91,6 @@ class BaseStation {
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
-    this.initLeds()
   }
 
   /**
