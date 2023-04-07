@@ -79,6 +79,11 @@ class StationIdInterface {
     }
   }
 
+  /**
+   * 
+   * @param {Number} revision hardware revision to determine ID chip to check
+   * @returns {String} V3+ Station ID
+   */
   async getV3StationId(revision) {
     let id
     switch(revision) {
@@ -96,10 +101,21 @@ class StationIdInterface {
     return id
   }
 
+  /**
+   * 
+   * @returns {String} V2 Station ID
+   */
   async getV2StationId() {
     return IdChips.ATSHA204A()
   }
 
+  /**
+   * @typedef {Object} HardwareInfo
+   * @property {String} id - Station ID
+   * @property {Number} version - Station Version
+   * @property {Number} revision - Station Hardware Revision
+   * @returns {HardwareInfo} 
+   */
   async getHardwareInfo() {
     const version_info = await this.getVersion()
     const { version, revision } = version_info
