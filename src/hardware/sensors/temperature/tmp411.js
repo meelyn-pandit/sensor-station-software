@@ -1,4 +1,5 @@
 import i2c from '../../i2c/i2c.js'
+import i2cscanner from '../../i2c/scan.js'
 
 /**
  * utility to read temperature from TMP411 sensor chip
@@ -11,6 +12,8 @@ class Tmp411 {
       address: this.#address,
       bus: 1,
     })
+
+    this.device_detected = null
 
     this.registers = {
       CONFIG: {
@@ -29,6 +32,24 @@ class Tmp411 {
       },
       STATUS: 0x02,
     }
+  }
+
+  async detected() {
+    // check that the device has been detected at least once
+    if (this.device_detected === null) {
+      // check has not been made - make it now
+      console.log('first time TMP411 check')
+      const addresses = await i2cscanner(1)
+      if (addresses.includes(this.#address)) {
+        // identified a device at the proper address
+        console.log('TMP 411 detected')
+        this.device_detected = true
+      } else {
+        console.log('TMP 411 not detected')
+        this.device_detected = false
+      }
+    }
+    return this.device_detected
   }
 
   /**
@@ -53,11 +74,24 @@ class Tmp411 {
     })
   }
 
+  c_to_f(celsius) {
+    return celsius * 9 / 5 + 32
+  }
+
   /**
    *
    **/
   async readLocalTemperature() {
     // configure the tmp411 chip to extend temperature range
+    const detected = await this.detected()
+    if (detected === false) {
+      // chip was not detected
+      // return bad values
+      return {
+        celsius: -100,
+        fahrenheit: -100,
+      }
+    }
     await this.configure()
     // read the low byte from the register
     const low_byte = Buffer.alloc(1)
@@ -78,7 +112,10 @@ class Tmp411 {
     let celsius = high - offset
     // account for decimal fraction
     if (low === 128) celsius += 0.5
-    return celsius
+    return {
+      celsius,
+      fahrenheit: this.c_to_f(celsius)
+    }
   }
 }
 
