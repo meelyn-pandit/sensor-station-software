@@ -20,8 +20,13 @@ class I2C {
 
 	/**
 	 * 
-	 * @param {Number} opts.register 1 byte register, ie 0x58
-	 * @param {Buffer} opts.buffer buffer object to write to 
+   * @typedef {Object} RegisterInput
+   * @property {Number} register
+   * @property {Buffer} buffer
+  */
+
+  /**
+	 * @param {RegisterInput}
 	 */
 	async writeRegister(opts) {
 		const i2c1 = await i2c.openPromisified(this.#bus)
@@ -43,8 +48,7 @@ class I2C {
 
 	/**
 	 * 
-	 * @param {Number} opts.register
-	 * @param {Buffer} opts.buffer
+	 * @param {RegisterInput} opts
 	 * @returns 
 	 */
 	async readRegister(opts) {
