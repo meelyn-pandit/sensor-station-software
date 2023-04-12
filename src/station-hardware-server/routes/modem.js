@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { exec, spawn } from 'child_process'
+import { exec } from 'child_process'
 import { ModemInterface, QuectelCommandSetParser } from '../../modem-status-driver/index.js'
 import RunCommand from '../../command.js'
 var router = express.Router()

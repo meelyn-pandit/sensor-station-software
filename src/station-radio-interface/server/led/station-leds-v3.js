@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { SetState, Reset, EnablePullUp, SetDirection } from '../../../io-expander/expander.js'
+import { SetState, Reset, EnablePullUp, SetDirection } from '../../../hardware/io-expander/expander.js'
 
 const LEDS = {
   GPS: 0,
@@ -43,13 +43,6 @@ class StationLeds {
           return false
         }
       })
-  }
-
-  async init() {
-    await Reset()
-    let pins = Object.values(BUTTONS).concat(CFGS)
-    await EnablePullUp(pins)
-    await SetDirection(pins)
   }
 
   async toggleAll(gps) {

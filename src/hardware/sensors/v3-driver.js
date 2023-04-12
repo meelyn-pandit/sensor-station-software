@@ -1,10 +1,15 @@
 import EventEmitter from 'events'
 import Max11645 from './max11645.js'
+import Tmp411 from './temperature/tmp411.js'
 
+/**
+ * abstraction for v3 station sensor monitor
+ */
 class SensorMonitor extends EventEmitter {
   constructor() {
     super()
     this.adc = new Max11645()
+    this.temperature_sensor = new Tmp411()
     this.interval = null
     this.data = {
       voltages: {},
@@ -23,6 +28,8 @@ class SensorMonitor extends EventEmitter {
 
   async read() {
     let voltages = await this.adc.getVoltages()
+    const temperature = await this.temperature_sensor.readLocalTemperature()
+    const { celsius, fahrenheit } = temperature
     this.data = {
       voltages: {
         battery: voltages.battery.toFixed(2),
@@ -30,8 +37,8 @@ class SensorMonitor extends EventEmitter {
         rtc: -1
       },
       temperature: {
-        celsius: 0,
-        fahrenheit: 0,
+        celsius,
+        fahrenheit,
       },
       recorded_at: new Date()
     }

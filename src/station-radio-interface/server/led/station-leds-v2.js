@@ -38,10 +38,6 @@ class StationLeds {
     }
   }
 
-  async init() {
-    // placeholder for v3 compatibility
-  }
-
   async toggleInternet() {
     return fetch('http://localhost:3000/modem/ppp')
       .then(res => res.json())

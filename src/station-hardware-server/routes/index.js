@@ -1,6 +1,6 @@
 import express from 'express'
 import fs from 'fs'
-import getDeviceId from '../../id-driver/index.js'
+import StationId from '../../hardware/id-driver/index.js'
 import path from 'path'
 import { ComputeModule } from './compute-module.js'
 import { fileURLToPath } from 'url'
@@ -18,14 +18,7 @@ const read_package_version = () => {
 
 const package_info = read_package_version()
 
-let device_id
-getDeviceId().then((id) => {
-  device_id = id
-}).catch((err) => {
-  console.log('Device ID Error')
-  console.error(err)
-  device_id = "error"
-})
+const DEVICE_ID = StationId.FromFile()
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -33,7 +26,7 @@ router.get('/', function (req, res, next) {
 })
 
 router.get('/id', function (req, res, next) {
-  res.json({ id: device_id })
+  res.json({ id: DEVICE_ID })
 })
 
 const get_about_info = () => {
@@ -66,7 +59,7 @@ const get_about_info = () => {
 router.get('/about', (req, res, next) => {
   ModuleInfo.info()
     .then((info) => {
-      info.station_id = device_id
+      info.station_id = DEVICE_ID
       return info
     })
     .then((info) => {
