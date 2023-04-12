@@ -79,7 +79,13 @@ class Tmp411 {
   }
 
   /**
-   *
+   * @typedef {Object} Temperature
+   * @param {Number} celsius
+   * @param {Number} fahrenheit
+   */
+  /**
+   * read local temperature
+   * @returns {Temperature}
    **/
   async readLocalTemperature() {
     // configure the tmp411 chip to extend temperature range

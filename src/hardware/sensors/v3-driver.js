@@ -1,7 +1,10 @@
 import EventEmitter from 'events'
 import Max11645 from './max11645.js'
-import Tmp411 from '../hardware/sensors/temperature/tmp411.js'
+import Tmp411 from './temperature/tmp411.js'
 
+/**
+ * abstraction for v3 station sensor monitor
+ */
 class SensorMonitor extends EventEmitter {
   constructor() {
     super()

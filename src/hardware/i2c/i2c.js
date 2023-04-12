@@ -26,6 +26,7 @@ class I2C {
   */
 
   /**
+   * write provided buffer to given register address
 	 * @param {RegisterInput}
 	 */
 	async writeRegister(opts) {
@@ -36,7 +37,7 @@ class I2C {
 	}
 
 	/**
-	 * 
+	 * write buffer to i2c instance
 	 * @param {Buffer} buffer 
 	 */
 	async write(buffer) {
@@ -59,7 +60,7 @@ class I2C {
 	}
 
 	/**
-	 * 
+	 * read from i2c address into provided buffer
 	 * @param {Buffer} buffer 
 	 */
 	async read(buffer) {
