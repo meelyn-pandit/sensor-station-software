@@ -18,6 +18,5 @@ export default async () => {
     register: Command,
     buffer: response_buffer,
   })
-  console.log('read', results.bytesRead, 'from i2c')
   return response_buffer
 }
