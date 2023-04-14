@@ -93,6 +93,8 @@ class StationIdInterface {
     switch(revision) {
       case 0:
         // revision 0 - use DS3231 RTC EEPROM chip for ID
+      case 127:
+        // revision 0 - use DS3231 RTC EEPROM chip for ID
         id = await IdChips.DS3231()
         break
       case 1:
