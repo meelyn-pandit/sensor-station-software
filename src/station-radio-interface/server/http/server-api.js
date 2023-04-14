@@ -103,6 +103,7 @@ class ServerApi {
             'about': responses[3],
             'uploads': responses[4],
             'software': responses[5],
+            'revision': responses[6],
             'radio': radio_fw,
           }
         })
