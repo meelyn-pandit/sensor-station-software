@@ -11,7 +11,8 @@ class ServerApi {
       'gps',
       'about',
       'internet/pending-upload',
-      'node/version'
+      'node/version',
+      'revision',
     ]
     this.sensor_data = []
     this.max_sensor_records = 100
