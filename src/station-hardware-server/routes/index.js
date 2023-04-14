@@ -4,6 +4,7 @@ import StationId from '../../hardware/id-driver/index.js'
 import path from 'path'
 import { ComputeModule } from './compute-module.js'
 import { fileURLToPath } from 'url'
+import StationIdInterface from '../../hardware/id-driver/station-id-interface.js'
 
 const ModuleInfo = new ComputeModule()
 
@@ -27,6 +28,15 @@ router.get('/', function (req, res, next) {
 
 router.get('/id', function (req, res, next) {
   res.json({ id: DEVICE_ID })
+})
+
+/**
+ * endpoint to determine station hardware revision
+ */
+router.get('/revision', async (req, res) => {
+  const id_interface = new StationIdInterface()
+  const hardware_info = await id_interface.getVersion()
+  return hardware_info
 })
 
 const get_about_info = () => {

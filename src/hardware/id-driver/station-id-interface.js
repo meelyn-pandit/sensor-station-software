@@ -61,8 +61,13 @@ class StationIdInterface {
   }
 
   /**
+   * @typedef {Object} Version
+   * @property {Number} version
+   * @property {Number} revision
+   */
+  /**
    * 
-   * @returns {Object} 
+   * @returns {Version} 
    */
   async getVersion() {
     const io_expander_exists = await this.ioExpanderExists()
