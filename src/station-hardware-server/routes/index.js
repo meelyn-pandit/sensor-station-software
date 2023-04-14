@@ -36,7 +36,7 @@ router.get('/id', function (req, res, next) {
 router.get('/revision', async (req, res) => {
   const id_interface = new StationIdInterface()
   const hardware_info = await id_interface.getVersion()
-  return hardware_info
+  res.json(hardware_info)
 })
 
 const get_about_info = () => {
