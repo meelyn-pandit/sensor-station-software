@@ -26,7 +26,7 @@ class DataManager {
     this.file_manager = new FileManager({
       id: this.id,
       // base_log_dir: this.base_log_dir
-      base_log_dir: '/home/ctt/sensor-station-software/data/'
+      base_log_dir: '/home/ctt/sensor-station-software/src/test-data/'
     })
 
     // loggers for each data file
