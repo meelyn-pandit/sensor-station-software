@@ -71,6 +71,122 @@ export default {
       "preset:fsktag"
     ],
     record: true
+  },{
+    channel: 13,
+    config: [],
+    record: true
+  },{
+    channel: 14,
+    config: [],
+    record: true
+  },{
+    channel: 15,
+    config: [],
+    record: true
+  },{
+    channel: 16,
+    config: [],
+    record: true
+  },
+  {
+    channel: 17,
+    config: [],
+    record: true
+  },
+  {
+    channel: 18,
+    config: [],
+    record: true
+  },
+  {
+    channel: 19,
+    config: [],
+    record: true
+  },
+  {
+    channel: 20,
+    config: [],
+    record: true
+  },
+  {
+    channel: 21,
+    config: [],
+    record: true
+  },
+  {
+    channel: 22,
+    config: [],
+    record: true
+  },
+  {
+    channel: 23,
+    config: [],
+    record: true
+  },
+  {
+    channel: 24,
+    config: [],
+    record: true
+  },
+  {
+    channel: 25,
+    config: [],
+    record: true
+  },
+  {
+    channel: 26,
+    config: [],
+    record: true
+  },
+  {
+    channel: 27,
+    config: [],
+    record: true
+  },
+  {
+    channel: 28,
+    config: [],
+    record: true
+  },
+  {
+    channel: 29,
+    config: [],
+    record: true
+  },
+  {
+    channel: 30,
+    config: [],
+    record: true
+  },
+  {
+    channel: 31,
+    config: [],
+    record: true
+  },
+  {
+    channel: 32,
+    config: [],
+    record: true
+  },
+  {
+    channel: 33,
+    config: [],
+    record: true
+  },
+  {
+    channel: 34,
+    config: [],
+    record: true
+  },
+  {
+    channel: 35,
+    config: [],
+    record: true
+  },
+  {
+    channel: 36,
+    config: [],
+    record: true
   }],
   http: {
     websocket_port: 8001,

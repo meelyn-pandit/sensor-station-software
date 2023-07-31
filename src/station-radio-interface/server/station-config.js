@@ -35,6 +35,8 @@ class StationConfig {
    * opts.config
    **/
   threadRadioMapWithConfig(opts) {
+    // console.log('radio opts', opts)
+    // console.log('radio opts.config.radios', opts.config.radios)
     let radios = opts.config.radios
     let found_radio
     radios.forEach(radio => {
@@ -42,6 +44,7 @@ class StationConfig {
       if (found_radio) {
         // identified the radio in the radio map
         radio.path = found_radio.path
+        console.log('Radio path', radio.path)
       }
     })
     return opts.config
@@ -56,9 +59,13 @@ class StationConfig {
     }
     // load radio mapping
     let radio_map_contents = fs.readFileSync(this.radio_map_filepath).toString()
+    console.log('radio map contents', radio_map_contents) // this loads all the defined radios and paths
     let radio_map = JSON.parse(radio_map_contents)
+    console.log('radio map parsed', radio_map)
     // check if config file exists
     file_exists = await this.checkIfFileExists(this.config_filepath)
+    console.log('radio map file', file_exists)
+
     let config
     if (file_exists != true) {
       config = this.loadDefaultConfig()
@@ -72,6 +79,7 @@ class StationConfig {
       config: config
     })
     this.data = merged_config
+    // console.log('station config', merged_config) //merged config contains all ble paths
     return merged_config
   }
 
@@ -82,6 +90,7 @@ class StationConfig {
   save() {
     // strip radio path from config to be threaded dynamically on load
     let cloned_config = JSON.parse(JSON.stringify(this.data))
+    console.log('cloned config', cloned_config)
     cloned_config.radios.forEach(radio => {
       if (radio.path) {
         delete radio.path

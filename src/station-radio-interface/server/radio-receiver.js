@@ -148,12 +148,16 @@ class RadioReceiver extends EventEmitter {
     this.serialport = port
     let parser = new Readline()
     parser.on('data', (line) => {
+      
+      // console.log('radio receiver beep line', line)
+
       let raw_beep
       let now = moment(new Date()).utc()
       try {
         raw_beep = JSON.parse(line)
         raw_beep.channel = this.channel
         raw_beep.received_at = now
+        // console.log('raw beep', raw_beep)
         if (raw_beep.firmware) {
           this.emit('radio-fw', raw_beep.firmware)
           this.fw_version = raw_beep.firmware

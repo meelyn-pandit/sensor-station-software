@@ -390,6 +390,7 @@ const format_node_health = function (msg) {
 
 
 const handle_beep = function (beep) {
+  console.log('handle beep', beep)
   if (beep.protocol) {
     switch (beep.meta.data_type) {
       case 'coded_id':

@@ -22,13 +22,15 @@ class BaseStation {
   /**
    * 
    * @param {*} opts.config_filepath - string filename used to persist changes / control behaviour
-   * @param {*} otps.radio_map_filepath - string filename used for radio channel mapping
+   * @param {*} opts.radio_map_filepath - string filename used for radio channel mapping
    */
   constructor(opts) {
     this.config = new StationConfig({
       config_filepath: opts.config_filepath,
       radio_map_filepath: opts.radio_map_filepath
     })
+    console.log('base station', opts.radio_map_filepath)
+
     this.active_radios = {}
     this.station_leds = new StationLeds()
     this.gps_client = new GpsClient({
@@ -360,7 +362,7 @@ class BaseStation {
    * start the radio receivers
    */
   startRadios() {
-    console.log('starting radio receivers')
+    console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
     this.config.data.radios.forEach((radio) => {
       if (radio.path) {
@@ -369,7 +371,12 @@ class BaseStation {
           port_uri: radio.path,
           channel: radio.channel
         })
+
+        // let raw_beep = beep_reader.buildSerialInterface()
+        // console.log('base station raw beep', raw_beep)
+        // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
+          // console.log('beep reader', beep)
           this.data_manager.handleRadioBeep(beep)
           beep.msg_type = 'beep'
           this.broadcast(JSON.stringify(beep))
