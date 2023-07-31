@@ -25,7 +25,8 @@ class DataManager {
     // utility for maintaining filenames for given id, descriptor (suffix)
     this.file_manager = new FileManager({
       id: this.id,
-      base_log_dir: this.base_log_dir
+      // base_log_dir: this.base_log_dir
+      base_log_dir: '/home/ctt/sensor-station-software/data/'
     })
 
     // loggers for each data file
