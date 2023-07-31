@@ -72,7 +72,7 @@ class BaseStation {
     */
 
     // save the config to disk
-    this.config.save()
+    // this.config.save()
 
     // pull out config options to start everythign
     this.date_format = this.config.data.record.date_format
