@@ -25,7 +25,7 @@ class BeepFormatter {
    * @param {object} record - GPS record received from GPSD
    */
   formatRecord(record) {
-    console.log('beep formatter record', record)
+    // console.log('beep formatter record', record)
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 
