@@ -98,7 +98,7 @@ class DataManager {
       // expect new protocol
       switch (beep.meta.data_type) {
         case 'ble_tag': {
-          console.log('this is a ble tag')
+          // console.log('this is a ble tag')
           record = this.loggers.beep.addRecord(beep)
           this.stats.addBeep(record)
           break

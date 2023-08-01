@@ -38,7 +38,7 @@ class BeepFormatter {
       // handle new protocol
       switch (record.meta.data_type) {
         case 'ble_tag':
-          console.log('this is a ble tag', record)
+          // console.log('this is a ble tag', record)
           // tag_id = record.data.payload
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at

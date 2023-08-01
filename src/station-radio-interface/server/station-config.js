@@ -69,7 +69,7 @@ class StationConfig {
     let config
     if (file_exists != true) {
       config = this.loadDefaultConfig()
-      console.log('loading default config')
+      // console.log('loading default config')
     } else {
       config = fs.readFileSync(this.config_filepath).toString()
       config = JSON.parse(config)
@@ -90,7 +90,7 @@ class StationConfig {
   save() {
     // strip radio path from config to be threaded dynamically on load
     let cloned_config = JSON.parse(JSON.stringify(this.data))
-    console.log('cloned config', cloned_config)
+    // console.log('cloned config', cloned_config)
     cloned_config.radios.forEach(radio => {
       if (radio.path) {
         delete radio.path
