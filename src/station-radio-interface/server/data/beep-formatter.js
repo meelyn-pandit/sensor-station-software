@@ -108,7 +108,7 @@ class BeepFormatter {
         fields = null
       }
     }
-    console.log('beep formatter fields', fields)
+    // console.log('beep formatter fields', fields)
     return fields
   }
 }
