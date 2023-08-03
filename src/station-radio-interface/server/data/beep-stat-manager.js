@@ -51,7 +51,9 @@ class BeepStatManager {
    *  bump tag stats for beep
    */
   addBeep(record) {
+    // console.log('beep manager record', record)
     let channel = this.getChannel(record)
+    // console.log('beep manager channel', channel)
 
     let beep_stats
     if (record.NodeId.length > 0) {
@@ -65,6 +67,19 @@ class BeepStatManager {
     } else {
       beep_stats[record.TagId] = 1
     }
+  }
+
+  /**
+   * 
+   * @param {*} record
+   * 
+   * bump ble stats for given id
+   */
+
+  addBleBeep(record) {
+    let channel = this.getChannel(record)
+
+    let beep_stats
   }
 
   /**

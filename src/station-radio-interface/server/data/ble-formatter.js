@@ -1,4 +1,5 @@
-import moment from 'moment'
+import parsePayload from './ble-parser.js'
+// import moment from 'moment'
 
 /**
  * file formatter for BLE data
@@ -22,36 +23,22 @@ class BleFormatter {
   }
 
   /**
-   * @param {String} data
-   */
-
-  parsePayload(data) {
-    return {
-    //   raw_payload: data,
-      service: data.readUInt16LE(2),
-      product: data.readUInt8(4),
-      family: data.readUInt8(5),
-      id: data.subarray(6, 10).toString('hex'),
-      vcc: data.readUInt8(10) * 0.03125,
-      temp: data.readUInt16LE(11) / 100
-    }
-  }
-
-  /**
    * 
    * @param {object} record - GPS record received from GPSD
    */
   formatRecord(record) {
-    console.log('beep formatter record', record)
+
+    console.log('ble formatter record', record)
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 
-    let fields, recorded_at
-    let { service, product, family, id, vcc, temp } = parsePayload(Buffer.from(payload, 'hex'))
-    console.log('BLE Parsed Data', ble_data)
+    let fields, recorded_at, tag_rssi
+    let { service, product, family, id, vcc, temp } = parsePayload(Buffer.from(record.data.payload, 'hex'))
+    console.log('BLE Formatter Parsed Data', temp)
 
     // let tag_type = 'ble'
-    
+    if (record.protocol) {
+
       fields = [
         recorded_at.format(this.date_format),
         service,
@@ -59,10 +46,10 @@ class BleFormatter {
         family,
         id,
         vcc,
-        temp
+        temp,
       ]
-    
-    console.log('beep formatter fields', fields)
+    }
+    console.log('ble formatter fields', fields)
     return fields
   }
 }

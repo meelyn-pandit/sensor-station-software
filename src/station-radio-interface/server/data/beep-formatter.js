@@ -1,4 +1,5 @@
 import moment from 'moment'
+import parsePayload from './ble-parser.js'
 // import CttBLERawDataPayloadV01 from './ble-parser'
 
 /**
@@ -17,25 +18,14 @@ class BeepFormatter {
       'TagRSSI',
       'NodeId',
       'Validated',
-      'Type'
+      'Type',
+      'VCC',
+      'Temp',
+      'Service',
+      'Product',
+      'Family'
     ]
     this.date_format = opts.date_format
-  }
-
-  /**
-   * @param {String} data
-   */
-
-  parsePayload(data) {
-    return {
-      raw_payload: data,
-      service: data.readUInt16LE(2),
-      product: data.readUInt8(4),
-      family: data.readUInt8(5),
-      id: data.subarray(6, 10).toString('hex'),
-      vcc: data.readUInt8(10) * 0.03125,
-      temp: data.readUInt16LE(11) / 100
-    }
   }
 
   /**
@@ -47,21 +37,23 @@ class BeepFormatter {
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 
-    let fields, recorded_at, tag_rssi
+    let fields, recorded_at, tag_rssi, vcc, temp, service, product, family
+    let ble_data = record.data.payload ? parsePayload(Buffer.from(record.data.payload, 'hex')) : null
     let node_id = ''
     let validated = 0
-    let tag_id = record.data.id ? record.data.id : record.data.payload
-    let ble_data = parsePayload(record.data.payload)
-    console.log('BLE Parsed Data', ble_data)
+    let tag_id = record.data.id ? record.data.id : ble_data.id
+    // console.log('BLE Parsed Data', ble_data)
 
     let tag_type = record.meta.data_type
     if (record.protocol) {
       // handle new protocol
       switch (record.meta.data_type) {
         case 'ble_tag':
-          // console.log('this is a ble tag', record)
-          // tag_id = record.data.payload
-          // parsed_data = parsePayload(record.data.payload)
+          vcc = ble_data.vcc
+          temp = ble_data.temp
+          service = ble_data.service
+          product = ble_data.product
+          family = ble_data.family
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at
           break
@@ -83,8 +75,8 @@ class BeepFormatter {
           recorded_at = record.received_at
           break
       }
-      if (tag_id.length == 10) {v12
-      }
+      // if (tag_id.length == 10) {v12
+      // }
 
       fields = [
         recorded_at.format(this.date_format),
@@ -93,11 +85,17 @@ class BeepFormatter {
         tag_rssi,
         node_id,
         validated,
-        tag_type
+        tag_type,
+        vcc = ble_data ? ble_data.vcc : null,
+        temp = ble_data ? ble_data.temp : null,
+        service = ble_data ? ble_data.service : null,
+        product = ble_data ? ble_data.product : null,
+        family = ble_data ? ble_data.family : null,
       ]
     } else {
       // handle original protocol
       if (record.data.tag || record.data.payload) {
+        // if (record.data.tag) {
         // beep received at radio
         recorded_at = record.received_at
         fields = [
@@ -113,21 +111,29 @@ class BeepFormatter {
         // beep received by a node
         recorded_at = record.received_at.subtract(record.data.node_beep.offset_ms, 'ms')
         fields = [
-          record.received_at.format(this.date_format),
-          record.channel,
-          record.data.node_tag.tag_id,
-          record.data.node_beep.tag_rssi,
-          record.data.node_beep.id,
-          validated,
-          tag_type
+          record.received_at.format(this.date_format),ble_tag
         ]
+      // } else if (record.data.payload){
+      //   console.log('ble payload', record.data.payload)
+      //   recorded_at = record.received_at
+      //   fields = [
+      //     recorded_at.format(this.date_format),
+      //     ble_data.service,
+      //     ble_data.product,
+      //     ble_data.family,
+      //     ble_data.id,
+      //     ble_data.vcc,
+      //     ble_data.temp,
+      //     tag_type
+      //   ]
+      //   console.log('ble fields', fields)
       } else {
-        console.error(`i don't know what to do ${record}`)
-        console.log(record)
-        fields = null
-      }
+          console.error(`i don't know what to do ${record}`)
+          console.log(record)
+          fields = null
+        }
     }
-    console.log('beep formatter fields', fields)
+    // console.log('beep formatter fields', fields)
     return fields
   }
 }

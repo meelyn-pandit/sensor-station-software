@@ -5,7 +5,7 @@ import { LogFormatter } from './log-formatter.js'
 import { GpsFormatter } from './gps-formatter.js'
 import { NodeHealthFormatter } from './node-health-formatter.js'
 import { TelemetryFormatter } from './telemetry-formatter.js'
-import { BleFormatter } from './ble-formatter'
+import { BleFormatter } from './ble-formatter.js'
 import { BeepStatManager } from './beep-stat-manager.js'
 import moment from 'moment'
 
@@ -68,8 +68,8 @@ class DataManager {
         })
       }),
       ble: new Logger({
-        fileuri: this.file_manager.getFileUri('ble'),
-        suffix: 'ble',
+        fileuri: this.file_manager.getFileUri('ble'), // getting same raw data as radio beeps and using conditionals
+        suffix: 'ble', // try ble suffix and if that doesn't work, switch to raw-data
         formatter: new BleFormatter({
           date_format: this.date_format
         })
@@ -83,6 +83,7 @@ class DataManager {
   writeCache() {
     Object.keys(this.loggers).forEach((key) => {
       let logger = this.loggers[key]
+      // console.log('logger', logger)
       logger.writeCacheToDisk()
     })
   }
@@ -101,6 +102,7 @@ class DataManager {
    * @param {*} beep 
    */
   handleRadioBeep(beep) {
+    // console.log('handle radio beep', beep)
     let record, id, stats
     if (beep.meta) {
       // expect new protocol
@@ -108,7 +110,8 @@ class DataManager {
         case 'ble_tag': {
           // console.log('this is a ble tag')
           record = this.loggers.beep.addRecord(beep)
-          this.stats.addBeep(record)
+          console.log('ble record', record)
+          this.stats.addBleBeep(record)
           break
         }
         case 'coded_id': {
@@ -160,6 +163,15 @@ class DataManager {
    */
   handleGps(record) {
     this.loggers.gps.addRecord(record)
+  }
+
+  /**
+   * 
+   * @param {*} beep - BLE beep - need to parse out payload here?
+   */
+  handleBleBeep(record){
+    console.log('handle ble beep', beep)
+    this.loggers.ble.addRecord(record)
   }
 
   /**
