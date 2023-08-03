@@ -23,6 +23,22 @@ class BeepFormatter {
   }
 
   /**
+   * @param {String} data
+   */
+
+  parsePayload(data) {
+    return {
+      raw_payload: data,
+      service: data.readUInt16LE(2),
+      product: data.readUInt8(4),
+      family: data.readUInt8(5),
+      id: data.subarray(6, 10).toString('hex'),
+      vcc: data.readUInt8(10) * 0.03125,
+      temp: data.readUInt16LE(11) / 100
+    }
+  }
+
+  /**
    * 
    * @param {object} record - GPS record received from GPSD
    */
@@ -42,7 +58,7 @@ class BeepFormatter {
         case 'ble_tag':
           // console.log('this is a ble tag', record)
           // tag_id = record.data.payload
-          parsed_data = CttBLERawDataPayloadV01(record.data.payload)
+          parsed_data = parsePayload(record.data.payload)
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at
           break
