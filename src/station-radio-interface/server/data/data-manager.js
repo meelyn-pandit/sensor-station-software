@@ -5,6 +5,7 @@ import { LogFormatter } from './log-formatter.js'
 import { GpsFormatter } from './gps-formatter.js'
 import { NodeHealthFormatter } from './node-health-formatter.js'
 import { TelemetryFormatter } from './telemetry-formatter.js'
+import { BleFormatter } from './ble-formatter'
 import { BeepStatManager } from './beep-stat-manager.js'
 import moment from 'moment'
 
@@ -63,6 +64,13 @@ class DataManager {
         fileuri: this.file_manager.getFileUri('telemetry'),
         suffix: 'telemetry',
         formatter: new TelemetryFormatter({
+          date_format: this.date_format
+        })
+      }),
+      ble: new Logger({
+        fileuri: this.file_manager.getFileUri('ble'),
+        suffix: 'ble',
+        formatter: new BleFormatter({
           date_format: this.date_format
         })
       })
