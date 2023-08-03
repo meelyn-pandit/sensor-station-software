@@ -50,8 +50,8 @@ class BeepFormatter {
     let fields, recorded_at, tag_rssi
     let node_id = ''
     let validated = 0
-    // let tag_id = record.data.id ? record.data.id : record.data.payload
-    let tag_id = record.data.id ? record.data.id : parsePayload(record.data.payload)
+    let tag_id = record.data.id ? record.data.id : record.data.payload
+    // let tag_id = record.data.id ? record.data.id : parsePayload(record.data.payload)
 
     let tag_type = record.meta.data_type
     if (record.protocol) {
