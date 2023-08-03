@@ -50,7 +50,9 @@ class BeepFormatter {
     let fields, recorded_at, tag_rssi
     let node_id = ''
     let validated = 0
-    let tag_id = record.data.id ? record.data.id : record.data.payload
+    // let tag_id = record.data.id ? record.data.id : record.data.payload
+    let tag_id = record.data.id ? record.data.id : parsePayload(record.data.payload)
+
     let tag_type = record.meta.data_type
     if (record.protocol) {
       // handle new protocol
@@ -58,7 +60,7 @@ class BeepFormatter {
         case 'ble_tag':
           // console.log('this is a ble tag', record)
           // tag_id = record.data.payload
-          parsed_data = parsePayload(record.data.payload)
+          // parsed_data = parsePayload(record.data.payload)
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at
           break
@@ -124,7 +126,7 @@ class BeepFormatter {
         fields = null
       }
     }
-    // console.log('beep formatter fields', fields)
+    console.log('beep formatter fields', fields)
     return fields
   }
 }
