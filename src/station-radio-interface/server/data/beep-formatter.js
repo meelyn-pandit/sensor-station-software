@@ -51,7 +51,8 @@ class BeepFormatter {
     let node_id = ''
     let validated = 0
     let tag_id = record.data.id ? record.data.id : record.data.payload
-    // let tag_id = record.data.id ? record.data.id : parsePayload(record.data.payload)
+    let ble_data = parsePayload(record.data.payload)
+    console.log('BLE Parsed Data', ble_data)
 
     let tag_type = record.meta.data_type
     if (record.protocol) {
@@ -89,7 +90,6 @@ class BeepFormatter {
         recorded_at.format(this.date_format),
         record.channel,
         tag_id,
-        parsePayload(record.data.payload),
         tag_rssi,
         node_id,
         validated,
@@ -104,7 +104,6 @@ class BeepFormatter {
           recorded_at.format(this.date_format),
           record.channel,
           record.data.tag.id,
-          parsePayload(record.data.payload),
           record.rssi,
           '',
           validated,
