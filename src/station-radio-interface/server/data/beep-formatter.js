@@ -89,7 +89,7 @@ class BeepFormatter {
         recorded_at.format(this.date_format),
         record.channel,
         tag_id,
-        ble_data,
+        parsePayload(record.data.payload),
         tag_rssi,
         node_id,
         validated,
