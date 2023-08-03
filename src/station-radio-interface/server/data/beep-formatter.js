@@ -1,4 +1,6 @@
 import moment from 'moment'
+import CttBLERawDataPayloadV01 from './ble-parser'
+
 /**
  * file formatter for GPS files
  */
@@ -40,6 +42,7 @@ class BeepFormatter {
         case 'ble_tag':
           // console.log('this is a ble tag', record)
           // tag_id = record.data.payload
+          parsed_data = CttBLERawDataPayloadV01(record.data.payload)
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at
           break
@@ -61,10 +64,7 @@ class BeepFormatter {
           recorded_at = record.received_at
           break
       }
-      if (tag_id.length == 10) {
-        // tag includes a CRC - validated by device
-        tag_id = tag_id.slice(0, tag_id.length - 2)
-        validated = 1
+      if (tag_id.length == 10) {v12
       }
 
       fields = [
