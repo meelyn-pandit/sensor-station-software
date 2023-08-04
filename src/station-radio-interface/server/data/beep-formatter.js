@@ -113,20 +113,6 @@ class BeepFormatter {
         fields = [
           record.received_at.format(this.date_format),ble_tag
         ]
-      // } else if (record.data.payload){
-      //   console.log('ble payload', record.data.payload)
-      //   recorded_at = record.received_at
-      //   fields = [
-      //     recorded_at.format(this.date_format),
-      //     ble_data.service,
-      //     ble_data.product,
-      //     ble_data.family,
-      //     ble_data.id,
-      //     ble_data.vcc,
-      //     ble_data.temp,
-      //     tag_type
-      //   ]
-      //   console.log('ble fields', fields)
       } else {
           console.error(`i don't know what to do ${record}`)
           console.log(record)

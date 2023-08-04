@@ -33,14 +33,12 @@ class BleFormatter {
    */
   formatRecord(record) {
 
-    console.log('ble formatter record', record)
+    // console.log('ble formatter record', record)
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 
     let fields, recorded_at, channel, ble_chan, protocol, tag_rssi
     let { service, product, family, id, vcc, temp } = parsePayload(Buffer.from(record.data.payload, 'hex'))
-    // console.log('BLE Formatter Parsed Data', temp)
-
     let tag_type = record.meta.data_type
     // console.log('ble tag type', tag_type)
     // if (record.protocol) {
@@ -66,7 +64,11 @@ class BleFormatter {
         tag_type,
       ]
     // }
+    if(vcc < 2.0) {
+      console.error('Solar voltage is low')
+    }
     console.log('ble formatter fields', fields)
+
     return fields
   }
 }
