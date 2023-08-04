@@ -37,8 +37,8 @@ export default function parsePayload(data) {
     const total_length = parseInt(data.toString('hex', 0, 1), 16)
     // const total_length = 11
     console.log('total payload length', total_length)
-    // const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
-    const broadcast_id = 'BTT'
+    const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
+    // const broadcast_id = 'BTT'
   
     console.log('broadcast id', broadcast_id)
   
