@@ -12,12 +12,17 @@ class BleFormatter {
   constructor(opts) {
     this.header = [
       'Time',
+      'Radio Receiver Channel',
+      'BLE Receiver Channel',
+      'Protocol',
+      'RSSI',
       'Service',
       'Product',
       'Family',
       'ID',
       'VCC',
       'Temp(C)',
+      'Tag Type',
     ]
     this.date_format = opts.date_format
   }
@@ -32,23 +37,35 @@ class BleFormatter {
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 
-    let fields, recorded_at, tag_rssi
+    let fields, recorded_at, channel, ble_chan, protocol, tag_rssi
     let { service, product, family, id, vcc, temp } = parsePayload(Buffer.from(record.data.payload, 'hex'))
-    console.log('BLE Formatter Parsed Data', temp)
+    // console.log('BLE Formatter Parsed Data', temp)
 
-    // let tag_type = 'ble'
-    if (record.protocol) {
-
+    let tag_type = record.meta.data_type
+    // console.log('ble tag type', tag_type)
+    // if (record.protocol) {
+      
+      recorded_at = record.received_at
+      channel = record.channel
+      ble_chan = record.meta.chan
+      protocol = record.protocol
+      tag_rssi = record.meta.rssi
+      
       fields = [
         recorded_at.format(this.date_format),
+        channel,
+        ble_chan,
+        protocol,
+        tag_rssi,
         service,
         product,
         family,
         id,
         vcc,
         temp,
+        tag_type,
       ]
-    }
+    // }
     console.log('ble formatter fields', fields)
     return fields
   }

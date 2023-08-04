@@ -110,7 +110,7 @@ class DataManager {
         case 'ble_tag': {
           // console.log('this is a ble tag')
           record = this.loggers.beep.addRecord(beep)
-          console.log('ble record', record)
+          // console.log('ble record', record)
           this.stats.addBleBeep(record)
           break
         }
@@ -170,7 +170,7 @@ class DataManager {
    * @param {*} beep - BLE beep - need to parse out payload here?
    */
   handleBleBeep(record){
-    console.log('handle ble beep', beep)
+    // console.log('handle ble beep', beep)
     this.loggers.ble.addRecord(record)
   }
 

@@ -365,7 +365,7 @@ class BaseStation {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
     this.config.data.radios.forEach((radio) => {
-      console.log('radio', radio)
+      // console.log('radio', radio)
       if (radio.path) {
         let beep_reader = new RadioReceiver({
           baud_rate: 115200,
@@ -377,10 +377,11 @@ class BaseStation {
         // console.log('base station raw beep', raw_beep)
         // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
-          // console.log('beep reader', beep)
-          if (beep.data_type === 'ble_tag') {
+          if (beep.meta.data_type === 'ble_tag') {
+            // console.log('beep reader', beep)
+
             this.data_manager.handleBleBeep(beep)
-            console.log('handleBleBeep', this.data_manager.handleBleBeep(beep))
+            // console.log('handleBleBeep', this.data_manager.handleBleBeep(beep))
             beep.msg_type = 'ble'
             this.broadcast(JSON.stringify(beep))
           } else {
