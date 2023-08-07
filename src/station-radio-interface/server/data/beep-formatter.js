@@ -38,7 +38,7 @@ class BeepFormatter {
     // console.log('beep record data type', record.meta.data_type)
 
     let fields, recorded_at, tag_rssi, vcc, temp, service, product, family
-    // let ble_data = record.data.payload ? parsePayload(Buffer.from(record.data.payload, 'hex')) : null
+    let ble_data = record.data.payload ? parsePayload(Buffer.from(record.data.payload, 'hex')) : null
     let node_id = ''
     let validated = 0
     let tag_id = record.data.id ? record.data.id : ble_data.id
@@ -48,15 +48,15 @@ class BeepFormatter {
     if (record.protocol) {
       // handle new protocol
       switch (record.meta.data_type) {
-        case 'ble_tag':
-          // vcc = ble_data.vcc
-          // temp = ble_data.temp
-          // service = ble_data.service
-          // product = ble_data.product
-          // family = ble_data.family
-          tag_rssi = record.meta.rssi
-          recorded_at = record.received_at
-          break
+        // case 'ble_tag':
+        //   vcc = ble_data.vcc
+        //   temp = ble_data.temp
+        //   service = ble_data.service
+        //   product = ble_data.product
+        //   family = ble_data.family
+        //   tag_rssi = record.meta.rssi
+        //   recorded_at = record.received_at
+        //   break
         case 'node_coded_id':
           // beep originated from a node
           // get the node id, and get the recorded at date from the device
