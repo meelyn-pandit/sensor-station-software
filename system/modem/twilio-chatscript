@@ -42,7 +42,7 @@ OK AT+CGACT?
 OK AT+CGACT?
 
 # Define PDP context 
-"" AT+CGDCONT=1,"IP","wireless.twilio.com"
+"" AT+CGDCONT=1,"IP","super"
 
 # ATDT = Attention Dial Tone
 OK ATDT*99***1#

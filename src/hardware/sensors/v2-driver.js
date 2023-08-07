@@ -4,6 +4,9 @@ import Tmp102 from './tmp102.js'
 
 const ADC_TYPE = 'Ads7924'
 
+/**
+ * abstraction for v2 sensor monitoring
+ */
 class SensorMonitor extends EventEmitter {
   constructor() {
     super()

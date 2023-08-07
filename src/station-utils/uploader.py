@@ -37,10 +37,7 @@ class StationUploader:
         os.makedirs(self.sg_uploaded_dir, exist_ok=True)
 
     def checkInternetStatus(self):
-        url = 'http://localhost:{}/internet/status?ping_count={}'.format(
-            self.hardware_server_port, 
-            self.internet_check_ping_count
-        )
+        url = 'https://station.internetofwildlife.com/status'
 
         try:
             res = requests.get(url)
@@ -49,9 +46,7 @@ class StationUploader:
             return False
 
         if (res.status_code == 200):
-            response = res.json()
-            if response['success'] == self.internet_check_ping_count:
-                return True
+            return True
         return False
 
     def post(self, endpoint, headers, data):

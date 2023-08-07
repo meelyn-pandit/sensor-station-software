@@ -736,6 +736,13 @@ const updateStats = function () {
   }));
 };
 
+const pollRadioFirmware = () => {
+  socket.send(JSON.stringify({
+    msg_type: 'cmd',
+    cmd: 'radio-firmware',
+  }));
+}
+
 const initialize_websocket = function () {
   let url = 'ws://' + window.location.hostname + ':8001';
   socket = new WebSocket(url);
@@ -745,6 +752,7 @@ const initialize_websocket = function () {
   socket.addEventListener('open', (event) => {
     updateStats();
     setInterval(updateStats, 15000);
+    pollRadioFirmware();
   });
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
@@ -800,6 +808,13 @@ const initialize_websocket = function () {
         break;
       case ('fw'):
         document.querySelector('#raw_log').value += data.data
+        break
+      case ('radio-firmware'):
+        console.log('setting radio firwmare', data)
+        Object.keys(data.firmware).forEach((channel) => {
+          const firmware = data.firmware[channel]
+          document.querySelector(`#radio-firmware-version-${channel}`).textContent = firmware
+        })
         break
       default:
         console.log('WTF dunno', data);
@@ -872,6 +887,14 @@ const build_radio_component = function (n) {
   h2.setAttribute('style', 'text-align: center;')
   h2.textContent = 'Radio ' + n
   wrapper.appendChild(h2)
+  const version_label = document.createElement('span')
+  version_label.textContent = 'version:'
+  const firmware_version = document.createElement('span')
+  firmware_version.setAttribute('id', `radio-firmware-version-${n}`)
+  const firmware = document.createElement('div')
+  firmware.appendChild(version_label)
+  firmware.appendChild(firmware_version)
+  wrapper.appendChild(firmware)
   let h5 = document.createElement('h5')
   let span = document.createElement('span')
   span.setAttribute('style', 'padding-right:5px;')

@@ -1,5 +1,5 @@
 import express from 'express'
-import SensorMonitor from '../../adc-driver/index.js'
+import SensorMonitor from '../../hardware/sensors/index.js'
 const router = express.Router()
 
 let sensor_data = {

@@ -23,16 +23,36 @@ class RadioReceiver extends EventEmitter {
     this.restart_on_close = opts.restart_on_close | true
     this.serialport
     this.parser
-    this.fw_version = null
+    // poll firmware every 10 minutes
+    this.firmware_poll_period = 600
+    this.polling_interval = null
     this.commands = []
     this.current_command = null
     this.delay = 0.25
+    this.fw_version = null
 
     this.preset_commands = {
-      "node": "preset:node3",
-      "tag": "preset:fsktag",
-      "ook": "preset:ooktag"
+      node: "preset:node3",
+      tag: "preset:fsktag",
+      ook: "preset:ooktag",
+      version: "version",
     }
+
+    this.pollFirmware = this.pollFirmware.bind(this)
+  }
+
+  pollFirmware() {
+    this.issuePresetCommand('version')
+  }
+
+  startPollingFirmware() {
+    console.log(`polling firmware at an interval of ${this.firmware_poll_period} seconds`)
+    this.polling_interval = setInterval(this.pollFirmware, this.firmware_poll_period * 1000)
+    this.pollFirmware()
+  }
+
+  stopPollingFirmware() {
+    clearInterval(this.polling_interval)
   }
 
   /**
@@ -44,10 +64,8 @@ class RadioReceiver extends EventEmitter {
   }
 
   issuePresetCommand(cmd) {
-    console.log('about to issue preset command', cmd)
     let write_cmd = this.preset_commands[cmd]
     if (write_cmd) {
-      console.log('issuing preset', write_cmd, 'to', this.channel)
       this.write(write_cmd)
     }
   }
@@ -136,6 +154,12 @@ class RadioReceiver extends EventEmitter {
         raw_beep = JSON.parse(line)
         raw_beep.channel = this.channel
         raw_beep.received_at = now
+        if (raw_beep.firmware) {
+          this.emit('radio-fw', raw_beep.firmware)
+          this.fw_version = raw_beep.firmware
+          return
+        }
+
         if (raw_beep.key) {
           // radio command response
           this.emit('response', raw_beep)
@@ -149,6 +173,7 @@ class RadioReceiver extends EventEmitter {
       }
     })
     this.parser = port.pipe(parser)
+    this.startPollingFirmware()
   }
 }
 

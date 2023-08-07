@@ -11,7 +11,8 @@ class ServerApi {
       'gps',
       'about',
       'internet/pending-upload',
-      'node/version'
+      'node/version',
+      'revision',
     ]
     this.sensor_data = []
     this.max_sensor_records = 100
@@ -85,7 +86,7 @@ class ServerApi {
     return gps
   }
 
-  healthCheckin(stats) {
+  healthCheckin(stats, radio_fw) {
     return new Promise((resolve, reject) => {
       let promises = []
       // generate list of promises to post requests to hardware server
@@ -101,7 +102,9 @@ class ServerApi {
             'gps': responses[2],
             'about': responses[3],
             'uploads': responses[4],
-            'software': responses[5]
+            'software': responses[5],
+            'revision': responses[6],
+            'radio': radio_fw,
           }
         })
         .then((data) => {

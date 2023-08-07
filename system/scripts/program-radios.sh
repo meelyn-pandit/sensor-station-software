@@ -6,8 +6,21 @@ else
   fw_file=$1
 fi
 
-program-radio 1 $fw_file
-program-radio 2 $fw_file
-program-radio 3 $fw_file
-program-radio 4 $fw_file
-program-radio 5 $fw_file
+MAX_ATTEMPTS=5
+
+log_file="/data/program.log"
+
+function program () {
+  n=0
+  until [ "$n" -ge 5 ]
+  do
+    now=`date`
+    echo "$now" >> $log_file
+    echo "programming radio $1" >> $log_file
+    program-radio $1 $fw_file >> $log_file 2>&1 && break
+    n=$((n+1))
+    sleep 2
+  done
+}
+
+for i in {1..5}; do program "$i"; done

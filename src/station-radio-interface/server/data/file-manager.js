@@ -66,7 +66,7 @@ export class FileManager {
   rotateDataFile(opts) {
     return new Promise((resolve, reject) => {
       // append date as suffix to data file
-      let now = moment(new Date()).format('YYYY-MM-DD_HHmmss')
+      let now = moment(new Date()).utc().format('YYYY-MM-DD_HHmmss')
       let newname = `${opts.new_basename.replace('.csv', '')}.${now}.csv`
       let rotated_uri = path.join(this.base_log_dir, 'rotated', newname)
 
