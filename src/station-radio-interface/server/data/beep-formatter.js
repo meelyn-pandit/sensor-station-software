@@ -19,11 +19,11 @@ class BeepFormatter {
       'NodeId',
       'Validated',
       'Type',
-      'VCC',
-      'Temp',
-      'Service',
-      'Product',
-      'Family'
+      // 'VCC',
+      // 'Temp',
+      // 'Service',
+      // 'Product',
+      // 'Family'
     ]
     this.date_format = opts.date_format
   }
@@ -38,7 +38,7 @@ class BeepFormatter {
     // console.log('beep record data type', record.meta.data_type)
 
     let fields, recorded_at, tag_rssi, vcc, temp, service, product, family
-    let ble_data = record.data.payload ? parsePayload(Buffer.from(record.data.payload, 'hex')) : null
+    // let ble_data = record.data.payload ? parsePayload(Buffer.from(record.data.payload, 'hex')) : null
     let node_id = ''
     let validated = 0
     let tag_id = record.data.id ? record.data.id : ble_data.id
@@ -49,11 +49,11 @@ class BeepFormatter {
       // handle new protocol
       switch (record.meta.data_type) {
         case 'ble_tag':
-          vcc = ble_data.vcc
-          temp = ble_data.temp
-          service = ble_data.service
-          product = ble_data.product
-          family = ble_data.family
+          // vcc = ble_data.vcc
+          // temp = ble_data.temp
+          // service = ble_data.service
+          // product = ble_data.product
+          // family = ble_data.family
           tag_rssi = record.meta.rssi
           recorded_at = record.received_at
           break
@@ -86,11 +86,11 @@ class BeepFormatter {
         node_id,
         validated,
         tag_type,
-        vcc = ble_data ? ble_data.vcc : null,
-        temp = ble_data ? ble_data.temp : null,
-        service = ble_data ? ble_data.service : null,
-        product = ble_data ? ble_data.product : null,
-        family = ble_data ? ble_data.family : null,
+        // vcc = ble_data ? ble_data.vcc : null,
+        // temp = ble_data ? ble_data.temp : null,
+        // service = ble_data ? ble_data.service : null,
+        // product = ble_data ? ble_data.product : null,
+        // family = ble_data ? ble_data.family : null,
       ]
     } else {
       // handle original protocol
