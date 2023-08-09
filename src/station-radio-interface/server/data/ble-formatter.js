@@ -12,8 +12,8 @@ class BleFormatter {
   constructor(opts) {
     this.header = [
       'Time',
-      'Radio Receiver Channel',
-      'BLE Receiver Channel',
+      'RadioId',
+      'BleId',
       'Protocol',
       'RSSI',
       'Service',
@@ -21,8 +21,8 @@ class BleFormatter {
       'Family',
       'ID',
       'VCC',
-      'Temp(C)',
-      'Tag Type',
+      'Temp',
+      // 'TagType',
     ]
     this.date_format = opts.date_format
   }
@@ -61,7 +61,7 @@ class BleFormatter {
         id,
         vcc,
         temp,
-        tag_type,
+        // tag_type,
       ]
     // }
     if(vcc < 2.0) {

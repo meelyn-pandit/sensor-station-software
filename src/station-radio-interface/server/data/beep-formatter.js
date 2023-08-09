@@ -19,11 +19,11 @@ class BeepFormatter {
       'NodeId',
       'Validated',
       'Type',
-      'VCC',
-      'Temp',
-      'Service',
-      'Product',
-      'Family'
+      // 'VCC',
+      // 'Temp',
+      // 'Service',
+      // 'Product',
+      // 'Family'
     ]
     this.date_format = opts.date_format
   }
