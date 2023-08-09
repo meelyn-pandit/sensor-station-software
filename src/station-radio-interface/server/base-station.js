@@ -378,25 +378,28 @@ class BaseStation {
         // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
           // if (beep.meta.data_type === 'ble_tag') {
-          //   // console.log('beep reader', beep)
+            // console.log('beep reader', beep)
 
-          //   this.data_manager.handleBleBeep(beep)
-          //   // console.log('handleBleBeep', this.data_manager.handleBleBeep(beep))
-          //   beep.msg_type = 'ble'
-          //   this.broadcast(JSON.stringify(beep))
-          // } else {
+            // this.data_manager.handleBleBeep(beep)
+            // beep.msg_type = 'ble'
+            // this.broadcast(JSON.stringify(beep))
+
             this.data_manager.handleRadioBeep(beep)
             beep.msg_type = 'beep'
             this.broadcast(JSON.stringify(beep))
+          // } else {
+            // this.data_manager.handleRadioBeep(beep)
+            // beep.msg_type = 'beep'
+            // this.broadcast(JSON.stringify(beep))
           // }
         })
-        // beep_reader.on('ble', (beep) => {
-        //   console.log('ble beep reader', beep)
-        //   this.data_manager.handleBleBeep(beep)
-        //   console.log('handleBleBeep', this.data_manager.handleBleBeep(beep))
-        //   beep.msg_type = 'ble'
-        //   this.broadcast(JSON.stringify(beep))
-        // })
+        beep_reader.on('beep', (beep) => {
+          console.log('ble beep reader', beep)
+          this.data_manager.handleBleBeep(beep)
+          console.log('handleBleBeep', this.data_manager.handleBleBeep(beep))
+          beep.msg_type = 'ble'
+          this.broadcast(JSON.stringify(beep))
+        })
         beep_reader.on('radio-fw', (fw_version) => {
           this.radio_fw[radio.channel] = fw_version
         })

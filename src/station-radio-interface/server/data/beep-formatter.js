@@ -19,11 +19,11 @@ class BeepFormatter {
       'NodeId',
       'Validated',
       'Type',
-      // 'VCC',
-      // 'Temp',
-      // 'Service',
-      // 'Product',
-      // 'Family'
+      'VCC',
+      'Temp',
+      'Service',
+      'Product',
+      'Family'
     ]
     this.date_format = opts.date_format
   }
@@ -48,15 +48,15 @@ class BeepFormatter {
     if (record.protocol) {
       // handle new protocol
       switch (record.meta.data_type) {
-        // case 'ble_tag':
-        //   vcc = ble_data.vcc
-        //   temp = ble_data.temp
-        //   service = ble_data.service
-        //   product = ble_data.product
-        //   family = ble_data.family
-        //   tag_rssi = record.meta.rssi
-        //   recorded_at = record.received_at
-        //   break
+        case 'ble_tag':
+          vcc = ble_data.vcc
+          temp = ble_data.temp
+          service = ble_data.service
+          product = ble_data.product
+          family = ble_data.family
+          tag_rssi = record.meta.rssi
+          recorded_at = record.received_at
+          break
         case 'node_coded_id':
           // beep originated from a node
           // get the node id, and get the recorded at date from the device
@@ -86,7 +86,7 @@ class BeepFormatter {
         node_id,
         validated,
         tag_type,
-        // vcc = ble_data ? ble_data.vcc : null,
+        // vcc = ble_data ? ble_data.vcc : null, // need to have ble data defined here otherwise it will not get saved to raw data csv
         // temp = ble_data ? ble_data.temp : null,
         // service = ble_data ? ble_data.service : null,
         // product = ble_data ? ble_data.product : null,
@@ -94,8 +94,8 @@ class BeepFormatter {
       ]
     } else {
       // handle original protocol
-      if (record.data.tag || record.data.payload) {
-        // if (record.data.tag) {
+      // if (record.data.tag || record.data.payload) {
+        if (record.data.tag) {
         // beep received at radio
         recorded_at = record.received_at
         fields = [
@@ -106,6 +106,17 @@ class BeepFormatter {
           '',
           validated,
           tag_type
+        ]
+      } else if (record.data.payload) {
+        fields = [
+          recorded_at.format(this.date_format),
+          record.channel,
+          tag_id,
+          tag_rssi,
+          node_id,
+          validated,
+          tag_type,
+
         ]
       } else if (record.data.node_beep) {
         // beep received by a node
