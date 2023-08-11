@@ -325,7 +325,8 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        // payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        tag_id = beep.data.payload;
         tag_id = payload.id;
         rssi = beep.meta.rssi;
         tag_at = beep.received_at;
@@ -446,6 +447,7 @@ const handle_tag_beep = function (beep) {
   console.log('handle tag beep', beep)
   let validated = false;
   let tag_id = beep.tag_id;
+  console.log('handle tag beep tag id', tag_id)
   if (tag_id.length > 8) {
     tag_id = tag_id.slice(0, 8);
     validated = true;
@@ -771,6 +773,8 @@ const initialize_websocket = function () {
       case ('beep'):
         handle_beep(data);
         break;
+      case ('ble'):
+        handle_beep(data);
 
       case ('stats'):
         handle_stats(data);
