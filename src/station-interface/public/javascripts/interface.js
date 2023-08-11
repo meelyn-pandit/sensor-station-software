@@ -324,6 +324,12 @@ const format_beep = function (beep) {
         rssi = beep.meta.rssi;
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
+      if (beep.meta.data_type == 'ble_tag') {
+        payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        tag_id = payload.id;
+        rssi = beep.meta.rssi;
+        tag_at = beep.received_at;
+      }
     }
 
     if (beep.data.tag) {
@@ -404,6 +410,8 @@ const handle_beep = function (beep) {
       case 'telemetry':
         handle_tag_beep(format_beep(beep));
         break;
+      case 'ble_tag':
+        handle_tag_beep(format_beep(beep));
       default:
         break;
     }
@@ -435,6 +443,7 @@ const clip_beep_tables = function () {
 }
 
 const handle_tag_beep = function (beep) {
+  console.log('handle tag beep', beep)
   let validated = false;
   let tag_id = beep.tag_id;
   if (tag_id.length > 8) {

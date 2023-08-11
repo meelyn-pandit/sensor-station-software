@@ -377,6 +377,7 @@ class BaseStation {
         // console.log('base station raw beep', raw_beep)
         // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
+          console.log('base station beep', beep)
           this.data_manager.handleRadioBeep(beep)
           beep.msg_type = 'beep'
           this.broadcast(JSON.stringify(beep))

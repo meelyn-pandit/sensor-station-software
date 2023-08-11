@@ -42,37 +42,37 @@ export default function parsePayload(data) {
         // throw new Error('Bad payload, length is not 12 bytes!')
         console.error('BLE Parser Error: Bad payload, length is not 12 bytes')
         return {
-          service: 'service data is corrupt',
-          product: 'product data is corrupt',
-          family: 'family data is corrupt',
-          id: 'id data is corrupt',
-          vcc: 'vcc data is corrupt',
-          temp: 'temp data is corrupt',
+          service: 'E101',
+          product: 'E101',
+          family: 'E101',
+          id: 'E101',
+          vcc: 'E101',
+          temp: 'E101',
         }
       }
 
     // const total_length = 11
     // console.log('total payload length', total_length)
-    // const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
-    const broadcast_id = 'BTT'
+    const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
+    // const broadcast_id = 'BTT'
   
     console.log('broadcast id', broadcast_id)
   
     if (broadcast_id !== 'CTT') {
       console.error('Broadcast ID is not CTT and is: ', broadcast_id)
       return {
-        service: 'service data is corrupt',
-        product: 'product data is corrupt',
-        family: 'family data is corrupt',
-        id: 'id data is corrupt',
-        vcc: 'vcc data is corrupt',
-        temp: 'temp data is corrupt',
+        service: 'E102',
+          product: 'E102',
+          family: 'E102',
+          id: 'E102',
+          vcc: 'E102',
+          temp: 'E102',
       }
     }
   
       return {
         service: data.readUInt16LE(2),
-        product: data.readUInt8(4),
+        product: data.readUInt8(4), // 1 byte = 8 bits
         family: data.readUInt8(5),
         id: data.subarray(6, 10).toString('hex'),
         vcc: data.readUInt8(10) * 0.03125,
