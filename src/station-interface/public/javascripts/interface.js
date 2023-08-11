@@ -6,6 +6,54 @@ let beep_hist = {};
 const DATE_FMT = 'YYYY-MM-DD HH:mm:ss';
 let socket;
 
+const parsePayload = function (data) {
+  // console.log('data', data.toString('hex', 0, 1))
+  const total_length = parseInt(data.toString('hex', 0, 1), 16)
+  // const total_length = 11
+  console.log('total byte length', total_length)
+
+    if (total_length !== 12) { 
+      // throw new Error('Bad payload, length is not 12 bytes!')
+      console.error('BLE Parser Error: Bad payload, length is not 12 bytes')
+      return {
+        service: 'E101',
+        product: 'E101',
+        family: 'E101',
+        id: 'E101',
+        vcc: 'E101',
+        temp: 'E101',
+      }
+    }
+
+  // const total_length = 11
+  // console.log('total payload length', total_length)
+  const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
+  // const broadcast_id = 'BTT'
+
+  console.log('broadcast id', broadcast_id)
+
+  if (broadcast_id !== 'CTT') {
+    console.error('Broadcast ID is not CTT and is: ', broadcast_id)
+    return {
+      service: 'E102',
+        product: 'E102',
+        family: 'E102',
+        id: 'E102',
+        vcc: 'E102',
+        temp: 'E102',
+    }
+  }
+
+    return {
+      service: data.readUInt16LE(2),
+      product: data.readUInt8(4), // 1 byte = 8 bits
+      family: data.readUInt8(5),
+      id: data.subarray(6, 10).toString('hex'),
+      vcc: data.readUInt8(10) * 0.03125,
+      temp: data.readUInt16LE(11) / 100
+    }
+  }
+
 const setText = function (tag, value) {
   let id = '#' + tag;
   document.querySelector(id).textContent = value;
@@ -325,8 +373,8 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        // payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
-        tag_id = beep.data.payload;
+        payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        // tag_id = beep.data.payload;
         tag_id = payload.id;
         rssi = beep.meta.rssi;
         tag_at = beep.received_at;
@@ -766,16 +814,19 @@ const initialize_websocket = function () {
     setInterval(updateStats, 15000);
     pollRadioFirmware();
   });
+  console.log('message', msg)
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
+    console.log('radio data', data)
     let tr, td;
     switch (data.msg_type) {
       case ('beep'):
         handle_beep(data);
         break;
       case ('ble'):
+        console.log('this is a ble beep', data)
         handle_beep(data);
-
+        break;
       case ('stats'):
         handle_stats(data);
         break;
@@ -831,7 +882,7 @@ const initialize_websocket = function () {
         })
         break
       default:
-        console.log('WTF dunno', data);
+        console.log('WTF dunno', data.msg_type);
 
       //      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
     }
