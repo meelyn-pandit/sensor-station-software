@@ -1,3 +1,5 @@
+// import { Buffer } from 'node:buffer';
+
 let beeps = [];
 let tags = new Set();
 let nodes = {};
@@ -201,6 +203,7 @@ const initialize_controls = function () {
   document.querySelectorAll('button[name="toggle_node_radio"]').forEach((btn) => {
     btn.addEventListener('click', function (e) {
       let radio_id = e.target.getAttribute('value');
+      console.log('radio id', radio_id)
       let res = window.confirm('Are you sure you want to toggle NODE listening mode for radio ' + radio_id + '?');
       if (res) {
         document.querySelector(`#config_radio_${radio_id}`).textContent = 'Node'
@@ -243,6 +246,23 @@ const initialize_controls = function () {
           cmd: 'toggle_radio',
           data: {
             type: 'ook',
+            channel: radio_id
+          }
+        }));
+      }
+    });
+  });
+  document.querySelectorAll('button[name="toggle_ble_radio"]').forEach((btn) => {
+    btn.addEventListener('click', function (e) {
+      let radio_id = e.target.getAttribute('value');
+      let res = window.confirm('Are you sure you want to toggle BLE listening mode for radio ' + radio_id + '?');
+      if (res) {
+        document.querySelector(`#config_radio_${radio_id}`).textContent = 'BLE Tag'
+        socket.send(JSON.stringify({
+          msg_type: 'cmd',
+          cmd: 'toggle_radio',
+          data: {
+            type: 'ble_tag',
             channel: radio_id
           }
         }));
@@ -354,6 +374,8 @@ const format_beep = function (beep) {
     let tag_id, rssi, node_id, tag_at;
     let beep_at = moment(new Date(beep.received_at)).utc();
     tag_at = beep_at;
+    console.log('tag at ', tag_at)
+
     if (beep.protocol) {
       // new protocol
       if (beep.meta.data_type == 'node_coded_id') {
@@ -373,11 +395,16 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        console.log('format ble tag', beep.meta.data_type)
+        // payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
+        tag_id = beep.data.payload
+        console.log('format parsed payload', tag_id)
         // tag_id = beep.data.payload;
-        tag_id = payload.id;
+        // tag_id = payload.id;
         rssi = beep.meta.rssi;
-        tag_at = beep.received_at;
+        tag_at = beep_at;
+        // tag_at = beep.received_at;
+        // tag_at = moment(new Date(beep.received_at * 1000)).utc();
       }
     }
 
@@ -460,6 +487,7 @@ const handle_beep = function (beep) {
         handle_tag_beep(format_beep(beep));
         break;
       case 'ble_tag':
+        // console.log('this is a ble beep', data)
         handle_tag_beep(format_beep(beep));
       default:
         break;
@@ -476,6 +504,7 @@ const handle_beep = function (beep) {
   }
 };
 let DONGLES_ENABLED = false;
+let BLE_ENABLED = false;
 let MAX_ROW_COUNT = 1000;
 
 const clip_beep_tables = function () {
@@ -506,7 +535,14 @@ const handle_tag_beep = function (beep) {
       document.querySelector('#dongles').style.display = 'block'
     }
   }
+  // if (BLE_ENABLED == false) {
+  //   if (beep.channel > 12) {
+  //     BLE_ENABLED = true
+  //     document.querySelector('#ble').style.display = 'block'
+  //   }
+  // }
   let BEEP_TABLE = document.querySelector('#radio_' + beep.channel);
+  // console.log('Beep Table', BEEP_TABLE)
   let tr = document.createElement('tr');
   if (validated == true) {
     tr.style.border = "2px solid #22dd22";
@@ -814,10 +850,10 @@ const initialize_websocket = function () {
     setInterval(updateStats, 15000);
     pollRadioFirmware();
   });
-  console.log('message', msg)
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
     console.log('radio data', data)
+    console.log('radio data message', data.msg_type)
     let tr, td;
     switch (data.msg_type) {
       case ('beep'):
@@ -882,7 +918,8 @@ const initialize_websocket = function () {
         })
         break
       default:
-        console.log('WTF dunno', data.msg_type);
+        console.log('WTF dunno', data);
+        console.log('hello world');
 
       //      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
     }
@@ -905,27 +942,39 @@ const updateChrony = function () {
 const get_config = function () {
   $.ajax({
     url: '/config',
-    success: function (contents) {
-      let i = 0;
+    success: function (contents) { // contents are from /etc/ctt/station-config.json not default-config.json
+      console.log('radio contents', contents)
+      // let i = 0;
       let radio_id, value;
       contents.radios.forEach(function (radio) {
-        i++;
-        radio_id = "#config_radio_" + i;
-        switch (radio.config[0]) {
-          case "preset:node3":
-            value = "Node";
-            break;
-          case "preset:fsktag":
-            value = "Tag";
-            break;
-          case "preset:ooktag":
-            value = "Original Tag"
-            break;
-          default:
-            value = "Custom Mode"
-            break;
-        }
+        console.log('radio number', radio)
+        console.log('radio channel', radio.channel)
+        // i++;
+        // console.log('radio i', i);
+        // radio_id = "#config_radio_" + i;
+        radio_id = "#config_radio_" + radio.channel
+        console.log('radio id config', radio.config[0])
+        value = 'Radio Tag';
+        // switch (radio.config[0]) {
+        //   case "preset:node3":
+        //     value = "Node";
+        //     break;
+        //   case "preset:fsktag":
+        //     value = "Tag";
+        //     break;
+        //   case "preset:ooktag":
+        //     value = "Original Tag"
+        //     break;
+        //   // case "preset:bletag":
+        //   case undefined || 'preset:bletag' || null || '':
+        //     value = "BLE Tag"
+        //     break;
+        //   default:
+        //     value = "Custom Mode"
+        //     break;
+        // }
         document.querySelector(radio_id).textContent = value;
+        console.log('radio value', value) // radio values are all tags
       });
 
     }
@@ -946,6 +995,7 @@ const build_row = function (opts) {
 };
 
 const build_radio_component = function (n) {
+  console.log(' build radio component n', n)
   let wrapper = document.createElement('div')
 
   let h2 = document.createElement('h2')
@@ -1025,6 +1075,16 @@ const build_radio_component = function (n) {
   button.textContent = 'Tag'
   col_sm.appendChild(button)
   div.appendChild(col_sm)
+
+  // col_sm = document.createElement('div')
+  // col_sm.setAttribute('class', 'col-sm')
+  // button = document.createElement('button')
+  // button.setAttribute('class', 'btn btn-block btn-sm btn-danger')
+  // button.setAttribute('name', 'toggle_ble_radio')
+  // button.setAttribute('value', n)
+  // button.textContent = 'BLE Tag' // creates button to switch radio to monitor for ble tags
+  // col_sm.appendChild(button)
+  // div.appendChild(col_sm)
 
   col_sm = document.createElement('div')
   col_sm.setAttribute('class', 'col-sm')
@@ -1226,7 +1286,7 @@ const init_sg = () => {
     col.appendChild(component)
     document.querySelector('#main-radios').appendChild(col)
   }
-  for (let i = 6; i <= 12; i++) {
+  for (let i = 6; i <= 36; i++) {
     component = build_radio_component(i)
     col = document.createElement('div')
     col.classList.add('col-lg')
