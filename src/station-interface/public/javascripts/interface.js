@@ -944,35 +944,32 @@ const get_config = function () {
     url: '/config',
     success: function (contents) { // contents are from /etc/ctt/station-config.json not default-config.json
       console.log('radio contents', contents)
-      // let i = 0;
+      let i = 0;
       let radio_id, value;
       contents.radios.forEach(function (radio) {
         console.log('radio number', radio)
         console.log('radio channel', radio.channel)
-        // i++;
-        // console.log('radio i', i);
-        // radio_id = "#config_radio_" + i;
-        radio_id = "#config_radio_" + radio.channel
+        i++;
+        console.log('radio i', i);
+        radio_id = "#config_radio_" + i;
         console.log('radio id config', radio.config[0])
-        value = 'Radio Tag';
-        // switch (radio.config[0]) {
-        //   case "preset:node3":
-        //     value = "Node";
-        //     break;
-        //   case "preset:fsktag":
-        //     value = "Tag";
-        //     break;
-        //   case "preset:ooktag":
-        //     value = "Original Tag"
-        //     break;
-        //   // case "preset:bletag":
-        //   case undefined || 'preset:bletag' || null || '':
-        //     value = "BLE Tag"
-        //     break;
-        //   default:
-        //     value = "Custom Mode"
-        //     break;
-        // }
+        switch (radio.config[0]) {
+          case "preset:node3":
+            value = "Node";
+            break;
+          case "preset:fsktag":
+            value = "Tag";
+            break;
+          case "preset:ooktag":
+            value = "Original Tag"
+            break;
+          case 'preset:bletag':
+            value = "BLE Tag"
+            break;
+          default:
+            value = "Custom Mode"
+            break;
+        }
         document.querySelector(radio_id).textContent = value;
         console.log('radio value', value) // radio values are all tags
       });
