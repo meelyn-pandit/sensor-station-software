@@ -395,16 +395,18 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        console.log('format ble tag', beep.meta.data_type)
+        console.log('format ble tag', typeof beep.data.payload)
         // payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
-        tag_id = beep.data.payload
-        console.log('format parsed payload', tag_id)
-        // tag_id = beep.data.payload;
+        total_length = parseInt(beep.data.payload.substring(0,2), 16)
+        console.log('format payload total length', total_length)
+        // payload = parsePayload(beep.data.payload)
+        // payload = beep.data.payload.subarray(6, 10).toString('hex')
+        // console.log('format ble payload', payload)
+        tag_id = beep.data.payload.substring(12,20); // 6 zeroes and 2 digits
+        console.log('format ble tag id', tag_id);
         // tag_id = payload.id;
         rssi = beep.meta.rssi;
         tag_at = beep_at;
-        // tag_at = beep.received_at;
-        // tag_at = moment(new Date(beep.received_at * 1000)).utc();
       }
     }
 
