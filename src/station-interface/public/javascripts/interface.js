@@ -372,6 +372,7 @@ const initialize_controls = function () {
 const format_beep = function (beep) {
   if (beep.data) {
     let tag_id, rssi, node_id, tag_at;
+    let tag_type = beep.meta.data_type;
     let beep_at = moment(new Date(beep.received_at)).utc();
     tag_at = beep_at;
     console.log('tag at ', tag_at)
@@ -382,16 +383,20 @@ const format_beep = function (beep) {
         node_id = beep.meta.source.id;
         rssi = beep.data.rssi;
         tag_id = beep.data.id;
+        tag_type = tag_type;
         tag_at = moment(new Date(beep.data.rec_at * 1000)).utc();
       }
       if (beep.meta.data_type == 'coded_id') {
         rssi = beep.meta.rssi;
         tag_id = beep.data.id;
+        tag_type = tag_type;
         tag_at = beep_at;
+        total_length = null;
       }
       if (beep.meta.data_type == 'telemetry') {
         tag_id = beep.meta.source.id;
         rssi = beep.meta.rssi;
+        tag_type = tag_type;
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
@@ -406,6 +411,7 @@ const format_beep = function (beep) {
         console.log('format ble tag id', tag_id);
         // tag_id = payload.id;
         rssi = beep.meta.rssi;
+        tag_type = tag_type;
         tag_at = beep_at;
       }
     }
@@ -427,7 +433,9 @@ const format_beep = function (beep) {
       rssi: rssi,
       channel: beep.channel,
       received_at: beep_at,
-      tag_at: tag_at
+      tag_type: tag_type,
+      tag_at: tag_at,
+      total_length: total_length,
     }
     return data
   }
@@ -526,9 +534,13 @@ const handle_tag_beep = function (beep) {
   console.log('handle tag beep', beep)
   let validated = false;
   let tag_id = beep.tag_id;
+  let tag_type = beep.tag_type;
+  let total_length = beep.total_length;
   console.log('handle tag beep tag id', tag_id)
-  if (tag_id.length > 8) {
+  if (tag_id.length > 8 && tag_type !== 'ble_tag') {
     tag_id = tag_id.slice(0, 8);
+    validated = true;
+  } else if (tag_type === 'ble_tag' && total_length === 12) {
     validated = true;
   }
   if (DONGLES_ENABLED == false) {
