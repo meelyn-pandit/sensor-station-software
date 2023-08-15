@@ -8,54 +8,6 @@ let beep_hist = {};
 const DATE_FMT = 'YYYY-MM-DD HH:mm:ss';
 let socket;
 
-const parsePayload = function (data) {
-  // console.log('data', data.toString('hex', 0, 1))
-  const total_length = parseInt(data.toString('hex', 0, 1), 16)
-  // const total_length = 11
-  console.log('total byte length', total_length)
-
-    if (total_length !== 12) { 
-      // throw new Error('Bad payload, length is not 12 bytes!')
-      console.error('BLE Parser Error: Bad payload, length is not 12 bytes')
-      return {
-        service: 'E101',
-        product: 'E101',
-        family: 'E101',
-        id: 'E101',
-        vcc: 'E101',
-        temp: 'E101',
-      }
-    }
-
-  // const total_length = 11
-  // console.log('total payload length', total_length)
-  const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
-  // const broadcast_id = 'BTT'
-
-  console.log('broadcast id', broadcast_id)
-
-  if (broadcast_id !== 'CTT') {
-    console.error('Broadcast ID is not CTT and is: ', broadcast_id)
-    return {
-      service: 'E102',
-        product: 'E102',
-        family: 'E102',
-        id: 'E102',
-        vcc: 'E102',
-        temp: 'E102',
-    }
-  }
-
-    return {
-      service: data.readUInt16LE(2),
-      product: data.readUInt8(4), // 1 byte = 8 bits
-      family: data.readUInt8(5),
-      id: data.subarray(6, 10).toString('hex'),
-      vcc: data.readUInt8(10) * 0.03125,
-      temp: data.readUInt16LE(11) / 100
-    }
-  }
-
 const setText = function (tag, value) {
   let id = '#' + tag;
   document.querySelector(id).textContent = value;
@@ -203,7 +155,6 @@ const initialize_controls = function () {
   document.querySelectorAll('button[name="toggle_node_radio"]').forEach((btn) => {
     btn.addEventListener('click', function (e) {
       let radio_id = e.target.getAttribute('value');
-      console.log('radio id', radio_id)
       let res = window.confirm('Are you sure you want to toggle NODE listening mode for radio ' + radio_id + '?');
       if (res) {
         document.querySelector(`#config_radio_${radio_id}`).textContent = 'Node'
@@ -375,7 +326,6 @@ const format_beep = function (beep) {
     let tag_type = beep.meta.data_type;
     let beep_at = moment(new Date(beep.received_at)).utc();
     tag_at = beep_at;
-    console.log('tag at ', tag_at)
 
     if (beep.protocol) {
       // new protocol
@@ -391,7 +341,7 @@ const format_beep = function (beep) {
         tag_id = beep.data.id;
         tag_type = tag_type;
         tag_at = beep_at;
-        total_length = null;
+        byte_length = null;
       }
       if (beep.meta.data_type == 'telemetry') {
         tag_id = beep.meta.source.id;
@@ -400,16 +350,8 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        console.log('format ble tag', typeof beep.data.payload)
-        // payload = parsePayload(Buffer.from(beep.data.payload, 'hex'));
-        total_length = parseInt(beep.data.payload.substring(0,2), 16)
-        console.log('format payload total length', total_length)
-        // payload = parsePayload(beep.data.payload)
-        // payload = beep.data.payload.subarray(6, 10).toString('hex')
-        // console.log('format ble payload', payload)
+        byte_length = parseInt(beep.data.payload.substring(0,2), 16)
         tag_id = beep.data.payload.substring(12,20); // 6 zeroes and 2 digits
-        console.log('format ble tag id', tag_id);
-        // tag_id = payload.id;
         rssi = beep.meta.rssi;
         tag_type = tag_type;
         tag_at = beep_at;
@@ -435,7 +377,7 @@ const format_beep = function (beep) {
       received_at: beep_at,
       tag_type: tag_type,
       tag_at: tag_at,
-      total_length: total_length,
+      byte_length: byte_length,
     }
     return data
   }
@@ -482,7 +424,6 @@ const format_node_health = function (msg) {
 
 
 const handle_beep = function (beep) {
-  console.log('handle beep', beep)
   if (beep.protocol) {
     switch (beep.meta.data_type) {
       case 'coded_id':
@@ -497,7 +438,6 @@ const handle_beep = function (beep) {
         handle_tag_beep(format_beep(beep));
         break;
       case 'ble_tag':
-        // console.log('this is a ble beep', data)
         handle_tag_beep(format_beep(beep));
       default:
         break;
@@ -531,16 +471,14 @@ const clip_beep_tables = function () {
 }
 
 const handle_tag_beep = function (beep) {
-  console.log('handle tag beep', beep)
   let validated = false;
   let tag_id = beep.tag_id;
   let tag_type = beep.tag_type;
-  let total_length = beep.total_length;
-  console.log('handle tag beep tag id', tag_id)
+  let byte_length = beep.byte_length;
   if (tag_id.length > 8 && tag_type !== 'ble_tag') {
     tag_id = tag_id.slice(0, 8);
     validated = true;
-  } else if (tag_type === 'ble_tag' && total_length === 12) {
+  } else if (tag_type === 'ble_tag' && byte_length === 12) {
     validated = true;
   }
   if (DONGLES_ENABLED == false) {
@@ -556,7 +494,6 @@ const handle_tag_beep = function (beep) {
   //   }
   // }
   let BEEP_TABLE = document.querySelector('#radio_' + beep.channel);
-  // console.log('Beep Table', BEEP_TABLE)
   let tr = document.createElement('tr');
   if (validated == true) {
     tr.style.border = "2px solid #22dd22";
@@ -700,6 +637,7 @@ const render_channel_stats = function (channel_stats) {
     node_beep_info = `#node_beep_count_${channel}`;
     telemetry_beep_info = `#telemetry_beep_count_${channel}`;
     let stats = channel_stats[channel];
+
     document.querySelector(beep_info).textContent = stats.beeps;
     document.querySelector(node_beep_info).textContent = stats.node_beeps;
     document.querySelector(telemetry_beep_info).textContent = stats.telemetry_beeps;
@@ -866,15 +804,12 @@ const initialize_websocket = function () {
   });
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
-    console.log('radio data', data)
-    console.log('radio data message', data.msg_type)
     let tr, td;
     switch (data.msg_type) {
       case ('beep'):
         handle_beep(data);
         break;
       case ('ble'):
-        console.log('this is a ble beep', data)
         handle_beep(data);
         break;
       case ('stats'):
@@ -925,7 +860,6 @@ const initialize_websocket = function () {
         document.querySelector('#raw_log').value += data.data
         break
       case ('radio-firmware'):
-        console.log('setting radio firwmare', data)
         Object.keys(data.firmware).forEach((channel) => {
           const firmware = data.firmware[channel]
           document.querySelector(`#radio-firmware-version-${channel}`).textContent = firmware
@@ -933,8 +867,6 @@ const initialize_websocket = function () {
         break
       default:
         console.log('WTF dunno', data);
-        console.log('hello world');
-
       //      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
     }
   };
@@ -957,16 +889,11 @@ const get_config = function () {
   $.ajax({
     url: '/config',
     success: function (contents) { // contents are from /etc/ctt/station-config.json not default-config.json
-      console.log('radio contents', contents)
       let i = 0;
       let radio_id, value;
       contents.radios.forEach(function (radio) {
-        console.log('radio number', radio)
-        console.log('radio channel', radio.channel)
         i++;
-        console.log('radio i', i);
         radio_id = "#config_radio_" + i;
-        console.log('radio id config', radio.config[0])
         switch (radio.config[0]) {
           case "preset:node3":
             value = "Node";
@@ -985,7 +912,6 @@ const get_config = function () {
             break;
         }
         document.querySelector(radio_id).textContent = value;
-        console.log('radio value', value) // radio values are all tags
       });
 
     }
@@ -1006,7 +932,6 @@ const build_row = function (opts) {
 };
 
 const build_radio_component = function (n) {
-  console.log(' build radio component n', n)
   let wrapper = document.createElement('div')
 
   let h2 = document.createElement('h2')

@@ -111,7 +111,8 @@ class DataManager {
           // console.log('this is a ble tag')
           record = this.loggers.beep.addRecord(beep)
           // console.log('ble record', record)
-          this.stats.addBleBeep(record)
+          // this.stats.addBleBeep(record)
+          this.stats.addBeep(record)
           break
         }
         case 'coded_id': {
