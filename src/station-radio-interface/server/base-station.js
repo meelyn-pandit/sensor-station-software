@@ -377,15 +377,19 @@ class BaseStation {
         // console.log('base station raw beep', raw_beep)
         // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
-          console.log('base station beep', beep)
-          this.data_manager.handleRadioBeep(beep)
-          beep.msg_type = 'beep'
-          this.broadcast(JSON.stringify(beep))
+            this.data_manager.handleRadioBeep(beep)
+            // this.data_manager.handleBleBeep(beep) //still saves ble data if here but does not show radios on interface
+            beep.msg_type = 'beep'
+            this.broadcast(JSON.stringify(beep))
+            console.log('base station beep', beep)
         })
-        beep_reader.on('beep', (beep) => {
+        beep_reader.on('beep', (beep) => { // this writes ble to the ble.csv file and shows up on interface
           this.data_manager.handleBleBeep(beep)
+          // this.data_manager.handleRadioBeep(beep)
           beep.msg_type = 'ble'
+          console.log('base station ble beep', beep)
           this.broadcast(JSON.stringify(beep))
+          // console.log('base station ble parsed', parsed_beep)
         })
         beep_reader.on('radio-fw', (fw_version) => {
           this.radio_fw[radio.channel] = fw_version

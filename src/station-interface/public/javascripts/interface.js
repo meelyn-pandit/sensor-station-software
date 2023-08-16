@@ -804,6 +804,7 @@ const initialize_websocket = function () {
   });
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
+    console.log('socket data', data);
     let tr, td;
     switch (data.msg_type) {
       case ('beep'):
@@ -904,9 +905,9 @@ const get_config = function () {
           case "preset:ooktag":
             value = "Original Tag"
             break;
-          case 'preset:bletag':
-            value = "BLE Tag"
-            break;
+          // case 'preset:bletag':
+          //   value = "BLE Tag"
+          //   break;
           default:
             value = "Custom Mode"
             break;
@@ -931,7 +932,7 @@ const build_row = function (opts) {
   return tr
 };
 
-const build_radio_component = function (n) {
+const build_radio_component = function (n, type) { // add int channel and radio tag type, conditional statements if ble
   let wrapper = document.createElement('div')
 
   let h2 = document.createElement('h2')

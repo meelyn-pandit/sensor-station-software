@@ -33,6 +33,7 @@ class Logger {
   addRecord(record) {
     let data
     let line = this.formatter.formatRecord(record)
+    console.log('logger line', line)
     if (line) {
       this.record_cache.push(line)
       data = _.zipObject(this.formatter.header, line)

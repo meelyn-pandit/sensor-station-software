@@ -67,7 +67,7 @@ class BleFormatter {
     if(vcc < 2.0) {
       console.error('Solar voltage is low')
     }
-    console.log('ble formatter fields', fields)
+    // console.log('ble formatter fields', fields)
 
     return fields
   }
