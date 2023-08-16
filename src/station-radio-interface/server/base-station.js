@@ -13,6 +13,8 @@ import heartbeats from 'heartbeats'
 import path from 'path'
 import _ from 'lodash'
 import moment from 'moment'
+import parsePayload from './data/ble-parser.js'
+import Buffer from 'buffer'
 
 /**
  * manager class for controlling / reading radios
@@ -380,15 +382,19 @@ class BaseStation {
             this.data_manager.handleRadioBeep(beep)
             // this.data_manager.handleBleBeep(beep) //still saves ble data if here but does not show radios on interface
             beep.msg_type = 'beep'
-            this.broadcast(JSON.stringify(beep))
             console.log('base station beep', beep)
+            this.broadcast(JSON.stringify(beep))
         })
         beep_reader.on('beep', (beep) => { // this writes ble to the ble.csv file and shows up on interface
           this.data_manager.handleBleBeep(beep)
-          // this.data_manager.handleRadioBeep(beep)
-          beep.msg_type = 'ble'
-          console.log('base station ble beep', beep)
-          this.broadcast(JSON.stringify(beep))
+          // beep.msg_type = 'ble'
+          // console.log('base station ble beep', beep)
+          if (beep.meta.data_type === 'ble_tag') {
+            beep.byte_length = parseInt(beep.data.payload.substring(0,2), 16)
+            beep.tag_id = beep.data.payload.substring(12,20); // 6 zeroes and 2 digits
+            console.log('ble beep', beep)
+          }
+          // this.broadcast(JSON.stringify(beep))
           // console.log('base station ble parsed', parsed_beep)
         })
         beep_reader.on('radio-fw', (fw_version) => {

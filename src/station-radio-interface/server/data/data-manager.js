@@ -112,7 +112,7 @@ class DataManager {
           record = this.loggers.beep.addRecord(beep)
           // ble_record = this.loggers.ble.addRecord(beep)
           // record = this.loggers.ble.addRecord(beep)
-          // console.log('ble record', ble_record)
+          // console.log('ble record', record)
           this.stats.addBeep(record)
           break
         }
@@ -175,7 +175,7 @@ class DataManager {
     if (record.meta.data_type === 'ble_tag') {
       console.log('handle ble beep', record)
       this.loggers.ble.addRecord(record)
-      this.stats.addBeep(record)
+      // this.stats.addBeep(record)
     }
   }
 

@@ -170,6 +170,7 @@ class RadioReceiver extends EventEmitter {
         } else {
           this.emit('beep', raw_beep)
         }
+        // console.log('raw beep', raw_beep)
       } catch (err) {
         // not a JSON document - emit the raw input
         this.emit('raw', line)
