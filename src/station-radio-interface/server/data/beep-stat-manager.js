@@ -27,6 +27,7 @@ class BeepStatManager {
       telemetry: {},
     }
     this.stats.channels[channel] = channel_data
+    // console.log('channel data', channel_data)
     return channel_data
   }
 
@@ -37,7 +38,9 @@ class BeepStatManager {
    *  get in memory stat document for a given record by channel id - create the entry if does not exist
    */
   getChannel(record) {
+    // console.log('get channel record', record)
     if (Object.keys(this.stats.channels).includes(record.RadioId.toString())) {
+      console.log('channel includes radio id', this.stats.channels)
       return this.stats.channels[record.RadioId]
     } else {
       return this.addStatChannel(record.RadioId)
@@ -53,20 +56,23 @@ class BeepStatManager {
   addBeep(record) {
     // console.log('beep manager record', record)
     let channel = this.getChannel(record)
-    // console.log('beep manager channel', channel)
+    // console.log('beep manager channel', JSON.stringify(channel))
 
     let beep_stats
+    console.log('record node', record.NodeId.length)
     if (record.NodeId.length > 0) {
       // from a node
       beep_stats = channel.nodes.beeps
     } else {
       beep_stats = channel.beeps
     }
+    // console.log('beep stats', beep_stats)
     if (Object.keys(beep_stats).includes(record.TagId)) {
       beep_stats[record.TagId] += 1
     } else {
       beep_stats[record.TagId] = 1
     }
+    // console.log('record tag id', record.TagId, 'tag id stats', beep_stats[record.TagId])
   }
 
   /**

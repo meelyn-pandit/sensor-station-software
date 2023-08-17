@@ -15,11 +15,12 @@ class BleFormatter {
       'RadioId',
       'BleId',
       'Protocol',
-      'RSSI',
+      'TagRSSI',
+      'NodeId',
       'Service',
       'Product',
       'Family',
-      'ID',
+      'TagId',
       'VCC',
       'Temp',
       // 'TagType',
@@ -40,6 +41,7 @@ class BleFormatter {
     // console.log('beep record data type', record.meta.data_type)
 
     let fields, recorded_at, channel, ble_chan, protocol, tag_rssi
+    let node_id = ''
     let { service, product, family, id, vcc, temp } = parsePayload(Buffer.from(record.data.payload, 'hex'))
     let tag_type = record.meta.data_type
     // console.log('ble tag type', tag_type)
@@ -57,6 +59,7 @@ class BleFormatter {
         ble_chan,
         protocol,
         tag_rssi,
+        node_id,
         service,
         product,
         family,

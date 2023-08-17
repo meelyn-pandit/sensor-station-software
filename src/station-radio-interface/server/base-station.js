@@ -14,7 +14,6 @@ import path from 'path'
 import _ from 'lodash'
 import moment from 'moment'
 import parsePayload from './data/ble-parser.js'
-// import Buffer from 'node:buffer'
 
 /**
  * manager class for controlling / reading radios
@@ -381,13 +380,14 @@ class BaseStation {
         beep_reader.on('beep', (beep) => {
             
           if (beep.meta.data_type === 'ble_tag') {
-            console.log('preparsed beep', beep)
+            // console.log('preparsed beep', beep)
             this.data_manager.handleBleBeep(beep) //still saves ble data if here but does not show radios on interface
+            // console.log('ble data saved to file')
             beep.msg_type = 'ble'
             // beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
             // console.log('buffer', Buffer.from(beep.data.payload, 'hex'))
             beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-            console.log('about to broadcast beep', beep)
+            // console.log('about to broadcast beep', beep)
             this.broadcast(JSON.stringify(beep))
           } else {
             this.data_manager.handleRadioBeep(beep)

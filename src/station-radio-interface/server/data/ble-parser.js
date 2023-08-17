@@ -80,6 +80,6 @@ export default function parsePayload(data) {
     vcc: data.readUInt8(10) * 0.03125,
     temp: data.readUInt16LE(11) / 100
   }
-  console.log('PARSED STUFF', x)
+  // console.log('PARSED STUFF', x)
   return x
 }
