@@ -33,7 +33,9 @@ class BleFormatter {
    */
   formatRecord(record) {
 
-    // console.log('ble formatter record', record)
+    // console.log('ble formatter record', typeof record.data.payload)
+    // console.log('ble formatter', record.data.payload)
+
     // console.log('beep record protocol', record.protocol)
     // console.log('beep record data type', record.meta.data_type)
 

@@ -33,7 +33,8 @@ KKKKKK - Hexadecimal encoded ASCII 43 = C 54 = T 54 = T
 */
 
 export default function parsePayload(data) {
-    console.log('data', typeof data)
+  console.log('calling parser')
+    // console.log('ble parser data', data)
     // const total_length = parseInt(data.toString('hex', 0, 1), 16)
     // const total_length = 11
     // console.log('total byte length', total_length)
@@ -53,7 +54,7 @@ export default function parsePayload(data) {
 
     // const total_length = 11
     // console.log('total payload length', total_length)
-    const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
+  const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
     // const broadcast_id = 'BTT'
   
     // console.log('broadcast id', broadcast_id)
@@ -70,12 +71,14 @@ export default function parsePayload(data) {
     //   }
     // }
   
-      return {
-        service: data.readUInt16LE(2),
-        product: data.readUInt8(4), // 1 byte = 8 bits
-        family: data.readUInt8(5),
-        id: data.subarray(6, 10).toString('hex'),
-        vcc: data.readUInt8(10) * 0.03125,
-        temp: data.readUInt16LE(11) / 100
-      }
-    }
+  const x = {
+    service: data.readUInt16LE(2),
+    product: data.readUInt8(4), // 1 byte = 8 bits
+    family: data.readUInt8(5),
+    id: data.subarray(6, 10).toString('hex'),
+    vcc: data.readUInt8(10) * 0.03125,
+    temp: data.readUInt16LE(11) / 100
+  }
+  console.log('PARSED STUFF', x)
+  return x
+}
