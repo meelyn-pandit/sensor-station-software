@@ -350,8 +350,8 @@ const format_beep = function (beep) {
         tag_at = moment(new Date(beep.data.time * 1000)).utc();
       }
       if (beep.meta.data_type == 'ble_tag') {
-        byte_length = parseInt(beep.data.payload.substring(0,2), 16)
-        tag_id = beep.data.payload.substring(12,20); // 6 zeroes and 2 digits
+        byte_length = beep.parsed.byte_length;
+        tag_id = beep.parsed.id;
         rssi = beep.meta.rssi;
         tag_type = tag_type;
         tag_at = beep_at;

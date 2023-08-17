@@ -386,8 +386,8 @@ class BaseStation {
             beep.msg_type = 'ble'
             // beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
             // console.log('buffer', Buffer.from(beep.data.payload, 'hex'))
-            const parsed_data = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-            console.log('about to broadcast beep', beep, parsed_data)
+            beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
+            console.log('about to broadcast beep', beep)
             this.broadcast(JSON.stringify(beep))
           } else {
             this.data_manager.handleRadioBeep(beep)

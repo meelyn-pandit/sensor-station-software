@@ -72,6 +72,7 @@ export default function parsePayload(data) {
     // }
   
   const x = {
+    byte_length: parseInt(data.toString('hex', 0, 1), 16),
     service: data.readUInt16LE(2),
     product: data.readUInt8(4), // 1 byte = 8 bits
     family: data.readUInt8(5),
