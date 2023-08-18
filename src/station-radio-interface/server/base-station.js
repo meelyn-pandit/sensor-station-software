@@ -380,39 +380,17 @@ class BaseStation {
         beep_reader.on('beep', (beep) => {
             
           if (beep.meta.data_type === 'ble_tag') {
-            // console.log('preparsed beep', beep)
-            this.data_manager.handleBleBeep(beep) //still saves ble data if here but does not show radios on interface
-            // console.log('ble data saved to file')
+            // this.data_manager.handleBleBeep(beep)
+            this.data_manager.handleRadioBeep(beep)
             beep.msg_type = 'ble'
-            // beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-            // console.log('buffer', Buffer.from(beep.data.payload, 'hex'))
             beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-            // console.log('about to broadcast beep', beep)
             this.broadcast(JSON.stringify(beep))
           } else {
             this.data_manager.handleRadioBeep(beep)
             beep.msg_type = 'beep'
-            // console.log('base station beep', beep)
             this.broadcast(JSON.stringify(beep))
           }
         })
-        // beep_reader.on('beep', (beep) => { // this writes ble to the ble.csv file and shows up on interface
-        //   this.data_manager.handleBleBeep(beep)
-        //   // beep.msg_type = 'ble'
-        //   // console.log('base station ble beep', beep)
-        //   if (beep.meta.data_type === 'ble_tag') {
-        //     console.log('beep before', beep)
-        //     // parsed_beep = beep.data.payload
-        //     beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-        //     // console.log('parsed beep', parsePayload(Buffer.from(beep.data.payload, 'hex')))
-        //     // beep.byte_length = parseInt(beep.data.payload.substring(0,2), 16)
-        //     // beep.tag_id = beep.data.payload.substring(12,20); // 6 zeroes and 2 digits
-        //     console.log('ble beep', beep)
-        //     this.broadcast(JSON.stringify(beep))
-        //   }
-        //   // this.broadcast(JSON.stringify(beep))
-        //   // console.log('base station ble parsed', parsed_beep)
-        // })
         beep_reader.on('radio-fw', (fw_version) => {
           this.radio_fw[radio.channel] = fw_version
         })

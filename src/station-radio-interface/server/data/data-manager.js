@@ -109,12 +109,8 @@ class DataManager {
       // expect new protocol
       switch (beep.meta.data_type) {
         case 'ble_tag': {
-          // record = this.loggers.beep.addRecord(beep)
-          // ble_record = this.loggers.ble.addRecord(beep)
-          // record = this.loggers.ble.addRecord(beep)
-          // console.log('ble record', record)
-          // this.stats.addBeep(record)
-          // console.log('ble tag added to beep count')
+          record = this.loggers.ble.addRecord(beep)
+          this.stats.addBeep(record) 
           break
         }
         case 'coded_id': {
@@ -168,26 +164,17 @@ class DataManager {
     this.loggers.gps.addRecord(record)
   }
 
-  /**
-   * 
-   * @param {*} beep - BLE beep - need to parse out payload here?
-   */
-  handleBleBeep(beep){
-    let record, id, stats
-
-    // console.log('incoming ble beep', beep)
-
-    if (beep.meta.data_type === 'ble_tag') {
-      // console.log('ble data saved to file', beep)
-      record = this.loggers.ble.addRecord(beep)
-      // console.log('handle ble beep', record)
-      // parsed_record = parsePayload(Buffer.from(record.data.payload, 'hex'))
-      // console.log('parsed record', parsed_record)
-
-      this.stats.addBeep(record) // for whatever reason this prevents the radio receivers form appearing on interface
-      // console.log('ble beep added to sum', this.stats.addBeep(record))
-    }
-  }
+  // /**
+  //  * 
+  //  * @param {*} beep - BLE beep - need to parse out payload here?
+  //  */
+  // handleBleBeep(beep){
+  //   let record, id, stats
+  //   if (beep.meta.data_type === 'ble_tag') {
+  //     record = this.loggers.ble.addRecord(beep)
+  //     this.stats.addBeep(record)
+  //   }
+  // }
 
   /**
    * rotate all logging files
