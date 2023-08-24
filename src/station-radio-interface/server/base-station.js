@@ -378,7 +378,7 @@ class BaseStation {
         // console.log('base station raw beep', raw_beep)
         // console.log('beep reader', beep_reader)
         beep_reader.on('beep', (beep) => {
-            
+            // console.log('beep', beep)
           if (beep.meta.data_type === 'ble_tag') {
             // this.data_manager.handleBleBeep(beep)
             this.data_manager.handleRadioBeep(beep)

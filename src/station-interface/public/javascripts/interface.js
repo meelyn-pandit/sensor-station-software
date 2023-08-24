@@ -482,12 +482,39 @@ const handle_tag_beep = function (beep) {
   } else if (tag_type === 'ble_tag' && byte_length === 12) {
     validated = true;
   }
+
+  get_radio_channels(data);
+
+  // let component, col
+  // console.log('radio data channel', data.channel)
+  // if (beep_channels.includes(data.channel) && data.channel !== undefined && component === undefined) {
+  //   component = build_radio_component(data.channel)
+  //   col = document.createElement('div')
+  //   col.classList.add('col-lg') // keeps making this class list
+  //   col.appendChild(component)
+  //   document.querySelector('#extra-radios').appendChild(col)
+  // }   
   if (DONGLES_ENABLED == false) {
     // if (beep.channel > 5) {
     if (beep.channel < 13 && beep.channel > 5) {
       DONGLES_ENABLED = true
       document.querySelector('#dongles').style.display = 'block'
-    } else if (beep.channel >= 13) {
+    } else if (beep.channel < 17 && beep.channel >= 13) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
+    } else if (beep.channel < 21 && beep.channel >= 17) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
+    } else if (beep.channel < 25 && beep.channel >= 21) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
+    } else if (beep.channel < 29 && beep.channel >= 25) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
+    } else if (beep.channel < 33 && beep.channel >= 29) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
+    } else if (beep.channel < 36 && beep.channel >= 33) {
       BLE_ENABLED = true
       document.querySelector('#ble-dongles').style.display = 'block'
     }
@@ -809,17 +836,6 @@ const initialize_websocket = function () {
     let data = JSON.parse(msg.data);
 
     // console.log('socket data', data);
-    get_radio_channels(data);
-
-    // let component, col
-    // console.log('radio data channel', data.channel)
-    // if (beep_channels.includes(data.channel) && data.channel !== undefined && component === undefined) {
-    //   component = build_radio_component(data.channel)
-    //   col = document.createElement('div')
-    //   col.classList.add('col-lg') // keeps making this class list
-    //   col.appendChild(component)
-    //   document.querySelector('#extra-radios').appendChild(col)
-    // }   
 
     let tr, td;
     switch (data.msg_type) {
@@ -1261,7 +1277,6 @@ function init_sg() {
   }
 
   initialize_software_versions()
-  console.log('initialize websocket', initialize_websocket())
 
   for (let i = 1; i <= 5; i++) {
     component = build_radio_component(i)
