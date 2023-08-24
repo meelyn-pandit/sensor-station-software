@@ -33,46 +33,41 @@ KKKKKK - Hexadecimal encoded ASCII 43 = C 54 = T 54 = T
 */
 
 export default function parsePayload(data) {
-  console.log('calling parser')
-    // console.log('ble parser data', data)
-    // const total_length = parseInt(data.toString('hex', 0, 1), 16)
-    // const total_length = 11
-    // console.log('total byte length', total_length)
 
-      // if (total_length !== 12) { 
-      //   // throw new Error('Bad payload, length is not 12 bytes!')
-      //   console.error('BLE Parser Error: Bad payload, length is not 12 bytes')
-      //   return {
-      //     service: 'E101',
-      //     product: 'E101',
-      //     family: 'E101',
-      //     id: 'E101',
-      //     vcc: 'E101',
-      //     temp: 'E101',
-      //   }
-      // }
+  const byte_length = parseInt(data.toString('hex', 0, 1), 16)
+  // console.log('byte length', byte_length)
+  const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character  
 
-    // const total_length = 11
-    // console.log('total payload length', total_length)
-  const broadcast_id = data.subarray(15, 18).toString('utf8') // utf8 is ascii character
-    // const broadcast_id = 'BTT'
+    if (byte_length !== 12) { 
+      // throw new Error('Bad payload, length is not 12 bytes!')
+      console.error('BLE Parser Error: Bad payload, length is not 12 bytes')
+      return {
+        byte_length,
+        broadcast_id,
+        service: 'E101',
+        product: 'E101',
+        family: 'E101',
+        id: 'E101',
+        vcc: 'E101',
+        temp: 'E101',
+      }
+    }
   
-    // console.log('broadcast id', broadcast_id)
+    if (broadcast_id !== 'CTT') {
+      console.error('Broadcast ID is not CTT and is: ', broadcast_id)
+      return {
+        service: 'E102',
+          product: 'E102',
+          family: 'E102',
+          id: 'E102',
+          vcc: 'E102',
+          temp: 'E102',
+      }
+    }
   
-    // if (broadcast_id !== 'CTT') {
-    //   console.error('Broadcast ID is not CTT and is: ', broadcast_id)
-    //   return {
-    //     service: 'E102',
-    //       product: 'E102',
-    //       family: 'E102',
-    //       id: 'E102',
-    //       vcc: 'E102',
-    //       temp: 'E102',
-    //   }
-    // }
-  
-  const x = {
-    byte_length: parseInt(data.toString('hex', 0, 1), 16),
+  const parsed_payload = {
+    byte_length,
+    broadcast_id, // utf8 is ascii character
     service: data.readUInt16LE(2),
     product: data.readUInt8(4), // 1 byte = 8 bits
     family: data.readUInt8(5),
@@ -80,6 +75,5 @@ export default function parsePayload(data) {
     vcc: data.readUInt8(10) * 0.03125,
     temp: data.readUInt16LE(11) / 100
   }
-  // console.log('PARSED STUFF', x)
-  return x
+  return parsed_payload
 }

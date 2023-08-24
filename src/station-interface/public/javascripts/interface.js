@@ -1,9 +1,8 @@
-// import { Buffer } from 'node:buffer';
-
 let beeps = [];
 let tags = new Set();
 let nodes = {};
 let beep_hist = {};
+let beep_channels = [];
 
 const DATE_FMT = 'YYYY-MM-DD HH:mm:ss';
 let socket;
@@ -355,6 +354,7 @@ const format_beep = function (beep) {
         rssi = beep.meta.rssi;
         tag_type = tag_type;
         tag_at = beep_at;
+        temp_c = beep.parsed.temp;
       }
     }
 
@@ -471,6 +471,7 @@ const clip_beep_tables = function () {
 }
 
 const handle_tag_beep = function (beep) {
+  // console.log('handle tag beep', beep);
   let validated = false;
   let tag_id = beep.tag_id;
   let tag_type = beep.tag_type;
@@ -482,18 +483,18 @@ const handle_tag_beep = function (beep) {
     validated = true;
   }
   if (DONGLES_ENABLED == false) {
-    if (beep.channel > 5) {
+    // if (beep.channel > 5) {
+    if (beep.channel < 13 && beep.channel > 5) {
       DONGLES_ENABLED = true
       document.querySelector('#dongles').style.display = 'block'
+    } else if (beep.channel >= 13) {
+      BLE_ENABLED = true
+      document.querySelector('#ble-dongles').style.display = 'block'
     }
   }
-  // if (BLE_ENABLED == false) {
-  //   if (beep.channel > 12) {
-  //     BLE_ENABLED = true
-  //     document.querySelector('#ble').style.display = 'block'
-  //   }
-  // }
-  let BEEP_TABLE = document.querySelector('#radio_' + beep.channel);
+
+  let BEEP_TABLE = document.querySelector('#radio_' + beep.channel); // creates table for individual beeps
+
   let tr = document.createElement('tr');
   if (validated == true) {
     tr.style.border = "2px solid #22dd22";
@@ -511,12 +512,14 @@ const handle_tag_beep = function (beep) {
   }
   tr.appendChild(createElement(beep.rssi));
   tr.appendChild(createElement(beep.node_id));
+
   // remove last beep record if table exceeds max row count
   if (BEEP_TABLE.children.length > MAX_ROW_COUNT) {
     BEEP_TABLE.removeChild(BEEP_TABLE.lastElementChild)
-  }
+  } 
   BEEP_TABLE.insertBefore(tr, BEEP_TABLE.firstChild.nextSibling);
   beeps.push(beep);
+
   let beep_count = beep_hist[tag_id];
   if (tags.has(tag_id)) {
     beep_hist[tag_id] += 1;
@@ -572,8 +575,8 @@ const handle_tag_beep = function (beep) {
     TAG_TABLE.appendChild(tr);
     //TAG_TABLE.insertBefore(tr, TAG_TABLE.firstChild.nextSibling);
   }
-
 };
+
 const createElement = function (text) {
   let td = document.createElement('td');
   td.textContent = text;
@@ -804,7 +807,20 @@ const initialize_websocket = function () {
   });
   socket.onmessage = function (msg) {
     let data = JSON.parse(msg.data);
-    console.log('socket data', data);
+
+    // console.log('socket data', data);
+    get_radio_channels(data);
+
+    // let component, col
+    // console.log('radio data channel', data.channel)
+    // if (beep_channels.includes(data.channel) && data.channel !== undefined && component === undefined) {
+    //   component = build_radio_component(data.channel)
+    //   col = document.createElement('div')
+    //   col.classList.add('col-lg') // keeps making this class list
+    //   col.appendChild(component)
+    //   document.querySelector('#extra-radios').appendChild(col)
+    // }   
+
     let tr, td;
     switch (data.msg_type) {
       case ('beep'):
@@ -871,6 +887,7 @@ const initialize_websocket = function () {
       //      document.querySelector('#raw_gps').textContent = JSON.stringify(data, null, 2);
     }
   };
+
 };
 
 const updateChrony = function () {
@@ -890,6 +907,7 @@ const get_config = function () {
   $.ajax({
     url: '/config',
     success: function (contents) { // contents are from /etc/ctt/station-config.json not default-config.json
+      // console.log('get config', contents)
       let i = 0;
       let radio_id, value;
       contents.radios.forEach(function (radio) {
@@ -933,8 +951,9 @@ const build_row = function (opts) {
 };
 
 const build_radio_component = function (n, type) { // add int channel and radio tag type, conditional statements if ble
+  // let beeps_copy = beeps.slice()
+  // console.log('beeps', beeps, 'beeps length', beeps.length)
   let wrapper = document.createElement('div')
-
   let h2 = document.createElement('h2')
   h2.setAttribute('style', 'text-align: center;')
   h2.textContent = 'Radio ' + n
@@ -1033,9 +1052,11 @@ const build_radio_component = function (n, type) { // add int channel and radio 
   col_sm.appendChild(button)
   div.appendChild(col_sm)
   wrapper.appendChild(div)
-
+  // console.log('build radio component beeps array', beep_channels, beep_channels?.length)
+  // wrapper.setAttribute("style","display:none;");
   return wrapper
-};
+
+};  
 
 const build_version_element = function(opts) {
 	let tr = document.createElement('tr')
@@ -1046,6 +1067,16 @@ const build_version_element = function(opts) {
 	td.textContent = opts.version
 	tr.appendChild(td)
 	return tr
+}
+
+const len = function (arr) {
+  var count = 0;
+  for (var k in arr) {
+    if (arr.hasOwnProperty(k)) {
+      count++;
+    }
+  }
+  return count;
 }
 
 const initialize_software_versions = function () {
@@ -1165,22 +1196,37 @@ const build_sg_tag_file_upload = function() {
 
 }
 
-const init_sg = () => {
+function get_radio_channels(beep) {
+  if (beep_channels.includes(beep.channel)) {
+    
+  } else {
+    beep_channels.push(beep.channel);
+    console.log('adding channel', beep.channel)
+  }
+  // for (let i = 6; i <=36; i++) {
+  // if(beep_channels.includes(i)) {
+  //   } else {
+  //     // BEEP_TABLE.setAttribute("style","display:none;");
+  //   }
+  // }
+};
+
+function init_sg() {
   document.querySelector('#upload-sensorgnome-tag-db').addEventListener('click', (evt) => {
-    let tag_file = document.querySelector('#tag-db-file').files[0]
-    console.log('uploading tag file', tag_file.name)
-    const file_ext = tag_file.name.split('.').pop()
-    const valid_exts = ['csv', 'sqlite']
+    let tag_file = document.querySelector('#tag-db-file').files[0];
+    console.log('uploading tag file', tag_file.name);
+    const file_ext = tag_file.name.split('.').pop();
+    const valid_exts = ['csv', 'sqlite'];
     if (!valid_exts.includes(file_ext.toLowerCase())) {
       // invalid file extenstion - expected csv or sqlite
-      alert('invalid file selected - expected csv or sqlite file')
-      return
+      alert('invalid file selected - expected csv or sqlite file');
+      return;
     }
-    const reader = new FileReader()
-    reader.readAsArrayBuffer(tag_file)
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(tag_file);
     reader.onload = (e) => {
-      let contents = e.target.result
-      console.log('loaded file contents', contents.length)
+      let contents = e.target.result;
+      console.log('loaded file contents', contents.length);
       fetch('/upload-sg-tag-file', {
         method: 'POST',
         body: contents,
@@ -1189,46 +1235,55 @@ const init_sg = () => {
           'file-extension': file_ext
         }
       }).then(res => res.json())
-      .then(json => {
-        if (json.res == true) {
-          alert('Tag database upload complete')
-        } else {
-          alert('invalid response for tag database upload')
-        }
-      }).catch((err) => {
-        console.error(err)
-        alert('An error occured attempting to upload the SG tag file database')
-      })
-    }
-  })
-}
-
-; (function () {
+        .then(json => {
+          if (json.res == true) {
+            alert('Tag database upload complete');
+          } else {
+            alert('invalid response for tag database upload');
+          }
+        }).catch((err) => {
+          console.error(err);
+          alert('An error occured attempting to upload the SG tag file database');
+        });
+    };
+  });
+} (function () {
   document.querySelector('#sg_link').setAttribute('href', 'http://' + window.location.hostname + ':3010');
   render_gateway()
   initialize_reboot()
   setInterval(render_gateway, 5000)
-  let component, col
+  // let component, col
   let max_row_count = localStorage.getItem('max-row-count')
   if (max_row_count) {
     MAX_ROW_COUNT = max_row_count
   } else {
     localStorage.setItem('max-row-count', MAX_ROW_COUNT)
   }
+
   initialize_software_versions()
+  console.log('initialize websocket', initialize_websocket())
+
   for (let i = 1; i <= 5; i++) {
     component = build_radio_component(i)
     col = document.createElement('div')
     col.classList.add('col-lg')
     col.appendChild(component)
     document.querySelector('#main-radios').appendChild(col)
+    // console.log('beep channel array', beep_channels, 'length', beep_channels?.length)
   }
-  for (let i = 6; i <= 36; i++) {
+  for (let i = 6; i <= 12; i++) {
     component = build_radio_component(i)
     col = document.createElement('div')
     col.classList.add('col-lg')
     col.appendChild(component)
     document.querySelector('#extra-radios').appendChild(col)
+  }
+  for (let i = 13; i <= 36; i++) {
+    component = build_radio_component(i)
+    col = document.createElement('div')
+    col.classList.add('col-lg')
+    col.appendChild(component)
+    document.querySelector('#ble-radios').appendChild(col)
   }
   initialize_websocket();
   initialize_controls();

@@ -8,7 +8,6 @@ import { TelemetryFormatter } from './telemetry-formatter.js'
 import { BleFormatter } from './ble-formatter.js'
 import { BeepStatManager } from './beep-stat-manager.js'
 import moment from 'moment'
-import parsePayload from './ble-parser.js'
 
 /**
  * manager class for incoming beep packets
@@ -103,7 +102,6 @@ class DataManager {
    * @param {*} beep 
    */
   handleRadioBeep(beep) {
-    // console.log('handle radio beep', beep)
     let record, id, stats
     if (beep.meta) {
       // expect new protocol

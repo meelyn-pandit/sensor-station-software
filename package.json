@@ -8,7 +8,7 @@
     "transpile-watch": "babel src -d lib --watch --copy-files",
     "build": "rm -rf lib && babel src -d lib --copy-files",
     "start-hardware-server": "node ./src/station-hardware-server/bin/www.js",
-    "start-radio-interface": "node ./src/station-radio-interface/index.js",
+    "start-radio-interface": "watch 'node ./src/station-radio-interface/index.js' ",
     "start-lcd-interface": "node ./src/station-lcd-interface/index.js",
     "start-web-interface": "node ./src/station-interface/bin/www.js",
     "read-v3-serial": "node ./src/id-driver/serial-chip.js",
@@ -50,6 +50,7 @@
     "tar": "^6.1.11",
     "usb": "^2.3.1",
     "uuid": "^8.3.2",
+    "watch": "^1.0.2",
     "wifi-config": "^1.0.1",
     "ws": "^8.5.0"
   },
