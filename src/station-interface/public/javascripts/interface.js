@@ -483,8 +483,7 @@ const handle_tag_beep = function (beep) {
     validated = true;
   }
 
-  get_radio_channels(data);
-
+  // get_radio_channels(data);
   // let component, col
   // console.log('radio data channel', data.channel)
   // if (beep_channels.includes(data.channel) && data.channel !== undefined && component === undefined) {
@@ -1268,7 +1267,7 @@ function init_sg() {
   render_gateway()
   initialize_reboot()
   setInterval(render_gateway, 5000)
-  // let component, col
+  let component, col
   let max_row_count = localStorage.getItem('max-row-count')
   if (max_row_count) {
     MAX_ROW_COUNT = max_row_count
