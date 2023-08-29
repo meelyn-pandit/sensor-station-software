@@ -44,7 +44,7 @@ class StationConfig {
       if (found_radio) {
         // identified the radio in the radio map
         radio.path = found_radio.path
-        // console.log('Radio path', radio.path)
+        console.log('Radio path', radio.path)
       }
     })
     return opts.config
@@ -64,7 +64,7 @@ class StationConfig {
     // console.log('radio map parsed', radio_map)
     // check if config file exists
     file_exists = await this.checkIfFileExists(this.config_filepath)
-    // console.log('radio map file', file_exists)
+    console.log('radio map file', file_exists)
 
     let config
     if (file_exists != true) {

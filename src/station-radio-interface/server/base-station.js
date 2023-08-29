@@ -31,8 +31,9 @@ class BaseStation {
       radio_map_filepath: opts.radio_map_filepath
     })
     console.log('base station', opts.radio_map_filepath)
-
     this.active_radios = {}
+    this.open_radios = []
+    this.closed_radios = []
     this.station_leds = new StationLeds()
     this.gps_client = new GpsClient({
       max_gps_records: 50
@@ -94,6 +95,7 @@ class BaseStation {
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
+    await this.saveOpenRadios()
   }
 
   /**
@@ -104,6 +106,7 @@ class BaseStation {
    */
   toggleRadioMode(opts) {
     if (opts.channel in Object.keys(this.active_radios)) {
+    // if (opts.channel in Object.keys(this.open_radios)) {
       this.stationLog(`toggling ${opts.mode} mode on channel ${opts.channel}`)
       let radio = this.active_radios[opts.channel]
       this.config.toggleRadioMode({
@@ -334,6 +337,24 @@ class BaseStation {
   }
 
   /**
+   * write json of open radio ports
+   */
+  async saveOpenRadios() {
+    console.log('open save radios', this.open_radios)
+    this.open_ports = JSON.stringify(this.open_radios)
+    console.log('json version of open radios', this.open_ports)
+
+    fs.writeFile('open-radios.JSON', this.open_ports, 'utf8',
+    function (err) {
+      if (err) {
+        console.log('An error occurred while writing JSON object to file')
+        return console.log(err)
+      }
+    })
+  }
+
+
+  /**
    * get base station id
    */
   getId() {
@@ -396,14 +417,20 @@ class BaseStation {
         })
         beep_reader.on('open', (info) => {
           this.stationLog('opened radio on port', radio.channel)
+          this.open_radios.push(radio)
+          console.log('open radios', this.open_radios)
+
           // this.active_radios[info.port_uri] = info
           beep_reader.issueCommands(radio.config)
         })
         beep_reader.on('write', (msg) => {
+          // this.open_ports.push(msg.channel)
           this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
         })
         beep_reader.on('error', (err) => {
           console.log('reader error', err)
+
+          this.closed_radios.push(radio.channel.toString())
           console.error(err)
           // error on the radio - probably a path error
           beep_reader.stopPollingFirmware()
@@ -411,13 +438,14 @@ class BaseStation {
         })
         beep_reader.on('close', (info) => {
           this.stationLog(`radio closed ${radio.channel}`)
-          if (info.port_uri in Object.keys(this.active_radios)) {
-          }
+          // if (info.port_uri in Object.keys(this.active_radios)) {
+          // }
         })
         beep_reader.start(1000)
         this.active_radios[radio.channel] = beep_reader
       }
     })
+
   }
 }
 

@@ -39,6 +39,9 @@ class RadioReceiver extends EventEmitter {
     }
 
     this.pollFirmware = this.pollFirmware.bind(this)
+
+    this.open_ports = []
+
   }
 
   pollFirmware() {
@@ -89,6 +92,8 @@ class RadioReceiver extends EventEmitter {
   write(data) {
     console.log(`${moment(new Date()).utc().format('YYYY-MM-DD HH:mm:ss')} writing to radio ${this.channel}:  ${data.trim()}`)
     // emit 'write' message  with data to write / channel
+    this.open_ports.push(this.channel)
+    // console.log('open ports', this.open_ports)
     this.emit('write', {
       msg: data.trim(),
       channel: this.channel
