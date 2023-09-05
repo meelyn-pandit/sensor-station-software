@@ -15,6 +15,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import parsePayload from './data/ble-parser.js'
 
+
 /**
  * manager class for controlling / reading radios
  * and writing to disk
@@ -67,6 +68,7 @@ class BaseStation {
    * load config - start the data manager, gps client, web socket server, timers, radios
    */
   async init() {
+
     await this.config.load()
     /** DO NOT MERGE DEFAULT CONFIG for now...
     // merge default config with current config if fields have been added
@@ -92,10 +94,10 @@ class BaseStation {
 
     this.gps_client.start()
     this.stationLog('initializing base station')
+    this.saveOpenRadios()
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
-    this.saveOpenRadios()
   }
 
   /**
@@ -350,18 +352,22 @@ class BaseStation {
         // return files
         files.forEach((file, i) => {
           console.log('radio serial path', file)
-          let file_path = '/dev/serial/by-path/' + file
-          let channel = i+1
-          let file_obj = {
-            channel,
-            path: file_path,
+          if (file.substring(38,43) === 'port0') {
+            console.log('what is this serial path', file, file.substring(38,43))
+          } else {
+            let file_path = '/dev/serial/by-path/' + file
+            let channel = i-3
+            let file_obj = {
+              channel,
+              path: file_path,
+            }
+            file_object.push(file_obj)
+            console.log('serial port array', file_object)
+            return file_object
           }
-          file_object.push(file_obj)
-          console.log('serial port array', file_object)
-          return file_object
         })
 
-    fs.writeFile("serial_ports.json", JSON.stringify(file_object),
+    fs.writeFile("./src/station-radio-interface/server/data/serial-ports.json", JSON.stringify(file_object),
       {
         encoding: "utf8",
         flag: "w",
@@ -373,13 +379,13 @@ class BaseStation {
           else {
             console.log("File written successfully\n");
             console.log("The written has the following contents:");
-            console.log(fs.readFileSync("serial_ports.json", "utf8"));
+            console.log(fs.readFileSync("./src/station-radio-interface/server/data/serial-ports.json", "utf8"));
           }
         });
       }
     })
     console.log('watching serial directory')
-    
+
     // fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
     //   console.log(`event type is: ${eventType}`);
     //   if (filename) {
@@ -423,13 +429,9 @@ class BaseStation {
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
-    let radio_ports = fs.readdirSync('../../../dev/serial/by-path')
-    // console.log('radio ports', radio_ports)
+
     this.config.data.radios.forEach((radio) => {
-      // console.log('radio', radio.path.substring(0,20))
-      // if (radio && radio_ports.includes(radio.path.substring(0,20))) {
       if(radio.path) {
-        // if (radio_ports.includes(radio.path.substring(0,20))) {
         let beep_reader = new RadioReceiver({
           baud_rate: 115200,
           port_uri: radio.path,
