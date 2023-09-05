@@ -44,7 +44,7 @@ class StationConfig {
       if (found_radio) {
         // identified the radio in the radio map
         radio.path = found_radio.path
-        console.log('Radio path', radio.path)
+        // console.log('Radio path', radio.path)
       }
     })
     return opts.config

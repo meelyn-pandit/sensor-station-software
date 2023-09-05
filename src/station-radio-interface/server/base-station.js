@@ -95,7 +95,7 @@ class BaseStation {
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
-    await this.saveOpenRadios()
+    this.saveOpenRadios()
   }
 
   /**
@@ -339,18 +339,55 @@ class BaseStation {
   /**
    * write json of open radio ports
    */
-  async saveOpenRadios() {
-    console.log('open save radios', this.open_radios)
-    this.open_ports = JSON.stringify(this.open_radios)
-    console.log('json version of open radios', this.open_ports)
-
-    fs.writeFile('open-radios.JSON', this.open_ports, 'utf8',
-    function (err) {
+  saveOpenRadios() {
+    let file_object = []
+    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+      console.log('save open radios files', files)
       if (err) {
-        console.log('An error occurred while writing JSON object to file')
-        return console.log(err)
+      console.log(err)
+      } else {
+        console.log("\nCurrent directory filenames:")
+        // return files
+        files.forEach((file, i) => {
+          console.log('radio serial path', file)
+          let file_path = '/dev/serial/by-path/' + file
+          let channel = i+1
+          let file_obj = {
+            channel,
+            path: file_path,
+          }
+          file_object.push(file_obj)
+          console.log('serial port array', file_object)
+          return file_object
+        })
+
+    fs.writeFile("serial_ports.json", JSON.stringify(file_object),
+      {
+        encoding: "utf8",
+        flag: "w",
+        mode: 0o666
+      },
+        (err) => {
+          if (err)
+            console.log(err);
+          else {
+            console.log("File written successfully\n");
+            console.log("The written has the following contents:");
+            console.log(fs.readFileSync("serial_ports.json", "utf8"));
+          }
+        });
       }
     })
+    console.log('watching serial directory')
+    
+    // fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+    //   console.log(`event type is: ${eventType}`);
+    //   if (filename) {
+    //     console.log(`filename provided: ${filename}`);
+    //   } else {
+    //     console.log('filename not provided');
+    //   }
+    // });
   }
 
 
@@ -386,9 +423,13 @@ class BaseStation {
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
+    let radio_ports = fs.readdirSync('../../../dev/serial/by-path')
+    // console.log('radio ports', radio_ports)
     this.config.data.radios.forEach((radio) => {
-      // console.log('radio', radio)
-      if (radio.path) {
+      // console.log('radio', radio.path.substring(0,20))
+      // if (radio && radio_ports.includes(radio.path.substring(0,20))) {
+      if(radio.path) {
+        // if (radio_ports.includes(radio.path.substring(0,20))) {
         let beep_reader = new RadioReceiver({
           baud_rate: 115200,
           port_uri: radio.path,
@@ -418,7 +459,7 @@ class BaseStation {
         beep_reader.on('open', (info) => {
           this.stationLog('opened radio on port', radio.channel)
           this.open_radios.push(radio)
-          console.log('open radios', this.open_radios)
+          // console.log('open radios', this.open_radios)
 
           // this.active_radios[info.port_uri] = info
           beep_reader.issueCommands(radio.config)

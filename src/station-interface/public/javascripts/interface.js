@@ -922,7 +922,7 @@ const get_config = function () {
   $.ajax({
     url: '/config',
     success: function (contents) { // contents are from /etc/ctt/station-config.json not default-config.json
-      console.log('get config', contents)
+      // console.log('get config', contents)
       let i = 0;
       let radio_id, value;
       contents.radios.forEach(function (radio) {
