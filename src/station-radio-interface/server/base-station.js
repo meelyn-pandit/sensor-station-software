@@ -342,6 +342,7 @@ class BaseStation {
    * write json of open radio ports
    */
   saveOpenRadios() {
+    // console.log('save open radios regular radio config file',  this.config.data.radios)
     let file_object = []
     fs.readdir('../../../dev/serial/by-path', (err, files) => {
       console.log('save open radios files', files)
@@ -350,21 +351,19 @@ class BaseStation {
       } else {
         console.log("\nCurrent directory filenames:")
         // return files
-        files.forEach((file, i) => {
-          console.log('radio serial path', file)
-          if (file.substring(38,43) === 'port0') {
-            console.log('what is this serial path', file, file.substring(38,43))
-          } else {
+        this.config.data.radios.forEach((radio) => {
+          files.forEach((file) => {
+            console.log('radio serial path', file)
+            
             let file_path = '/dev/serial/by-path/' + file
-            let channel = i-3
-            let file_obj = {
-              channel,
-              path: file_path,
+            if (file_path === radio.path) {
+              file_object.push(radio)
             }
-            file_object.push(file_obj)
+            
             console.log('serial port array', file_object)
             return file_object
-          }
+          })
+          
         })
 
     fs.writeFile("./src/station-radio-interface/server/data/serial-ports.json", JSON.stringify(file_object),
