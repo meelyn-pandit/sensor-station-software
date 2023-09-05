@@ -385,14 +385,15 @@ class BaseStation {
     })
     console.log('watching serial directory')
 
-    // fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
-    //   console.log(`event type is: ${eventType}`);
-    //   if (filename) {
-    //     console.log(`filename provided: ${filename}`);
-    //   } else {
-    //     console.log('filename not provided');
-    //   }
-    // });
+    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+      console.log(`event type is: ${eventType}`);
+      if (filename) {
+        console.log(`filename provided: ${filename}`);
+        this.saveOpenRadios()
+      } else {
+        console.log('filename not provided');
+      }
+    });
   }
 
 
