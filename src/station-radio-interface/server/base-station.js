@@ -15,7 +15,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import parsePayload from './data/ble-parser.js'
 
-
 /**
  * manager class for controlling / reading radios
  * and writing to disk
@@ -77,7 +76,7 @@ class BaseStation {
 
     // save the config to disk
     this.config.save()
-
+    // console.log('config data', this.config.data, typeof this.config.data)
     // pull out config options to start everythign
     this.date_format = this.config.data.record.date_format
     this.station_id = await this.getId()
@@ -94,10 +93,20 @@ class BaseStation {
 
     this.gps_client.start()
     this.stationLog('initializing base station')
-    this.saveOpenRadios()
     this.startWebsocketServer()
     this.startTimers()
     this.startRadios()
+
+    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+      console.log(`event type is: ${eventType}`)
+      if (filename) {
+        console.log(`filename provided: ${filename}`)
+        this.startRadios()
+      } else {
+        console.log('filename not provided')
+      }
+    })
+
   }
 
   /**
@@ -393,7 +402,7 @@ class BaseStation {
       } else {
         console.log('filename not provided');
       }
-    });
+    })
   }
 
 
@@ -432,6 +441,7 @@ class BaseStation {
 
     this.config.data.radios.forEach((radio) => {
       if(radio.path) {
+
         let beep_reader = new RadioReceiver({
           baud_rate: 115200,
           port_uri: radio.path,
