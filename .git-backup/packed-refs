@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+8eed50e208bb5fd776916fdea7dfe086be42ada4 refs/remotes/origin/interface
+62c9b290cf0a308809fa46dea48b36acd4fbfa93 refs/remotes/origin/master
+e85e33225f7993c41cc613aec076b57f7767599e refs/remotes/origin/revision_32
+3c65ca49f14101977d0f89a3fc40e6dd718425f6 refs/remotes/origin/usb-tools

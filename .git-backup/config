@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/cellular-tracking-technologies/sensor-station-software.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "my-sensor-station"]
+	url = https://github.com/meelyn-pandit/sensor-station-software.git
+	fetch = +refs/heads/*:refs/remotes/my-sensor-station/*
+[branch "ble-data"]
+	remote = my-sensor-station
+	merge = refs/heads/ble-data
+[branch "dynamic-port-loader"]
+	remote = my-sensor-station
+	merge = refs/heads/dynamic-port-loader
