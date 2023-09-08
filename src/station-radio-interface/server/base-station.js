@@ -476,20 +476,34 @@ class BaseStation {
         console.log(err)
       } else {
         console.log("\nCurrent directory filenames:")
-        // return files
-        files.forEach((file) => {
-          // console.log('radio serial path', file)
-          
+        files.forEach((file) => {          
           let file_path = '/dev/serial/by-path/' + file
-          // file_object.push(file_path)
-            this.open_radios.push(file_path)
-          // console.log('serial port array', file_object)
-          return this.open_radios
+          this.open_radios.push(file_path)
         })
+
+      fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+        console.log(`event type is ${eventType}`)
+        if (filename) {
+          console.log(`filename provided ${filename}`)
+          let file_path = '/dev/serial/by-path/' + filename
+          // this.open_radios = this.open_radios.filter(val => val != file_path)
+          for (let i = 0; i < this.open_radios.length; i++) {
+            if (this.open_radios[i] === file_path) {
+              const removedElements = this.open_radios.splice(i, 1)
+              console.log('removed elements',removedElements)
+              i--
+            }
+          }
+          console.log('overwritten open radios', this.open_radios)
+          this.startRadios()
+        } else {
+          console.log('filename provided')
+        }
+      })
       }
  
 
-    console.log('initial radios', Array.isArray(this.open_radios))
+    // console.log('initial radios', Array.isArray(this.open_radios))
 
       this.config.data.radios.forEach((radio) => {
         if(this.open_radios.includes(radio.path)) {
@@ -547,6 +561,7 @@ class BaseStation {
         }
       })
     })
+  // })
   }
 
 }
