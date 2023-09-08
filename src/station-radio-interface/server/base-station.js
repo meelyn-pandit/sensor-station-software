@@ -53,7 +53,8 @@ class BaseStation {
     this.heartbeat = heartbeats.createHeart(1000)
     this.server_api = new ServerApi()
     this.radio_fw = {}
-  }
+
+    }
 
   /**
    * 
@@ -97,15 +98,15 @@ class BaseStation {
     this.startTimers()
     this.startRadios()
 
-    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
-      console.log(`event type is: ${eventType}`)
-      if (filename) {
-        console.log(`filename provided: ${filename}`)
-        this.startRadios()
-      } else {
-        console.log('filename not provided')
-      }
-    })
+    // fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+    //   console.log(`event type, ${filename} is: ${eventType}`)
+    //   if (filename) {
+    //     console.log(`filename provided: ${filename}`)
+    //     this.startRadios()
+    //   } else {
+    //     console.log('filename not provided')
+    //   }
+    // })
 
   }
 
@@ -432,74 +433,122 @@ class BaseStation {
     msgs.unshift(moment(new Date()).utc().format(this.date_format))
   }
 
+  InitialRadios() {
+    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+      console.log(`event type is: ${eventType}`);
+      if (filename) {
+        console.log(`filename provided: ${filename}`);
+      } else {
+        console.log('filename not provided');
+      }
+    })
+
+    // let file_object = []
+    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+      console.log('save open radios files', files)
+      if (err) {
+        console.log(err)
+      } else {
+        console.log("\nCurrent directory filenames:")
+        // return files
+        files.forEach((file) => {
+          // console.log('radio serial path', file)
+          
+          let file_path = '/dev/serial/by-path/' + file
+          // file_object.push(file_path)
+            this.open_radios.push(file_path)
+          // console.log('serial port array', file_object)
+          return this.open_radios
+        })
+      }
+    })
+  }
+
   /**
    * start the radio receivers
    */
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
-
-    this.config.data.radios.forEach((radio) => {
-      if(radio.path) {
-
-        let beep_reader = new RadioReceiver({
-          baud_rate: 115200,
-          port_uri: radio.path,
-          channel: radio.channel
+    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+      console.log('save open radios files', files)
+      if (err) {
+        console.log(err)
+      } else {
+        console.log("\nCurrent directory filenames:")
+        // return files
+        files.forEach((file) => {
+          // console.log('radio serial path', file)
+          
+          let file_path = '/dev/serial/by-path/' + file
+          // file_object.push(file_path)
+            this.open_radios.push(file_path)
+          // console.log('serial port array', file_object)
+          return this.open_radios
         })
-
-        // let raw_beep = beep_reader.buildSerialInterface()
-        // console.log('base station raw beep', raw_beep)
-        // console.log('beep reader', beep_reader)
-        beep_reader.on('beep', (beep) => {
-            // console.log('beep', beep)
-          if (beep.meta.data_type === 'ble_tag') {
-            // this.data_manager.handleBleBeep(beep)
-            this.data_manager.handleRadioBeep(beep)
-            beep.msg_type = 'ble'
-            beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
-            this.broadcast(JSON.stringify(beep))
-          } else {
-            this.data_manager.handleRadioBeep(beep)
-            beep.msg_type = 'beep'
-            this.broadcast(JSON.stringify(beep))
-          }
-        })
-        beep_reader.on('radio-fw', (fw_version) => {
-          this.radio_fw[radio.channel] = fw_version
-        })
-        beep_reader.on('open', (info) => {
-          this.stationLog('opened radio on port', radio.channel)
-          this.open_radios.push(radio)
-          // console.log('open radios', this.open_radios)
-
-          // this.active_radios[info.port_uri] = info
-          beep_reader.issueCommands(radio.config)
-        })
-        beep_reader.on('write', (msg) => {
-          // this.open_ports.push(msg.channel)
-          this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
-        })
-        beep_reader.on('error', (err) => {
-          console.log('reader error', err)
-
-          this.closed_radios.push(radio.channel.toString())
-          console.error(err)
-          // error on the radio - probably a path error
-          beep_reader.stopPollingFirmware()
-          this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
-        })
-        beep_reader.on('close', (info) => {
-          this.stationLog(`radio closed ${radio.channel}`)
-          // if (info.port_uri in Object.keys(this.active_radios)) {
-          // }
-        })
-        beep_reader.start(1000)
-        this.active_radios[radio.channel] = beep_reader
       }
-    })
+ 
 
+    console.log('initial radios', Array.isArray(this.open_radios))
+
+      this.config.data.radios.forEach((radio) => {
+        if(this.open_radios.includes(radio.path)) {
+          let beep_reader = new RadioReceiver({
+            baud_rate: 115200,
+            port_uri: radio.path,
+            channel: radio.channel
+          })
+
+          beep_reader.on('beep', (beep) => {
+              // console.log('beep', beep)
+            if (beep.meta.data_type === 'ble_tag') {
+              // this.data_manager.handleBleBeep(beep)
+              this.data_manager.handleRadioBeep(beep)
+              beep.msg_type = 'ble'
+              beep.parsed = parsePayload(Buffer.from(beep.data.payload, 'hex'))
+              this.broadcast(JSON.stringify(beep))
+            } else {
+              this.data_manager.handleRadioBeep(beep)
+              beep.msg_type = 'beep'
+              this.broadcast(JSON.stringify(beep))
+            }
+          })
+          beep_reader.on('radio-fw', (fw_version) => {
+            this.radio_fw[radio.channel] = fw_version
+          })
+          beep_reader.on('open', (info) => {
+            this.stationLog('opened radio on port', radio.channel)
+            this.open_radios.push(radio)
+            // console.log('open radios', this.open_radios)
+
+            // this.active_radios[info.port_uri] = info
+            beep_reader.issueCommands(radio.config)
+          })
+          beep_reader.on('write', (msg) => {
+            // this.open_ports.push(msg.channel)
+            this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
+          })
+          beep_reader.on('error', (err) => {
+            console.log('reader error', err)
+
+            this.closed_radios.push(radio.channel.toString())
+            console.error(err)
+            // error on the radio - probably a path error
+            beep_reader.stopPollingFirmware()
+            this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
+          })
+          beep_reader.on('close', (info) => {
+            this.stationLog(`radio closed ${radio.channel}`)
+            // if (info.port_uri in Object.keys(this.active_radios)) {
+            // }
+          })
+          beep_reader.start(1000)
+          this.active_radios[radio.channel] = beep_reader
+        }
+      })
+    })
   }
+
 }
 
 export { BaseStation }
