@@ -14,7 +14,7 @@ import path from 'path'
 import _ from 'lodash'
 import moment from 'moment'
 import parsePayload from './data/ble-parser.js'
-
+import chokidar from 'chokidar'
 /**
  * manager class for controlling / reading radios
  * and writing to disk
@@ -30,7 +30,7 @@ class BaseStation {
       config_filepath: opts.config_filepath,
       radio_map_filepath: opts.radio_map_filepath
     })
-    console.log('base station', opts.radio_map_filepath)
+    // console.log('base station', opts.radio_map_filepath)
     this.active_radios = {}
     this.open_radios = []
     this.closed_radios = []
@@ -470,55 +470,12 @@ class BaseStation {
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
-    fs.readdir('../../../dev/serial/by-path', (err, files) => {
-      console.log('save open radios files', files)
-      if (err) {
-        console.log(err)
-      } else {
-        console.log("\nCurrent directory filenames:")
-        this.open_radios = files.map((file) => {          
-          return '/dev/serial/by-path/' + file
-          // this.open_radios.push(file_path)
-          // console.log('files', files)
-        })
-        console.log('read directory open radios', this.open_radios)
-
-      fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
-        console.log(`event type is ${eventType}`)
-        if (eventType) {
-          fs.readdir('../../../dev/serial/by-path', (err, files) => {
-            console.log('save open radios files', files)
-            if (err) {
-              console.log(err)
-            } else {
-              console.log("\nCurrent directory filenames:")
-              this.open_radios = files.map((file) => {          
-                return '/dev/serial/by-path/' + file
-                // this.open_radios.push(file_path)
-                // console.log('files', files)
-              })
-              console.log('watch open radios', this.open_radios)
-              return this.open_radios
-            }
-          })
-          // console.log(`filename provided ${filename}`)
-          // let file_path = '/dev/serial/by-path/' + filename
-          // // this.open_radios = this.open_radios.filter(val => val != file_path)
-          // for (let i = 0; i < this.open_radios.length; i++) {
-          //   if (this.open_radios[i] === file_path) {
-          //     const removedElements = this.open_radios.splice(i, 1)
-          //     console.log('removed elements',removedElements)
-          //     i--
-          //   }
-          // }
-          // console.log('overwritten open radios', this.open_radios)
-          this.startRadios()
-        } else {
-          console.log('filename provided')
-        }
-      })
-      }
  
+    chokidar.watch('../../../../../../dev/serial/by-path').on('add', path => {
+      console.log(path)
+      this.open_radios.push(path.substring(17))
+      console.log('open radios', this.open_radios)
+    })
 
     // console.log('initial radios', Array.isArray(this.open_radios))
 
@@ -576,11 +533,9 @@ class BaseStation {
           })
           beep_reader.start(1000)
           this.active_radios[radio.channel] = beep_reader
-        }
+        } // open_radios end
       })
-    }) // end of fs.readdir
-  }
-
+    }
 }
 
 export { BaseStation }
