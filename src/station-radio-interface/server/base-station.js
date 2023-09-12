@@ -470,11 +470,21 @@ class BaseStation {
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
- 
-    chokidar.watch('../../../../../../dev/serial/by-path').on('add', path => {
+    const dir_watch = chokidar.watch('../../../../../../dev/serial/by-path')
+    
+    dir_watch.on('add', path => {
       console.log(path)
       this.open_radios.push(path.substring(17))
       console.log('open radios', this.open_radios)
+    })
+    dir_watch.on('unlink', path => {
+      console.log('unlinked path', path)
+        const index = this.open_radios.indexOf(path.substring(17))
+        if (index > -1) {
+          this.open_radios.splice(index, 1)
+        }
+        console.log('unlinked open radios', this.open_radios)
+        return this.open_radios
     })
 
     // console.log('initial radios', Array.isArray(this.open_radios))
@@ -518,7 +528,7 @@ class BaseStation {
             this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
           })
           beep_reader.on('error', (err) => {
-            console.log('reader error', err)
+            console.log('reader error on', radio.channel, err)
 
             this.closed_radios.push(radio.channel.toString())
             console.error(err)
@@ -527,7 +537,7 @@ class BaseStation {
             this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
           })
           beep_reader.on('close', (info) => {
-            this.stationLog(`radio closed ${radio.channel}`)
+            this.stationLog(`radio closed ${radio.channel}`) // destroy beep_reader of radio that was unplugged
             // if (info.port_uri in Object.keys(this.active_radios)) {
             // }
           })
