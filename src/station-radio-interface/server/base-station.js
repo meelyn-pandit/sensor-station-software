@@ -354,7 +354,7 @@ class BaseStation {
   saveOpenRadios() {
     // console.log('save open radios regular radio config file',  this.config.data.radios)
     let file_object = []
-    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+    fs.readdir('../../../../../../dev/serial/by-path', (err, files) => {
       console.log('save open radios files', files)
       if (err) {
       console.log(err)
@@ -395,7 +395,7 @@ class BaseStation {
     })
     console.log('watching serial directory')
 
-    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+    fs.watch('../../../../../../dev/serial/by-path', (eventType, filename) => {
       console.log(`event type is: ${eventType}`);
       if (filename) {
         console.log(`filename provided: ${filename}`);
@@ -434,7 +434,7 @@ class BaseStation {
   }
 
   InitialRadios() {
-    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+    fs.watch('../../../../../../dev/serial/by-path', (eventType, filename) => {
       console.log(`event type is: ${eventType}`);
       if (filename) {
         console.log(`filename provided: ${filename}`);
@@ -444,7 +444,7 @@ class BaseStation {
     })
 
     // let file_object = []
-    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+    fs.readdir('../../../../../../dev/serial/by-path', (err, files) => {
       console.log('save open radios files', files)
       if (err) {
         console.log(err)
@@ -470,7 +470,7 @@ class BaseStation {
   startRadios() {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
-    fs.readdir('../../../dev/serial/by-path', (err, files) => {
+    fs.readdir('../../../../../../dev/serial/by-path', (err, files) => {
       console.log('save open radios files', files)
       if (err) {
         console.log(err)
@@ -483,10 +483,10 @@ class BaseStation {
         })
         console.log('read directory open radios', this.open_radios)
 
-      fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
+      fs.watch('../../../../../../dev/serial/by-path', (eventType, filename) => {
         console.log(`event type is ${eventType}`)
         if (eventType) {
-          fs.readdir('../../../dev/serial/by-path', (err, files) => {
+          fs.readdir('../../../../../../dev/serial/by-path', (err, files) => {
             console.log('save open radios files', files)
             if (err) {
               console.log(err)
