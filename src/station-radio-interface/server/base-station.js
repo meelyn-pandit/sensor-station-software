@@ -96,17 +96,8 @@ class BaseStation {
     this.stationLog('initializing base station')
     this.startWebsocketServer()
     this.startTimers()
-    this.startRadios()
-
-    // fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
-    //   console.log(`event type, ${filename} is: ${eventType}`)
-    //   if (filename) {
-    //     console.log(`filename provided: ${filename}`)
-    //     this.startRadios()
-    //   } else {
-    //     console.log('filename not provided')
-    //   }
-    // })
+    this.directoryWatcher()
+    // this.startRadios()
 
   }
 
@@ -349,65 +340,6 @@ class BaseStation {
   }
 
   /**
-   * write json of open radio ports
-   */
-  saveOpenRadios() {
-    // console.log('save open radios regular radio config file',  this.config.data.radios)
-    let file_object = []
-    fs.readdir('../../../dev/serial/by-path', (err, files) => {
-      console.log('save open radios files', files)
-      if (err) {
-      console.log(err)
-      } else {
-        console.log("\nCurrent directory filenames:")
-        // return files
-        this.config.data.radios.forEach((radio) => {
-          files.forEach((file) => {
-            console.log('radio serial path', file)
-            
-            let file_path = '/dev/serial/by-path/' + file
-            if (file_path === radio.path) {
-              file_object.push(radio)
-            }
-            
-            console.log('serial port array', file_object)
-            return file_object
-          })
-          
-        })
-
-    fs.writeFile("./src/station-radio-interface/server/data/serial-ports.json", JSON.stringify(file_object),
-      {
-        encoding: "utf8",
-        flag: "w",
-        mode: 0o666
-      },
-        (err) => {
-          if (err)
-            console.log(err);
-          else {
-            console.log("File written successfully\n");
-            console.log("The written has the following contents:");
-            console.log(fs.readFileSync("./src/station-radio-interface/server/data/serial-ports.json", "utf8"));
-          }
-        });
-      }
-    })
-    console.log('watching serial directory')
-
-    fs.watch('../../../dev/serial/by-path', (eventType, filename) => {
-      console.log(`event type is: ${eventType}`);
-      if (filename) {
-        console.log(`filename provided: ${filename}`);
-        this.saveOpenRadios()
-      } else {
-        console.log('filename not provided');
-      }
-    })
-  }
-
-
-  /**
    * get base station id
    */
   getId() {
@@ -433,73 +365,42 @@ class BaseStation {
     msgs.unshift(moment(new Date()).utc().format(this.date_format))
   }
 
-  InitialRadios() {
-    fs.watch('../../../../../dev/serial/by-path', (eventType, filename) => {
-      console.log(`event type is: ${eventType}`);
-      if (filename) {
-        console.log(`filename provided: ${filename}`);
-      } else {
-        console.log('filename not provided');
-      }
-    })
+  otherFunction(path) {
+    this.open_radios.push(path.substring(17))
+    console.log('callback open radios', this.open_radios)
+  }
 
-    // let file_object = []
-    fs.readdir('../../../../../dev/serial/by-path', (err, files) => {
-      console.log('save open radios files', files)
-      if (err) {
-        console.log(err)
-      } else {
-        console.log("\nCurrent directory filenames:")
-        // return files
-        files.forEach((file) => {
-          // console.log('radio serial path', file)
-          
-          let file_path = '/dev/serial/by-path/' + file
-          // file_object.push(file_path)
-            this.open_radios.push(file_path)
-          // console.log('serial port array', file_object)
-          return this.open_radios
-        })
-      }
+  /**
+   * file watcher using chokidar
+   */
+  directoryWatcher() {
+    const watcher = chokidar.watch('../../../../../../dev/serial/by-path')
+    watcher.on('add', path => {
+      // this.open_radios.push(path.substring(17))
+      console.log('path', path.substring(17))
+      this.startRadios(path.substring(17)) // runs each time a radio is added to array
+
+    }).on('unlink', path => {
+      this.endRadios(path.substring(17))
     })
   }
 
   /**
    * start the radio receivers
    */
-  startRadios() {
+  startRadios(path) {
     console.log('I AM STARTING THIS RADIO!')
     this.stationLog('starting radio receivers')
-    const dir_watch = chokidar.watch('../../../../../../dev/serial/by-path')
-    
-    dir_watch.on('add', path => {
-      console.log(path)
-      this.open_radios.push(path.substring(17))
-      console.log('open radios', this.open_radios)
-    })
-    dir_watch.on('unlink', path => {
-      console.log('unlinked path', path)
-        const index = this.open_radios.indexOf(path.substring(17))
-        if (index > -1) {
-          this.open_radios.splice(index, 1)
-        }
-        console.log('unlinked open radios', this.open_radios)
-        return this.open_radios
-    })
 
-    // console.log('initial radios', Array.isArray(this.open_radios))
-
-      this.config.data.radios.forEach((radio) => {
-        if(this.open_radios.includes(radio.path)) {
-          console.log('radio found', radio)
-          let beep_reader = new RadioReceiver({
+    this.config.data.radios.forEach((radio) => {
+      if(radio.path === path) {
+        let beep_reader = new RadioReceiver({
             baud_rate: 115200,
             port_uri: radio.path,
             channel: radio.channel
           })
 
           beep_reader.on('beep', (beep) => {
-              // console.log('beep', beep)
             if (beep.meta.data_type === 'ble_tag') {
               // this.data_manager.handleBleBeep(beep)
               this.data_manager.handleRadioBeep(beep)
@@ -518,7 +419,6 @@ class BaseStation {
           beep_reader.on('open', (info) => {
             this.stationLog('opened radio on port', radio.channel)
             // this.open_radios.push(radio)
-            // console.log('open radios', this.open_radios)
 
             // this.active_radios[info.port_uri] = info
             beep_reader.issueCommands(radio.config)
@@ -528,24 +428,60 @@ class BaseStation {
             this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
           })
           beep_reader.on('error', (err) => {
+            // watcher.on('unlink', path => {
+            //   console.log('unlinked path', path)})
             console.log('reader error on', radio.channel, err)
 
             this.closed_radios.push(radio.channel.toString())
             console.error(err)
             // error on the radio - probably a path error
             beep_reader.stopPollingFirmware()
+            
             this.stationLog(`radio error on channel ${radio.channel}  ${err}`)
           })
           beep_reader.on('close', (info) => {
+            console.log(`radio closed ${radio.channel}`)
             this.stationLog(`radio closed ${radio.channel}`) // destroy beep_reader of radio that was unplugged
             // if (info.port_uri in Object.keys(this.active_radios)) {
             // }
           })
           beep_reader.start(1000)
-          this.active_radios[radio.channel] = beep_reader
+          
+            this.active_radios[radio.channel] = beep_reader // find way to remove unlinked radio from active_radios
+          console.log('active radios', this.active_radios)
         } // open_radios end
-      })
+      }) // forEach config.data.radios
+    // }) // chokidar watch end
     }
+
+  endRadios(path) {
+    this.config.data.radios.forEach((radio) => {
+      if(radio.path === path) {
+        // if(radio.channel in Object.keys(this.active_radios)) {
+        console.log('unlinked radio found', this.active_radios[radio.channel])
+
+          // this.active_radios[radio.channel] = undefined
+          delete this.active_radios[radio.channel]
+          console.log('endRadios unlinked radio found', this.active_radios)
+
+        // }
+      }
+    })
+  //   if(path in Object.values(this.active_radios.port_uri)) {
+  //       console.log('unlinked radio found', this.active_radios.port_uri)
+  //         const index = Object.values(this.active_radios).indexOf(radio)
+  //         console.log('index', index)
+  //         if (index > -1) {
+  //           let new_array0 = Object.values(this.active_radios)
+  //           let new_array1 = new_array0.splice(index, 1)
+  //           console.log('Object values active radios', new_array0)
+  //           let new_obj = new_array0.reduce((obj, item) => Object.assign(obj, { [item.key]: item.value}, {})
+  //           )
+  //           console.log('Modified active radios', new_obj)
+  //         }
+      // }
+  //   })
+  }
 }
 
 export { BaseStation }

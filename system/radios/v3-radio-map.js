@@ -29,6 +29,9 @@
   "channel": 10,
   "path": "/dev/serial/by-path/platform-3f980000.usb-usb-0:1.3:1.0"
 },{
+  "channel": 11,
+  "path": "/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1:1.0"
+},{
   "channel": 13,
   "path": "/dev/serial/by-path/platform-3f980000.usb-usb-0:1.7.1.1:1.0"
 },{
