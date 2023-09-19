@@ -56,6 +56,11 @@ class BaseStation {
 
     }
 
+    // destroy() {
+    //   console.log(`${this.serialport} is destroyed`)
+    //   delete this.beep_reader
+    // }
+
   /**
    * 
    * @param  {...any} msgs wrapper for data logger
@@ -380,7 +385,8 @@ class BaseStation {
       console.log('path', path.substring(17))
       this.startRadios(path.substring(17)) // runs each time a radio is added to array
 
-    }).on('unlink', path => {
+    })
+    watcher.on('unlink', path => {
       this.endRadios(path.substring(17))
     })
   }
@@ -431,9 +437,9 @@ class BaseStation {
             // watcher.on('unlink', path => {
             //   console.log('unlinked path', path)})
             console.log('reader error on', radio.channel, err)
-
+            // delete beep_reader
             this.closed_radios.push(radio.channel.toString())
-            console.error(err)
+            // console.error(err)
             // error on the radio - probably a path error
             beep_reader.stopPollingFirmware()
             
@@ -441,6 +447,7 @@ class BaseStation {
           })
           beep_reader.on('close', (info) => {
             console.log(`radio closed ${radio.channel}`)
+            beep_reader.destroy()
             this.stationLog(`radio closed ${radio.channel}`) // destroy beep_reader of radio that was unplugged
             // if (info.port_uri in Object.keys(this.active_radios)) {
             // }
@@ -448,7 +455,7 @@ class BaseStation {
           beep_reader.start(1000)
           
             this.active_radios[radio.channel] = beep_reader // find way to remove unlinked radio from active_radios
-          console.log('active radios', this.active_radios)
+          console.log('active radios', Object.keys(this.active_radios))
         } // open_radios end
       }) // forEach config.data.radios
     // }) // chokidar watch end
@@ -458,11 +465,11 @@ class BaseStation {
     this.config.data.radios.forEach((radio) => {
       if(radio.path === path) {
         // if(radio.channel in Object.keys(this.active_radios)) {
-        console.log('unlinked radio found', this.active_radios[radio.channel])
+        console.log('unlinked radio found', this.active_radios[radio.channel].channel)
 
           // this.active_radios[radio.channel] = undefined
           delete this.active_radios[radio.channel]
-          console.log('endRadios unlinked radio found', this.active_radios)
+          console.log('endRadios unlinked radio found', Object.keys(this.active_radios))
 
         // }
       }

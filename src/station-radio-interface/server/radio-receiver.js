@@ -44,6 +44,16 @@ class RadioReceiver extends EventEmitter {
 
   }
 
+  destroy() {
+    console.log('radio ', this.channel, 'is destroyed')
+    this.cancel()
+
+    delete this.port_uri
+    // delete new RadioReceiver()
+    delete this.parser
+    this.stopPollingFirmware()
+  }
+
   pollFirmware() {
     this.issuePresetCommand('version')
   }
@@ -123,9 +133,16 @@ class RadioReceiver extends EventEmitter {
    */
   start(delay = 0) {
     let self = this
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => { // clear interval for timeout, delete parser
       self.buildSerialInterface()
     }, delay)
+  }
+
+  /**
+   * cancel the radio
+   */
+  cancel(){
+    clearTimeout(this.timeoutId)
   }
 
   /**
@@ -133,6 +150,7 @@ class RadioReceiver extends EventEmitter {
    * emit basic events
    */
   buildSerialInterface() {
+    if (this.port_uri){
     let port = new SerialPort(this.port_uri, {
       baudRate: this.baud_rate
     })
@@ -185,6 +203,7 @@ class RadioReceiver extends EventEmitter {
     this.parser = port.pipe(parser)
     this.startPollingFirmware()
   }
+}
 }
 
 export { RadioReceiver }
