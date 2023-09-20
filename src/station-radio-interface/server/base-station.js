@@ -434,11 +434,7 @@ class BaseStation {
             this.stationLog(`writing message to radio ${msg.channel}: ${msg.msg}`)
           })
           beep_reader.on('error', (err) => {
-            // watcher.on('unlink', path => {
-            //   console.log('unlinked path', path)})
             console.log('reader error on', radio.channel, err)
-            // delete beep_reader
-            this.closed_radios.push(radio.channel.toString())
             // console.error(err)
             // error on the radio - probably a path error
             beep_reader.stopPollingFirmware()
@@ -474,20 +470,6 @@ class BaseStation {
         // }
       }
     })
-  //   if(path in Object.values(this.active_radios.port_uri)) {
-  //       console.log('unlinked radio found', this.active_radios.port_uri)
-  //         const index = Object.values(this.active_radios).indexOf(radio)
-  //         console.log('index', index)
-  //         if (index > -1) {
-  //           let new_array0 = Object.values(this.active_radios)
-  //           let new_array1 = new_array0.splice(index, 1)
-  //           console.log('Object values active radios', new_array0)
-  //           let new_obj = new_array0.reduce((obj, item) => Object.assign(obj, { [item.key]: item.value}, {})
-  //           )
-  //           console.log('Modified active radios', new_obj)
-  //         }
-      // }
-  //   })
   }
 }
 
